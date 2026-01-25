@@ -1,10 +1,6 @@
 {
   "watch": ["src", ".env"],
   "ext": ".ts,.js",
-  "ignore": [
-    "node_modules",
-    "dist",
-    "src/logs/*"
-  ],
+  "ignore": ["node_modules", "dist", "src/logs/*"],
   "exec": "tsx ./src/index.ts"
 }

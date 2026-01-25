@@ -1,0 +1,136 @@
+import { Request, Response, NextFunction } from 'express'
+import { checkConflict } from '../checkConflict.middleware.js'
+import { ParamsDictionary } from 'express-serve-static-core'
+import databaseService from '~/configs/database.config.js'
+import { Collection, ObjectId } from 'mongodb'
+import { AppError } from '~/models/appError.js'
+import { StatusCodes } from 'http-status-codes'
+import UserMessages from '~/constants/messages.js'
+import {
+  EmailVerifyRqType,
+  LoginRqType,
+  RefreshRqType,
+  RegisterRqType,
+  ResetPasswordRqType
+} from '~/models/requests/requestsType.js'
+import { verifyToken } from '~/utils/jwt.util.js'
+import env from '~/configs/env.config.js'
+import RedisService from '~/configs/redis.config.js'
+import userInfo from '~/models/userInfo.js'
+import { comparePassword, hashToken } from '~/utils/crypto.utils.js'
+import { OtpType } from '~/constants/enum.js'
+import { VerifyOtpLocals } from '~/models/requests/reponseType.js'
+import OtpCode from '~/models/schema/otpCodes.schema.js'
+//utils
+const checkOtpVerify = async (condition: { code: string; type: OtpType }, next: NextFunction) => {
+  const result = await databaseService.otpCodes.findOne(condition)
+  if (!result) {
+    return next(new AppError({ statusCode: StatusCodes.UNAUTHORIZED, message: UserMessages.VERIFY_TOKEN_INVALID }))
+  }
+  const exp = new Date(result.expires_at).getTime()
+  if (exp < Date.now()) {
+    return next(new AppError({ statusCode: StatusCodes.UNAUTHORIZED, message: UserMessages.VERIFY_TOKEN_INVALID }))
+  }
+  return result
+}
+export const regiterMiddleware = async (
+  req: Request<ParamsDictionary, any, RegisterRqType>,
+  res: Response,
+  next: NextFunction
+) => {
+  const hasConflict = await checkConflict(databaseService.users as unknown as Collection, 'email')(req)
+  if (hasConflict) {
+    return next(new AppError({ statusCode: StatusCodes.CONFLICT, message: UserMessages.EMAIL_EXISTS }))
+  }
+  return next()
+}
+export const LoginMiddleware = async (
+  req: Request<ParamsDictionary, any, LoginRqType>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { email, password } = req.body
+  const user = await databaseService.users.findOne({ email: email })
+  if (!user) {
+    return next(new AppError({ statusCode: StatusCodes.UNAUTHORIZED, message: UserMessages.UNAUTHORIZED }))
+  }
+  const isCheckPassword = await comparePassword(password, user.password)
+  if (!isCheckPassword) {
+    return next(
+      new AppError({
+        statusCode: StatusCodes.UNAUTHORIZED,
+        message: UserMessages.UNAUTHORIZED
+      })
+    )
+  }
+  req.user = user
+  next()
+}
+export const LogoutMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  const access_token = req.headers['authorization']?.split('Bearer ')[1]
+  if (access_token) {
+    try {
+      const payload = await verifyToken<userInfo>(access_token, env.SECRET_ACCESS_TOKEN)
+      req.decodeToken = payload
+      const redis = RedisService.getInstance()
+      const currentTime = Math.floor(Date.now() / 1000)
+      const ttl = (payload.exp as number) - currentTime
+      if (ttl > 0) {
+        await redis.set(`blacklist:${payload.jti}`, '1', 'EX', ttl)
+      }
+    } catch {
+      // next
+    }
+  }
+  const refresh_token = req.body?.refresh_token
+  if (refresh_token) {
+    try {
+      const payload = await verifyToken<userInfo>(refresh_token, env.SECRET_REFRESH_TOKEN)
+      await databaseService.refreshTokens.deleteOne({ jti: payload.jti, user_id: new ObjectId(payload.userId) })
+    } catch {
+      // next
+    }
+  }
+  next()
+}
+export const RefreshMiddleware = async (
+  req: Request<ParamsDictionary, any, RefreshRqType>,
+  res: Response,
+  next: NextFunction
+) => {
+  const refresh_token = req.body.refresh_token
+  try {
+    const payload = await verifyToken<userInfo>(refresh_token, env.SECRET_REFRESH_TOKEN)
+    req.decodeToken = payload
+    const result = await databaseService.refreshTokens.findOneAndDelete({
+      jti: payload.jti,
+      user_id: new ObjectId(payload.userId)
+    })
+    if (result) {
+      return next()
+    }
+    next(new AppError({ statusCode: StatusCodes.UNAUTHORIZED, message: UserMessages.REFRESH_TOKEN_ERROR }))
+  } catch {
+    next(new AppError({ statusCode: StatusCodes.UNAUTHORIZED, message: UserMessages.REFRESH_TOKEN_ERROR }))
+  }
+}
+export const verifyEmailMiddleware = async (
+  req: Request<ParamsDictionary, any, EmailVerifyRqType>,
+  res: Response<any, VerifyOtpLocals>,
+  next: NextFunction
+) => {
+  const hashedToken = hashToken(req.body.email_verify_token)
+  const result = await checkOtpVerify({ code: hashedToken, type: OtpType.VERIFY_EMAIL }, next)
+  res.locals.otpVerify = result as OtpCode
+  next()
+}
+export const resetPasswordMiddleware = async (
+  req: Request<ParamsDictionary, any, ResetPasswordRqType>,
+  res: Response<any, VerifyOtpLocals>,
+  next: NextFunction
+) => {
+  const hashedToken = hashToken(req.body.forgot_password_token)
+  const result = await checkOtpVerify({ code: hashedToken, type: OtpType.RESET_PASSWORD }, next)
+  res.locals.otpVerify = result as OtpCode
+  next()
+}
