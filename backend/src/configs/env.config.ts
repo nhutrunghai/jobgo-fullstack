@@ -30,7 +30,11 @@ const envSchema = z.object({
   // Provider - Resend
   RESEND_API_KEY: z.string().min(1, { message: 'Không tồn tại Resend api key' }),
   MAIL_FROM_ADDRESS: z.string().min(1, { message: 'Không tồn tại domain mail' }),
-  MAIL_FROM_NAME: z.string().min(1, { message: 'MAIL_FROM_NAME không được rỗng' })
+  MAIL_FROM_NAME: z.string().min(1, { message: 'MAIL_FROM_NAME không được rỗng' }),
+  // Oauth google
+  GOOGLE_CLIENT_ID: z.string().min(1, { message: 'Không tồn tại GOOGLE_CLIENT_ID' }),
+  GOOGLE_CLIENT_SECRET: z.string().min(1, { message: 'Không tồn tại GOOGLE_CLIENT_SECRET' }),
+  GOOGLE_REDIRECT_URL: z.url({ message: 'GOOGLE_REDIRECT_URL phải là một đường dẫn hợp lệ' })
 })
 const envServer = envSchema.safeParse(process.env)
 if (!envServer.success) {

@@ -6,6 +6,7 @@ interface UserType {
   fullName: string
   email: string
   password: string
+  avatar?: string
   is_verified?: boolean
   role?: UserRole
   status?: UserStatus
@@ -17,6 +18,7 @@ export default class User {
   fullName: string
   email: string
   password: string
+  avatar?: string
   is_verified?: boolean
   role?: UserRole
   status?: UserStatus
@@ -26,8 +28,9 @@ export default class User {
     const date = new Date()
     this._id = user._id
     this.fullName = user.fullName || ''
-    this.email = user.email
-    this.password = user.password
+    this.email = user.email || ''
+    this.password = user.password || ''
+    this.avatar = user.avatar || ''
     this.is_verified = user.is_verified || false
     this.created_at = user.created_at || date
     this.updated_at = user.updated_at || date

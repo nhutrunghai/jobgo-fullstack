@@ -20,11 +20,11 @@ import ms, { StringValue } from 'ms'
 import resendProvider from '~/providers/resend.provider.js'
 import userService from '~/services/users.service.js'
 import { VerifyOtpLocals } from '~/models/requests/reponseType.js'
-
+import _ from 'lodash'
 export const RegiterController = async (req: Request<ParamsDictionary, any, RegisterRqType>, res: Response) => {
   req.body.device_info = getDeviceInfo(req.headers['user-agent'] as string)
   req.body.role = UserRole.CANDIDATE
-  const result = await authService.regiter(req.body)
+  const result = await authService.regiter(_.omit(req.body, ['device_info']), req.body.device_info)
   const { rawToken, hashedToken } = generateToken()
   const ttl = ms(env.ExpiresIn_EMAIL_VERIFY_TOKEN as StringValue) as number
   const payloadOtp = {
@@ -59,6 +59,13 @@ export const LoginController = async (req: Request<ParamsDictionary, any, LoginR
     message: UserMessages.LOGIN_SUCCESS,
     data: result
   })
+}
+export const OauthGoogleController = async (req: Request, res: Response) => {
+  const { code } = req.query
+  const device_info = getDeviceInfo(req.headers['user-agent'] as string)
+  const result = await authService.oauthGoogle(code as string, device_info)
+  // đoạn này sẽ redirect đến url của font-end kèm theo acces_token và refrech_token gắn vào query 
+  res.send('ok')
 }
 export const LogoutController = async (req: Request, res: Response) => {
   return res.status(StatusCodes.OK).json({
@@ -115,7 +122,7 @@ export const forgotPasswordController = async (
 }
 export const resetPasswordController = async (
   req: Request<ParamsDictionary, any, ResetPasswordRqType>,
-  res: Response
+  res: Response<any, VerifyOtpLocals>
 ) => {
   await authService.resetPassword(res.locals.otpVerify as OtpCode, req.body.password)
   return res.status(StatusCodes.OK).json({
