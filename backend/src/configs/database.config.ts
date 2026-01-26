@@ -3,7 +3,6 @@ import RefreshToken from '~/models/schema/refreshTokens.schema.js'
 import User from '~/models/schema/user.schema.js'
 import env from './env.config.js'
 import OtpCode from '~/models/schema/otpCodes.schema.js'
-import { en } from 'zod/locales'
 
 class DatabaseService {
   private client: MongoClient
@@ -54,7 +53,7 @@ class DatabaseService {
       },
       {
         collection: env.DB_REFRESH_TOKEN_NAME,
-        key: { jti: 1, user_id: 1 },
+        key: { user_id: 1, jti: 1 },
         option: { unique: true, name: 'jti_user_id' }
       },
       {

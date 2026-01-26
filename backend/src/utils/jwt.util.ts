@@ -10,13 +10,13 @@ export const generateJwt = (userInfo: userInfo, privateKey: string, option: Sign
     })
   })
 }
-export const verifyToken = <T extends JwtPayload>(token: string, privateKey: string): Promise<T> => {
+export const verifyToken = (token: string, privateKey: string): Promise<userInfo> => {
   return new Promise((resolve, reject) => {
     jwt.verify(token, privateKey, (err, decode) => {
       if (err) {
         return reject(err)
       }
-      return resolve(decode as T)
+      return resolve(decode as userInfo)
     })
   })
 }

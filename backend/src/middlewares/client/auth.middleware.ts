@@ -16,7 +16,6 @@ import {
 import { verifyToken } from '~/utils/jwt.util.js'
 import env from '~/configs/env.config.js'
 import RedisService from '~/configs/redis.config.js'
-import userInfo from '~/models/userInfo.js'
 import { comparePassword, hashToken } from '~/utils/crypto.utils.js'
 import { OtpType } from '~/constants/enum.js'
 import { VerifyOtpLocals } from '~/models/requests/reponseType.js'
@@ -82,7 +81,7 @@ export const LogoutMiddleware = async (req: Request, res: Response, next: NextFu
   const access_token = req.headers['authorization']?.split('Bearer ')[1]
   if (access_token) {
     try {
-      const payload = await verifyToken<userInfo>(access_token, env.SECRET_ACCESS_TOKEN)
+      const payload = await verifyToken(access_token, env.SECRET_ACCESS_TOKEN)
       req.decodeToken = payload
       const redis = RedisService.getInstance()
       const currentTime = Math.floor(Date.now() / 1000)
@@ -97,8 +96,8 @@ export const LogoutMiddleware = async (req: Request, res: Response, next: NextFu
   const refresh_token = req.body?.refresh_token
   if (refresh_token) {
     try {
-      const payload = await verifyToken<userInfo>(refresh_token, env.SECRET_REFRESH_TOKEN)
-      await databaseService.refreshTokens.deleteOne({ jti: payload.jti, user_id: new ObjectId(payload.userId) })
+      const payload = await verifyToken(refresh_token, env.SECRET_REFRESH_TOKEN)
+      await databaseService.refreshTokens.deleteOne({ user_id: new ObjectId(payload.userId), jti: payload.jti })
     } catch {
       // next
     }
@@ -112,11 +111,11 @@ export const RefreshMiddleware = async (
 ) => {
   const refresh_token = req.body.refresh_token
   try {
-    const payload = await verifyToken<userInfo>(refresh_token, env.SECRET_REFRESH_TOKEN)
+    const payload = await verifyToken(refresh_token, env.SECRET_REFRESH_TOKEN)
     req.decodeToken = payload
     const result = await databaseService.refreshTokens.findOneAndDelete({
-      jti: payload.jti,
-      user_id: new ObjectId(payload.userId)
+      user_id: new ObjectId(payload.userId),
+      jti: payload.jti
     })
     if (result) {
       return next()

@@ -3,7 +3,8 @@ import { ZodError } from 'zod'
 import { StatusCodes } from 'http-status-codes'
 import { AppError } from '~/models/appError.js'
 import UserMessages from '~/constants/messages.js'
-
+import env from '~/configs/env.config'
+const isDev = env.BUILD_MODE === 'dev'
 const globalErrorHandle = (err: any, req: Request, res: Response, next: NextFunction) => {
   const isJsonParseError =
     err?.type === 'entity.parse.failed' || (err instanceof SyntaxError && (err as any).status === 400 && 'body' in err)
@@ -24,16 +25,17 @@ const globalErrorHandle = (err: any, req: Request, res: Response, next: NextFunc
       }))
     })
   }
-  if (err instanceof AppError) {
-    return res.status(err.statusCode).json({
-      status: 'fail',
-      message: err.message
-    })
-  }
-  console.log(err)
-  res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+  const dataError = {
     status: 'error',
-    message: UserMessages.SERVER_ERROR
-  })
+    message: UserMessages.SERVER_ERROR,
+    stack: err.stack
+  }
+  if (!isDev) {
+    delete dataError.stack
+  }
+  if (err instanceof AppError) {
+    return res.status(err.statusCode).json(Object.assign(dataError, { status: 'fail', errorCode: err.errorCode }))
+  }
+  res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(dataError)
 }
 export default globalErrorHandle
