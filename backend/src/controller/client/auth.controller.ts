@@ -24,7 +24,7 @@ import _ from 'lodash'
 export const RegiterController = async (req: Request<ParamsDictionary, any, RegisterRqType>, res: Response) => {
   req.body.device_info = getDeviceInfo(req.headers['user-agent'] as string)
   req.body.role = UserRole.CANDIDATE
-  const result = await authService.regiter(_.omit(req.body, ['device_info']), req.body.device_info)
+  const result = await authService.regiter(_.omit(req.body, ['device_info']) as User, req.body.device_info)
   const { rawToken, hashedToken } = generateToken()
   const ttl = ms(env.ExpiresIn_EMAIL_VERIFY_TOKEN as StringValue) as number
   const payloadOtp = {

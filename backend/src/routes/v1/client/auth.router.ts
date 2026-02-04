@@ -8,7 +8,7 @@ import {
   RegiterController,
   resetPasswordController,
   verifyEmailController
-} from '~/controller/auth.controller.js'
+} from '~/controller/client/auth.controller.js'
 import {
   LoginMiddleware,
   LogoutMiddleware,
@@ -18,7 +18,7 @@ import {
   resetPasswordMiddleware,
   verifyEmailMiddleware
 } from '~/middlewares/client/auth.middleware.js'
-import { mailLimiter } from '~/middlewares/client/rateLimit.middleware'
+import { mailLimiter } from '~/middlewares/rateLimit.middleware'
 import validate from '~/middlewares/validator.middleware.js'
 import {
   forgotPasswordValidator,

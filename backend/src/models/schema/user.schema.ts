@@ -1,12 +1,18 @@
 import { ObjectId } from 'mongodb'
 import { UserRole, UserStatus } from '~/constants/enum.js'
+import { generateUsername } from '~/utils/generatorId.util'
 
 interface UserType {
   _id?: ObjectId
+  username?: string
   fullName: string
   email: string
   password: string
   avatar?: string
+  phone?: string
+  bio?: string
+  address?: string
+  skills?: string[]
   is_verified?: boolean
   role?: UserRole
   status?: UserStatus
@@ -16,9 +22,14 @@ interface UserType {
 export default class User {
   _id?: ObjectId
   fullName: string
+  username?: string
   email: string
   password: string
   avatar?: string
+  phone?: string
+  bio?: string
+  address?: string
+  skills?: string[]
   is_verified?: boolean
   role?: UserRole
   status?: UserStatus
@@ -27,10 +38,15 @@ export default class User {
   constructor(user: UserType) {
     const date = new Date()
     this._id = user._id
-    this.fullName = user.fullName || ''
-    this.email = user.email || ''
-    this.password = user.password || ''
-    this.avatar = user.avatar || ''
+    this.username = generateUsername()
+    this.fullName = user.fullName
+    this.email = user.email
+    this.password = user.password
+    this.avatar = user.avatar
+    this.phone = user.phone
+    this.bio = user.bio
+    this.address = user.address
+    this.skills = user.skills || []
     this.is_verified = user.is_verified || false
     this.created_at = user.created_at || date
     this.updated_at = user.updated_at || date

@@ -1,5 +1,6 @@
+import { ParamsDictionary } from 'express-serve-static-core'
 import { UserRole } from '~/constants/enum.js'
-
+// Auth
 export interface RegisterRqType {
   fullName: string
   email: string
@@ -20,7 +21,15 @@ export interface EmailVerifyRqType {
 export interface ForgotPasswordRqType {
   email: string
 }
-export interface ResetPasswordRqType{
+export interface ResetPasswordRqType {
   password: string
   forgot_password_token: string
+}
+// User
+export interface GetUserRqType extends ParamsDictionary {
+  id: string
+}
+export interface newPasswordRqType {
+  newPassword: string
+  OtpCode: string
 }
