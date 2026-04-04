@@ -1,12 +1,12 @@
-import { ObjectId } from "mongodb"
-import { UserRole,UserStatus } from "~/constants/enum.js"
+import { ObjectId } from 'mongodb'
+import { UserRole, UserStatus } from '~/constants/enum.js'
 
 interface UserType {
   _id?: ObjectId
   fullName: string
   email: string
   password: string
-  is_verified?:boolean
+  is_verified?: boolean
   role?: UserRole
   status?: UserStatus
   created_at?: Date
@@ -32,6 +32,6 @@ export default class User {
     this.created_at = user.created_at || date
     this.updated_at = user.updated_at || date
     this.role = user.role || UserRole.CANDIDATE
-    this.status = user.status || UserStatus.PENDING
+    this.status = user.status || UserStatus.ACTIVE
   }
 }
