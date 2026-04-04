@@ -16,6 +16,10 @@ const UserMessages = {
   DATE_OF_BIRTH_NOT_FOUND: 'Ngày sinh không được để trống',
   DATE_OF_BIRTH_INVALID: 'Định dạng ngày sinh không hợp lệ (ISO 8601)',
   DATE_OF_BIRTH_IN_FUTURE: 'Ngày sinh không thể ở trong tương lai',
+  ACCESS_TOKEN_NOT_FOUND: 'Token không tồn tại',
+  ACCESS_TOKEN_EXPIRED: 'Phiên đăng nhập hết hạn',
+  ACCESS_TOKEN_INVALID: 'Token không hợp lệ',
+  ACCESS_TOKEN_REMOVED: 'Token đã bị thu hồi',
   REFRESH_TOKEN_NOT_FOUND: 'Token làm mới không được để trống',
   REFRESH_TOKEN_ERROR: 'Token làm mới không hợp lệ',
   REFRESH_TOKEN_SUCCESS: 'Làm mới token thành công',
@@ -23,6 +27,7 @@ const UserMessages = {
   EMAIL_VERIFY_TOKEN_NOT_FOUND: 'Token xác minh email không được để trống',
   VERIFY_TOKEN_INVALID: 'Token xác minh email không hợp lệ hoặc đã hết hạn',
   EMAIL_VERIFY_SUCCESS: 'Xác minh email thành công',
+  EMAIL_UNVERIFIED: 'Email chưa được xác minh',
   FORGOT_PASSWORD_EMAIL_SENT: 'Đã gửi email đặt lại mật khẩu nếu email tồn tại trong hệ thống',
   FORGOT_PASSWORD_TOKEN_NOT_FOUND: 'Token đặt lại mật khẩu không được để trống',
   FORGOT_PASSWORD_SUCCESS: 'Đặt lại mật khẩu thành công',
@@ -32,6 +37,9 @@ const UserMessages = {
   LOGOUT_SUCCESS: 'Đăng xuất thành công',
   OAUTH_GOOGELE_UNAUTHORIZED: 'Người dùng từ chối cấp quyền',
   OAUTH_GOOGELE_MISSING_CODE: 'Thiếu Authorization Code từ Google',
-  OAUTH_GOOGLE_EMAIL_NOT_VERIFIED: 'Email Google không được xác minh'
+  OAUTH_GOOGLE_EMAIL_NOT_VERIFIED: 'Email Google không được xác minh',
+  USER_NOT_FOUND: 'Người dùng không tồn tại',
+  USER_UPDATE_SUCCESS: 'Cập nhật thông tin người dùng thành công',
+  USER_DELETE_SUCCESS: 'Xóa người dùng thành công'
 } as const
 export default UserMessages

@@ -18,6 +18,7 @@ import {
   resetPasswordMiddleware,
   verifyEmailMiddleware
 } from '~/middlewares/client/auth.middleware.js'
+import { mailLimiter } from '~/middlewares/client/rateLimit.middleware'
 import validate from '~/middlewares/validator.middleware.js'
 import {
   forgotPasswordValidator,
@@ -34,6 +35,6 @@ authRouter.get('/oauth/google', OauthGoogleMiddleware, OauthGoogleController)
 authRouter.post('/logout', LogoutMiddleware, LogoutController)
 authRouter.post('/refresh-token', validate(refreshValidator), RefreshMiddleware, RefreshController)
 authRouter.post('/verify-email', validate(verifyEmailValidator), verifyEmailMiddleware, verifyEmailController)
-authRouter.post('/forgot-password', validate(forgotPasswordValidator), forgotPasswordController)
+authRouter.post('/forgot-password', validate(forgotPasswordValidator), mailLimiter, forgotPasswordController)
 authRouter.post('/reset-password', validate(resetPasswordValidator), resetPasswordMiddleware, resetPasswordController)
 export default authRouter

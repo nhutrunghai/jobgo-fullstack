@@ -1,0 +1,369 @@
+openapi: 3.0.3
+info:
+  title: "JobGo API (Ban nhap)"
+  description: "Mo ta API hien tai cho module auth. Tai lieu tam thoi bang tieng Viet."
+  version: "0.1.0"
+servers:
+  - url: "http://localhost:4000/api/v1"
+    description: "Moi truong local"
+tags:
+  - name: "Auth"
+    description: "Dang ky, dang nhap, quen mat khau, xac minh email"
+paths:
+  /auth/register:
+    post:
+      tags: ["Auth"]
+      summary: "Dang ky tai khoan"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: "Dang ky thanh cong"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "409":
+          description: "Email da ton tai"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: "Du lieu khong hop le"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+  /auth/login:
+    post:
+      tags: ["Auth"]
+      summary: "Dang nhap"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "201":
+          description: "Dang nhap thanh cong"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: "Sai thong tin dang nhap"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: "Du lieu khong hop le"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+  /auth/oauth/google:
+    get:
+      tags: ["Auth"]
+      summary: "Dang nhap bang Google (callback)"
+      description: "Endpoint nhan code tu Google, sau do xu ly dang nhap. Co the redirect ve front-end."
+      parameters:
+        - name: "code"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+          description: "Authorization code tu Google"
+        - name: "error"
+          in: "query"
+          required: false
+          schema:
+            type: "string"
+          description: "Loi tu Google neu co"
+      responses:
+        "200":
+          description: "Xu ly thanh cong (co the redirect)"
+        "400":
+          description: "Thieu code"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: "Nguoi dung tu choi hoac Google tra ve loi"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /auth/logout:
+    post:
+      tags: ["Auth"]
+      summary: "Dang xuat"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LogoutRequest"
+      responses:
+        "200":
+          description: "Dang xuat thanh cong"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BasicResponse"
+  /auth/refresh-token:
+    post:
+      tags: ["Auth"]
+      summary: "Lay access token moi"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshRequest"
+      responses:
+        "201":
+          description: "Lam moi token thanh cong"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: "Refresh token khong hop le"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: "Du lieu khong hop le"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+  /auth/verify-email:
+    post:
+      tags: ["Auth"]
+      summary: "Xac minh email"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyEmailRequest"
+      responses:
+        "200":
+          description: "Xac minh thanh cong"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BasicResponse"
+        "401":
+          description: "Token xac minh khong hop le/het han"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: "Du lieu khong hop le"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+  /auth/forgot-password:
+    post:
+      tags: ["Auth"]
+      summary: "Gui email quen mat khau"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordRequest"
+      responses:
+        "200":
+          description: "Da gui email (neu tai khoan ton tai)"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BasicResponse"
+        "422":
+          description: "Du lieu khong hop le"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+  /auth/reset-password:
+    post:
+      tags: ["Auth"]
+      summary: "Dat lai mat khau"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordRequest"
+      responses:
+        "200":
+          description: "Dat lai mat khau thanh cong"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BasicResponse"
+        "401":
+          description: "Token khong hop le/het han"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: "Du lieu khong hop le"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: "http"
+      scheme: "bearer"
+      bearerFormat: "JWT"
+  schemas:
+    RegisterRequest:
+      type: "object"
+      required: ["fullName", "email", "password", "confirmPassword"]
+      properties:
+        fullName:
+          type: "string"
+          example: "Nguyen Van A"
+        email:
+          type: "string"
+          example: "user@example.com"
+        password:
+          type: "string"
+          example: "Password123"
+        confirmPassword:
+          type: "string"
+          example: "Password123"
+    LoginRequest:
+      type: "object"
+      required: ["email", "password"]
+      properties:
+        email:
+          type: "string"
+          example: "user@example.com"
+        password:
+          type: "string"
+          example: "Password123"
+    RefreshRequest:
+      type: "object"
+      required: ["refresh_token"]
+      properties:
+        refresh_token:
+          type: "string"
+          example: "refresh_token_example"
+    VerifyEmailRequest:
+      type: "object"
+      required: ["email_verify_token"]
+      properties:
+        email_verify_token:
+          type: "string"
+          example: "email_verify_token_example"
+    ForgotPasswordRequest:
+      type: "object"
+      required: ["email"]
+      properties:
+        email:
+          type: "string"
+          example: "user@example.com"
+    ResetPasswordRequest:
+      type: "object"
+      required: ["password", "confirmPassword", "forgot_password_token"]
+      properties:
+        password:
+          type: "string"
+          example: "Password123"
+        confirmPassword:
+          type: "string"
+          example: "Password123"
+        forgot_password_token:
+          type: "string"
+          example: "forgot_password_token_example"
+    LogoutRequest:
+      type: "object"
+      properties:
+        refresh_token:
+          type: "string"
+          example: "refresh_token_example"
+    AuthData:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          example: "65f1b8a0f1a2b3c4d5e6f789"
+        AccessToken:
+          type: "string"
+          example: "access_token_example"
+        RefreshToken:
+          type: "string"
+          example: "refresh_token_example"
+    AuthResponse:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          example: "success"
+        message:
+          type: "string"
+          example: "LOGIN_SUCCESS"
+        data:
+          $ref: "#/components/schemas/AuthData"
+    BasicResponse:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          example: "success"
+        message:
+          type: "string"
+          example: "OK"
+    ErrorResponse:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          example: "fail"
+        message:
+          type: "string"
+          example: "UNAUTHORIZED"
+    ValidationError:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          example: "fail"
+        message:
+          type: "string"
+          example: "INVALID_DATA"
+        error:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              path:
+                type: "string"
+                example: "email"
+              location:
+                type: "string"
+                example: "body"
+              message:
+                type: "string"
+                example: "EMAIL_INVALID"

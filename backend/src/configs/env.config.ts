@@ -6,6 +6,11 @@ const envSchema = z.object({
     .min(1, { message: 'PORT phải lớn hơn 0' })
     .max(6553, { message: 'PORT không được vượt quá 6553' })
     .default(3000),
+  // Allow Origin Cors
+  ALLOWED_ORIGINS: z
+    .string()
+    .min(1, 'ORIGIN_ALLOW_CORS không hợp lệ')
+    .transform((item) => item.split(',') || []),
   // Redis
   REDIS_PORT: z.coerce
     .number()
@@ -34,7 +39,9 @@ const envSchema = z.object({
   // Oauth google
   GOOGLE_CLIENT_ID: z.string().min(1, { message: 'Không tồn tại GOOGLE_CLIENT_ID' }),
   GOOGLE_CLIENT_SECRET: z.string().min(1, { message: 'Không tồn tại GOOGLE_CLIENT_SECRET' }),
-  GOOGLE_REDIRECT_URL: z.url({ message: 'GOOGLE_REDIRECT_URL phải là một đường dẫn hợp lệ' })
+  GOOGLE_REDIRECT_URL: z.url({ message: 'GOOGLE_REDIRECT_URL phải là một đường dẫn hợp lệ' }),
+  // BUILD_MODE
+  BUILD_MODE: z.enum(['dev', 'production']).default('dev')
 })
 const envServer = envSchema.safeParse(process.env)
 if (!envServer.success) {

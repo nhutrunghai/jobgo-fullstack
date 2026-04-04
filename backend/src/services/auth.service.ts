@@ -4,7 +4,6 @@ import userInfo from '~/models/userInfo.js'
 import databaseService from '~/configs/database.config.js'
 import User from '~/models/schema/user.schema.js'
 import RefreshToken from '~/models/schema/refreshTokens.schema.js'
-import { RegisterRqType } from '~/models/requests/requestsType.js'
 import { v4 as uuidv4 } from 'uuid'
 import env from '~/configs/env.config.js'
 import { ObjectId } from 'mongodb'
@@ -79,12 +78,12 @@ class AuthService {
     }
     const result = await databaseService.users.insertOne(new User(payload))
     const user_id = result.insertedId
-    const userInfo = { userId: user_id, role: payload.role }
+    const userInfo = { userId: user_id, role: payload.role, vfd: payload.is_verified || false }
     const [AccessToken, RefreshToken] = await this.signAccessAndRefresh(userInfo, device_info)
     return { id: user_id, AccessToken, RefreshToken }
   }
   async login(user: User, device_info: string) {
-    const userInfo = { userId: user._id, role: user.role as UserRole }
+    const userInfo = { userId: user._id, role: user.role as UserRole, vfd: user.is_verified }
     const [AccessToken, RefreshToken] = await this.signAccessAndRefresh(userInfo, device_info)
     return { id: user._id, AccessToken, RefreshToken }
   }
@@ -105,7 +104,7 @@ class AuthService {
     })
     return userResponse.data
   }
-  async oauthGoogle(code: string, device_info: string) {
+  async loginOauthGoogle(code: string, device_info: string) {
     const access_token = await this.getOauthGooleToken(code)
     const userInfo = await this.getGoogleUserInfo(access_token)
     if (!userInfo.email_verified) {
@@ -113,7 +112,13 @@ class AuthService {
     }
     const user = await userService.findUser('email', userInfo.email)
     if (user) {
-      const userInfo = { userId: user._id, role: user.role }
+      if (!user.is_verified) {
+        await Promise.all([
+          databaseService.users.updateOne({ _id: user._id }, { $set: { is_verified: true, updated_at: new Date() } }),
+          await databaseService.refreshTokens.deleteMany({ user_id: user._id })
+        ])
+      }
+      const userInfo = { userId: user._id, role: user.role, vfd: true }
       const [AccessToken, RefreshToken] = await this.signAccessAndRefresh(userInfo, device_info)
       return { id: user._id, AccessToken, RefreshToken }
     } else {
@@ -129,19 +134,27 @@ class AuthService {
     }
   }
   async refreshToken(payload: userInfo, device_info: string) {
-    const userInfo = { userId: payload.userId, role: payload.role }
+    const userInfo = { userId: payload.userId, role: payload.role, vfd: payload.vfd }
     const expiresAt = new Date((payload.exp as number) * 1000)
     const [AccessToken, RefreshToken] = await this.signAccessAndRefresh(userInfo, device_info, { expiresAt })
     return { id: payload.userId, AccessToken, RefreshToken }
   }
-  async verifyEmail(payload: OtpCode) {
-    return Promise.all([
-      databaseService.users.updateOne(
+  async verifyEmail(payload: OtpCode, device_info: string) {
+    const [user] = await Promise.all([
+      databaseService.users.findOneAndUpdate(
         { _id: payload.user_id },
         { $set: { is_verified: true, updated_at: new Date() } }
       ),
       databaseService.otpCodes.deleteOne({ code: payload.code })
     ])
+    if (!user) {
+      throw new AppError({ statusCode: StatusCodes.UNAUTHORIZED, message: UserMessages.USER_NOT_FOUND })
+    } else {
+      const userInfo = { userId: payload.user_id, role: user.role, vfd: true }
+      await databaseService.refreshTokens.deleteMany({ user_id: payload.user_id })
+      const [AccessToken, RefreshToken] = await this.signAccessAndRefresh(userInfo, device_info)
+      return { id: payload.user_id, AccessToken, RefreshToken }
+    }
   }
   async resetPassword(payload: OtpCode, password: string) {
     password = await hashPassword(password)

@@ -5,12 +5,18 @@ import databaseService from './configs/database.config.js'
 import BASE_PATH from './constants/path.js'
 import globalErrorHandle from './middlewares/errorHandle.middleware.js'
 import v1Router from './routes/v1/index.js'
+import cors from 'cors'
+import corsOptions from '~/configs/cors.config.js'
+import morgan from 'morgan'
+const isDev = env.BUILD_MODE === 'dev'
 const app = express()
+if (isDev) {
+  app.use(morgan('dev'))
+}
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-
 databaseService.connect()
-
 app.get('/', (req, res) => {
   res.send('Hello World')
 })

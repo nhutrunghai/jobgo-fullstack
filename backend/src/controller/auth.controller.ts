@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { StatusCodes } from 'http-status-codes'
 import env from '~/configs/env.config.js'
-import { OtpType, UserRole } from '~/constants/enum.js'
+import { OtpType, TemplateResendId, UserRole } from '~/constants/enum.js'
 import UserMessages from '~/constants/messages.js'
 import {
   ForgotPasswordRqType,
@@ -42,8 +42,11 @@ export const RegiterController = async (req: Request<ParamsDictionary, any, Regi
       verify_url: `${env.MAIL_FROM_ADDRESS}/verify-email?email_verify_token=${rawToken}`
     }
   }
-  // OFF SEND MAIL
-  // await resendProvider.sendWithTemplate(TemplateResendId.VERIFY_EMAIL, [payloadSendVerify])
+  if (env.BUILD_MODE === 'production') {
+    await resendProvider.sendWithTemplate(TemplateResendId.VERIFY_EMAIL, [payloadSendVerify])
+  } else {
+    console.log('[DEV] verify url:', payloadSendVerify.variables.verify_url)
+  }
   return res.status(StatusCodes.CREATED).json({
     status: 'success',
     message: UserMessages.REGISTER_SUCCESS,
@@ -63,7 +66,7 @@ export const LoginController = async (req: Request<ParamsDictionary, any, LoginR
 export const OauthGoogleController = async (req: Request, res: Response) => {
   const { code } = req.query
   const device_info = getDeviceInfo(req.headers['user-agent'] as string)
-  const result = await authService.oauthGoogle(code as string, device_info)
+  const result = await authService.loginOauthGoogle(code as string, device_info)
   // đoạn này sẽ redirect đến url của font-end kèm theo acces_token và refrech_token gắn vào query 
   res.send('ok')
 }
@@ -83,10 +86,12 @@ export const RefreshController = async (req: Request, res: Response) => {
   })
 }
 export const verifyEmailController = async (req: Request, res: Response<any, VerifyOtpLocals>) => {
-  await authService.verifyEmail(res.locals.otpVerify as OtpCode)
+  const device_info = getDeviceInfo(req.headers['user-agent'] as string)
+  const result = await authService.verifyEmail(res.locals.otpVerify as OtpCode, device_info)
   return res.status(StatusCodes.OK).json({
     status: 'success',
-    message: UserMessages.EMAIL_VERIFY_SUCCESS
+    message: UserMessages.EMAIL_VERIFY_SUCCESS,
+    data: result
   })
 }
 export const forgotPasswordController = async (
@@ -112,8 +117,12 @@ export const forgotPasswordController = async (
         verify_url: `${env.MAIL_FROM_ADDRESS}/reset-password?forgot_password_token=${rawToken}`
       }
     }
-    // OFF SEND FORGOT
-    // await resendProvider.sendWithTemplate(TemplateResendId.VERIFY_EMAIL, [payloadSendVerify])
+    // Thay template vẫn đang dùng template xác thực email
+    if (env.BUILD_MODE === 'production') {
+      await resendProvider.sendWithTemplate(TemplateResendId.VERIFY_EMAIL, [payloadSendVerify])
+    } else {
+      console.log('[DEV] verify url:', payloadSendVerify.variables.verify_url)
+    }
   }
   return res.status(StatusCodes.OK).json({
     status: 'success',
