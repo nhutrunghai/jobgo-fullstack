@@ -1,50 +1,61 @@
 # Project JobGo
 
-Project JobGo is a backend-focused job platform that connects candidates and employers. The current codebase is centered on authentication, user profile management, employer company profiles, and the foundation for job posting and application workflows.
+Project JobGo là hệ thống backend cho nền tảng kết nối ứng viên và nhà tuyển dụng. Mục tiêu của dự án là xây dựng một kiến trúc đủ tốt để xử lý các bài toán xác thực người dùng, quản lý hồ sơ công ty, đăng tin tuyển dụng, quản lý ứng tuyển và mở rộng sang tìm kiếm việc làm.
 
-## Current Scope
+## Mục tiêu dự án
 
-The backend currently includes or is actively being extended around these areas:
+Dự án tập trung vào các nhóm nghiệp vụ chính:
 
-- Authentication and account security
-  - register, login, logout, refresh token
-  - email verification and password recovery flows
-  - Google OAuth login
-  - rate limiting for sensitive actions
-- User module
-  - my profile endpoint
-  - public profile endpoint
-  - profile update and account settings flows
-- Employer company module
-  - create company profile
-  - update company profile
-  - get current company profile
-- Job foundation
-  - job schema and validation
-  - job application schema and relation model
-  - MongoDB indexes for job and application workflows
-  - employer-side job creation foundation
-- Infrastructure and integrations
+- Xác thực và bảo mật tài khoản
+  - đăng ký, đăng nhập, đăng xuất
+  - refresh token
+  - xác minh email
+  - quên mật khẩu và đặt lại mật khẩu
+  - đăng nhập Google OAuth
+  - rate limiting cho các thao tác nhạy cảm
+- Quản lý người dùng
+  - xem hồ sơ cá nhân
+  - xem hồ sơ công khai
+  - cập nhật hồ sơ
+  - cài đặt tài khoản
+- Quản lý công ty tuyển dụng
+  - tạo hồ sơ công ty
+  - cập nhật hồ sơ công ty
+  - lấy hồ sơ công ty hiện tại
+- Nền tảng quản lý tin tuyển dụng
+  - schema và validator cho job
+  - schema quan hệ giữa ứng viên và job
+  - MongoDB indexes cho luồng company và job
+  - nền tảng cho employer tạo bài đăng tuyển dụng
+- Hạ tầng phục vụ mở rộng
   - MongoDB
   - Redis
   - Elasticsearch
   - Kibana
-  - Docker Compose support for local services
+  - Postman collection cho kiểm thử API
 
-## Architecture Notes
+## Kiến trúc hiện tại
 
-This repository is structured around a Node.js + Express + TypeScript backend using MongoDB as the primary datastore.
+Backend được xây dựng theo hướng module hóa với các lớp chính:
 
-Main architectural decisions in the current codebase:
+- `routes`: định nghĩa endpoint
+- `middlewares`: xác thực, phân quyền, validate request
+- `controller`: điều phối request/response
+- `services`: xử lý nghiệp vụ và thao tác dữ liệu
+- `models`: schema và kiểu dữ liệu
+- `validators`: validate đầu vào bằng Zod
+- `configs`: cấu hình môi trường, database, hạ tầng
 
-- modular route/controller/service structure
-- Zod-based request validation
-- MongoDB collections with explicit indexes for high-traffic entities
-- Redis-based infrastructure support
-- Elasticsearch reserved for search and retrieval use cases
-- Postman collection maintained for API testing during development
+Các quyết định kỹ thuật đang được áp dụng:
 
-## Tech Stack
+- Node.js + Express + TypeScript
+- MongoDB là nguồn dữ liệu giao dịch chính
+- Redis phục vụ hạ tầng và mở rộng hiệu năng
+- Elasticsearch dành cho bài toán search và retrieval
+- Zod để kiểm soát dữ liệu đầu vào
+- tổ chức code theo domain để dễ mở rộng về sau
+
+## Công nghệ sử dụng
 
 - Node.js
 - Express
@@ -57,7 +68,7 @@ Main architectural decisions in the current codebase:
 - Jest
 - Docker Compose
 
-## Repository Structure
+## Cấu trúc thư mục
 
 ```text
 backend/
@@ -70,52 +81,50 @@ backend/
     routes/
     services/
     validators/
-SRS/
-reports/
 ```
 
-## Getting Started
+## Cách chạy dự án
 
-### 1. Install dependencies
+### 1. Cài dependencies
 
 ```bash
 cd backend
 npm install
 ```
 
-### 2. Configure environment variables
+### 2. Cấu hình môi trường
 
-Create and update the backend environment file as needed:
+Tạo hoặc cập nhật file:
 
 ```bash
 backend/.env
 ```
 
-At minimum, configure:
+Các nhóm biến môi trường quan trọng:
 
-- application port
+- cổng chạy ứng dụng
 - MongoDB connection
 - JWT secrets
 - Redis connection
 - mail service settings
 - Elasticsearch settings
 
-### 3. Start infrastructure services
+### 3. Chạy hạ tầng local
 
-A Docker Compose file is included for local supporting services such as Redis, Elasticsearch, and Kibana.
+Repo có sẵn `docker-compose.yml` để chạy các dịch vụ hỗ trợ như Redis, Elasticsearch và Kibana.
 
 ```bash
 docker compose up -d
 ```
 
-### 4. Run the backend
+### 4. Chạy backend ở môi trường development
 
 ```bash
 cd backend
 npm run dev
 ```
 
-### 5. Build for production
+### 5. Build production
 
 ```bash
 cd backend
@@ -123,20 +132,25 @@ npm run build
 npm start
 ```
 
-## Development Status
+## Trạng thái phát triển
 
-This project is still under active development. The current focus is on stabilizing the employer workflow:
+Dự án vẫn đang trong quá trình hoàn thiện. Trọng tâm hiện tại là hoàn chỉnh luồng của nhà tuyển dụng trước khi mở rộng dashboard tổng hợp, bao gồm:
 
-- company profile management
-- job posting lifecycle
-- candidate application flow
-- dashboard and reporting layers after core workflows are complete
+- quản lý hồ sơ công ty
+- quản lý vòng đời tin tuyển dụng
+- quản lý luồng ứng tuyển của ứng viên
+- chuẩn hóa dữ liệu và index cho các bảng quan trọng
 
-## Notes
+## Định hướng tiếp theo
 
-- The repository also contains SRS and report-related materials used during the development process.
-- Search and recommendation capabilities are planned around Elasticsearch and retrieval-oriented workflows, while MongoDB remains the source of truth for transactional data.
+Các hạng mục đang được ưu tiên tiếp tục:
+
+- hoàn thiện CRUD job cho employer
+- hoàn thiện luồng apply job cho candidate
+- quản lý trạng thái application
+- xây dựng dashboard tổng quan sau khi các luồng cốt lõi ổn định
+- tích hợp search nâng cao dựa trên Elasticsearch và retrieval workflow
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
+Dự án sử dụng giấy phép MIT. Xem thêm tại [LICENSE](./LICENSE).
