@@ -21,15 +21,15 @@ class RedisService {
       this.instance = new Redis(redisOptions)
       this.instance.on('connect', () => {
         console.log('🚀 Redis: Connected to server');
-      });
+      })
 
       this.instance.on('error', (err) => {
         console.error('❌ Redis: Connection error:', err.message)
-      });
+      })
 
       this.instance.on('ready', () => {
         console.log('✅ Redis: Ready to use');
-      });
+      })
     }
 
     return this.instance

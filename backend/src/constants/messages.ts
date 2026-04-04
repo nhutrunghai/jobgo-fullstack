@@ -29,6 +29,9 @@ const UserMessages = {
   UNAUTHORIZED: 'Tài khoản hoặc mật khẩu không đúng',
   REGISTER_SUCCESS: 'Đăng ký tài khoản thành công',
   LOGIN_SUCCESS: 'Đăng nhập thành công',
-  LOGOUT_SUCCESS: 'Đăng xuất thành công'
+  LOGOUT_SUCCESS: 'Đăng xuất thành công',
+  OAUTH_GOOGELE_UNAUTHORIZED: 'Người dùng từ chối cấp quyền',
+  OAUTH_GOOGELE_MISSING_CODE: 'Thiếu Authorization Code từ Google',
+  OAUTH_GOOGLE_EMAIL_NOT_VERIFIED: 'Email Google không được xác minh'
 } as const
 export default UserMessages

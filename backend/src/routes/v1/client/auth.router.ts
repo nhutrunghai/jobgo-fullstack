@@ -3,6 +3,7 @@ import {
   forgotPasswordController,
   LoginController,
   LogoutController,
+  OauthGoogleController,
   RefreshController,
   RegiterController,
   resetPasswordController,
@@ -11,6 +12,7 @@ import {
 import {
   LoginMiddleware,
   LogoutMiddleware,
+  OauthGoogleMiddleware,
   RefreshMiddleware,
   regiterMiddleware,
   resetPasswordMiddleware,
@@ -28,6 +30,7 @@ import {
 const authRouter = Router()
 authRouter.post('/register', validate(registerValidator), regiterMiddleware, RegiterController)
 authRouter.post('/login', validate(loginValidator), LoginMiddleware, LoginController)
+authRouter.get('/oauth/google', OauthGoogleMiddleware, OauthGoogleController)
 authRouter.post('/logout', LogoutMiddleware, LogoutController)
 authRouter.post('/refresh-token', validate(refreshValidator), RefreshMiddleware, RefreshController)
 authRouter.post('/verify-email', validate(verifyEmailValidator), verifyEmailMiddleware, verifyEmailController)

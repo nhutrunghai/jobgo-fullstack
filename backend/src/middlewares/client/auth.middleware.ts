@@ -66,6 +66,18 @@ export const LoginMiddleware = async (
   req.user = user
   next()
 }
+export const OauthGoogleMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  const { code, error } = req.query
+  if (error) {
+    return next(
+      new AppError({ statusCode: StatusCodes.UNAUTHORIZED, message: UserMessages.OAUTH_GOOGELE_UNAUTHORIZED })
+    )
+  }
+  if (!code) {
+    return next(new AppError({ statusCode: StatusCodes.BAD_REQUEST, message: UserMessages.OAUTH_GOOGELE_MISSING_CODE }))
+  }
+  next()
+}
 export const LogoutMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const access_token = req.headers['authorization']?.split('Bearer ')[1]
   if (access_token) {

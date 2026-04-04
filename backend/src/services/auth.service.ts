@@ -4,12 +4,19 @@ import userInfo from '~/models/userInfo.js'
 import databaseService from '~/configs/database.config.js'
 import User from '~/models/schema/user.schema.js'
 import RefreshToken from '~/models/schema/refreshTokens.schema.js'
-import { RegisterRqType, ResetPasswordRqType } from '~/models/requests/requestsType.js'
+import { RegisterRqType } from '~/models/requests/requestsType.js'
 import { v4 as uuidv4 } from 'uuid'
 import env from '~/configs/env.config.js'
 import { ObjectId } from 'mongodb'
 import { hashPassword } from '~/utils/crypto.utils.js'
 import OtpCode from '~/models/schema/otpCodes.schema.js'
+import axios from 'axios'
+import { GoogleTokenResponse } from '~/models/oauth.js'
+import { AppError } from '~/models/appError.js'
+import { StatusCodes } from 'http-status-codes'
+import UserMessages from '~/constants/messages.js'
+import userService from './users.service.js'
+import { UserRole } from '~/constants/enum.js'
 class AuthService {
   private signAccessToken({
     userInfoAccessToken,
@@ -53,7 +60,7 @@ class AuthService {
     await databaseService.refreshTokens.insertOne(
       new RefreshToken({
         jti: jtiRefreshToken,
-        user_id: userInfoRefreshToken.userId,
+        user_id: new ObjectId(userInfoRefreshToken.userId),
         device_info: device_info,
         expires_at: expiresAt
       })
@@ -66,21 +73,63 @@ class AuthService {
       : this.signRefreshToken({ userInfoRefreshToken })
     return Promise.all([this.signAccessToken({ userInfoAccessToken }), refreshTokenPromise])
   }
-  async regiter(payload: RegisterRqType) {
-    payload.password = await hashPassword(payload.password)
+  async regiter(payload: User, device_info: string) {
+    if (!payload.is_verified) {
+      payload.password = await hashPassword(payload.password)
+    }
     const result = await databaseService.users.insertOne(new User(payload))
     const user_id = result.insertedId
     const userInfo = { userId: user_id, role: payload.role }
-    const [AccessToken, RefreshToken] = await this.signAccessAndRefresh(userInfo, payload.device_info)
+    const [AccessToken, RefreshToken] = await this.signAccessAndRefresh(userInfo, device_info)
     return { id: user_id, AccessToken, RefreshToken }
   }
   async login(user: User, device_info: string) {
-    const userInfo = { userId: user._id, role: user.role } as userInfo
+    const userInfo = { userId: user._id, role: user.role as UserRole }
     const [AccessToken, RefreshToken] = await this.signAccessAndRefresh(userInfo, device_info)
     return { id: user._id, AccessToken, RefreshToken }
   }
+  private async getOauthGooleToken(code: string) {
+    const body = {
+      code,
+      client_id: env.GOOGLE_CLIENT_ID,
+      client_secret: env.GOOGLE_CLIENT_SECRET,
+      redirect_uri: env.GOOGLE_REDIRECT_URL,
+      grant_type: 'authorization_code'
+    }
+    const tokenResponse = await axios.post<GoogleTokenResponse>('https://oauth2.googleapis.com/token', body)
+    return tokenResponse.data.access_token
+  }
+  private async getGoogleUserInfo(access_token: string) {
+    const userResponse = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: `Bearer ${access_token}` }
+    })
+    return userResponse.data
+  }
+  async oauthGoogle(code: string, device_info: string) {
+    const access_token = await this.getOauthGooleToken(code)
+    const userInfo = await this.getGoogleUserInfo(access_token)
+    if (!userInfo.email_verified) {
+      throw new AppError({ statusCode: StatusCodes.FORBIDDEN, message: UserMessages.OAUTH_GOOGLE_EMAIL_NOT_VERIFIED })
+    }
+    const user = await userService.findUser('email', userInfo.email)
+    if (user) {
+      const userInfo = { userId: user._id, role: user.role }
+      const [AccessToken, RefreshToken] = await this.signAccessAndRefresh(userInfo, device_info)
+      return { id: user._id, AccessToken, RefreshToken }
+    } else {
+      const payload: User = {
+        fullName: userInfo.name,
+        email: userInfo.email,
+        password: '',
+        avatar: userInfo.picture,
+        is_verified: true,
+        role: UserRole.CANDIDATE
+      }
+      return this.regiter(payload, device_info)
+    }
+  }
   async refreshToken(payload: userInfo, device_info: string) {
-    const userInfo = { userId: new ObjectId(payload.userId), role: payload.role } as userInfo
+    const userInfo = { userId: payload.userId, role: payload.role }
     const expiresAt = new Date((payload.exp as number) * 1000)
     const [AccessToken, RefreshToken] = await this.signAccessAndRefresh(userInfo, device_info, { expiresAt })
     return { id: payload.userId, AccessToken, RefreshToken }
