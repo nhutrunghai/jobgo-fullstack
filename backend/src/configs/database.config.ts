@@ -8,7 +8,7 @@ class DatabaseService {
   private client: MongoClient
   private db: Db
   constructor() {
-    this.client = new MongoClient(env.DB_URL)
+    this.client = new MongoClient(env.DB_URL, { ignoreUndefined: true })
     this.db = this.client.db(env.DB_NAME)
   }
   async connect() {
@@ -52,6 +52,11 @@ class DatabaseService {
         option: { unique: true, name: 'email', collation: { locale: 'en', strength: 2 } }
       },
       {
+        collection: env.DB_USER_NAME,
+        key: { username: 1 },
+        option: { unique: true, name: 'username' }
+      },
+      {
         collection: env.DB_REFRESH_TOKEN_NAME,
         key: { user_id: 1, jti: 1 },
         option: { unique: true, name: 'jti_user_id' }
@@ -60,6 +65,11 @@ class DatabaseService {
         collection: env.DB_OTP_CODE_NAME,
         key: { code: 1 },
         option: { unique: true, name: 'code' }
+      },
+      {
+        collection: env.DB_OTP_CODE_NAME,
+        key: { user_id: 1 },
+        option: { unique: true, name: 'user_id' }
       }
     ]
     for (const item of indexes) {

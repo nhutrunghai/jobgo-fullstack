@@ -15,7 +15,7 @@ import { AppError } from '~/models/appError.js'
 import { StatusCodes } from 'http-status-codes'
 import UserMessages from '~/constants/messages.js'
 import userService from './users.service.js'
-import { UserRole } from '~/constants/enum.js'
+import { OtpType, UserRole } from '~/constants/enum.js'
 class AuthService {
   private signAccessToken({
     userInfoAccessToken,
@@ -145,7 +145,7 @@ class AuthService {
         { _id: payload.user_id },
         { $set: { is_verified: true, updated_at: new Date() } }
       ),
-      databaseService.otpCodes.deleteOne({ code: payload.code })
+      databaseService.otpCodes.deleteOne({ code: payload.code, type: OtpType.VERIFY_EMAIL })
     ])
     if (!user) {
       throw new AppError({ statusCode: StatusCodes.UNAUTHORIZED, message: UserMessages.USER_NOT_FOUND })
@@ -163,7 +163,7 @@ class AuthService {
         { _id: payload.user_id },
         { $set: { password: password, updated_at: new Date() } }
       ),
-      databaseService.otpCodes.deleteOne({ code: payload.code })
+      databaseService.otpCodes.deleteOne({ code: payload.code, type: OtpType.RESET_PASSWORD })
     ])
   }
 }

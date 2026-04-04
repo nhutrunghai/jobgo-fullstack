@@ -34,7 +34,7 @@ const globalErrorHandle = (err: any, req: Request, res: Response, next: NextFunc
     delete dataError.stack
   }
   if (err instanceof AppError) {
-    return res.status(err.statusCode).json(Object.assign(dataError, { status: 'fail', errorCode: err.errorCode }))
+    return res.status(err.statusCode).json(Object.assign(dataError, { status: 'fail', errorCode: err.errorCode, message: err.message }))
   }
   res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(dataError)
 }

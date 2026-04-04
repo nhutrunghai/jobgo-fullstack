@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: "JobGo API (Ban nhap)"
   description: "Mo ta API hien tai cho module auth. Tai lieu tam thoi bang tieng Viet."
-  version: "0.1.0"
+  version: "0.1.1"
 servers:
   - url: "http://localhost:4000/api/v1"
     description: "Moi truong local"
@@ -39,6 +39,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationError"
+        "500":
+          description: "Loi he thong"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
   /auth/login:
     post:
       tags: ["Auth"]
@@ -68,6 +74,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationError"
+        "500":
+          description: "Loi he thong"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
   /auth/oauth/google:
     get:
       tags: ["Auth"]
@@ -89,6 +101,11 @@ paths:
       responses:
         "200":
           description: "Xu ly thanh cong (co the redirect)"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+                example: "ok"
         "400":
           description: "Thieu code"
           content:
@@ -101,12 +118,29 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: "Email Google chua duoc xac minh"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: "Loi he thong"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
   /auth/logout:
     post:
       tags: ["Auth"]
       summary: "Dang xuat"
-      security:
-        - bearerAuth: []
+      parameters:
+        - name: "Authorization"
+          in: "header"
+          required: false
+          schema:
+            type: "string"
+          description: "Bearer access token (neu co)"
       requestBody:
         required: false
         content:
@@ -120,6 +154,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BasicResponse"
+        "500":
+          description: "Loi he thong"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
   /auth/refresh-token:
     post:
       tags: ["Auth"]
@@ -149,6 +189,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationError"
+        "500":
+          description: "Loi he thong"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
   /auth/verify-email:
     post:
       tags: ["Auth"]
@@ -165,7 +211,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BasicResponse"
+                $ref: "#/components/schemas/AuthResponse"
         "401":
           description: "Token xac minh khong hop le/het han"
           content:
@@ -178,6 +224,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationError"
+        "500":
+          description: "Loi he thong"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
   /auth/forgot-password:
     post:
       tags: ["Auth"]
@@ -201,6 +253,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationError"
+        "429":
+          description: "Vuot qua gioi han gui email"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RateLimitResponse"
+        "500":
+          description: "Loi he thong"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
   /auth/reset-password:
     post:
       tags: ["Auth"]
@@ -230,6 +294,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationError"
+        "500":
+          description: "Loi he thong"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerErrorResponse"
 components:
   securitySchemes:
     bearerAuth:
@@ -344,6 +414,18 @@ components:
         message:
           type: "string"
           example: "UNAUTHORIZED"
+    ServerErrorResponse:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          example: "error"
+        message:
+          type: "string"
+          example: "SERVER_ERROR"
+        stack:
+          type: "string"
+          example: "Error: unexpected error"
     ValidationError:
       type: "object"
       properties:
@@ -367,3 +449,15 @@ components:
               message:
                 type: "string"
                 example: "EMAIL_INVALID"
+    RateLimitResponse:
+      type: "object"
+      properties:
+        status:
+          type: "integer"
+          example: 429
+        message:
+          type: "string"
+          example: "He thong da gui mail, vui long kiem tra hoac thu lai sau 1 gio."
+        retryAfter:
+          type: "integer"
+          example: 3600

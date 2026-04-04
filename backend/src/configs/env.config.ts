@@ -41,7 +41,7 @@ const envSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().min(1, { message: 'Không tồn tại GOOGLE_CLIENT_SECRET' }),
   GOOGLE_REDIRECT_URL: z.url({ message: 'GOOGLE_REDIRECT_URL phải là một đường dẫn hợp lệ' }),
   // BUILD_MODE
-  BUILD_MODE: z.enum(['dev', 'production']).default('dev')
+  BUILD_MODE: z.enum(['dev', 'production', 'test']).default('dev')
 })
 const envServer = envSchema.safeParse(process.env)
 if (!envServer.success) {

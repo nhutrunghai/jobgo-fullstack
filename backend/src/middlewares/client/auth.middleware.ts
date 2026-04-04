@@ -20,8 +20,7 @@ import { comparePassword, hashToken } from '~/utils/crypto.utils.js'
 import { OtpType } from '~/constants/enum.js'
 import { VerifyOtpLocals } from '~/models/requests/reponseType.js'
 import OtpCode from '~/models/schema/otpCodes.schema.js'
-//utils
-const checkOtpVerify = async (condition: { code: string; type: OtpType }, next: NextFunction) => {
+export const checkOtpVerify = async (condition: { code: string; type: OtpType }, next: NextFunction) => {
   const result = await databaseService.otpCodes.findOne(condition)
   if (!result) {
     return next(new AppError({ statusCode: StatusCodes.UNAUTHORIZED, message: UserMessages.VERIFY_TOKEN_INVALID }))
@@ -41,7 +40,7 @@ export const regiterMiddleware = async (
   if (hasConflict) {
     return next(new AppError({ statusCode: StatusCodes.CONFLICT, message: UserMessages.EMAIL_EXISTS }))
   }
-  return next()
+  next()
 }
 export const LoginMiddleware = async (
   req: Request<ParamsDictionary, any, LoginRqType>,
@@ -132,6 +131,15 @@ export const verifyEmailMiddleware = async (
 ) => {
   const hashedToken = hashToken(req.body.email_verify_token)
   const result = await checkOtpVerify({ code: hashedToken, type: OtpType.VERIFY_EMAIL }, next)
+  if (!result) return
+  const user = await databaseService.users.findOne({ _id: result?.user_id })
+  if (user?.is_verified) {
+    await databaseService.otpCodes.deleteOne({ code: hashedToken, type: OtpType.VERIFY_EMAIL })
+    return res.status(StatusCodes.OK).json({
+      status: 'success',
+      message: UserMessages.EMAIL_ALREADY_VERIFIED
+    })
+  }
   res.locals.otpVerify = result as OtpCode
   next()
 }
@@ -142,6 +150,7 @@ export const resetPasswordMiddleware = async (
 ) => {
   const hashedToken = hashToken(req.body.forgot_password_token)
   const result = await checkOtpVerify({ code: hashedToken, type: OtpType.RESET_PASSWORD }, next)
+  if (!result) return
   res.locals.otpVerify = result as OtpCode
   next()
 }
