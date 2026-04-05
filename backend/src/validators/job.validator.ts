@@ -8,6 +8,13 @@ const jobLevelValues = Object.values(JobLevel) as [JobLevel, ...JobLevel[]]
 const salaryCurrencyValues = ['VND', 'USD'] as const
 const createStatusValues = [JobStatus.DRAFT, JobStatus.OPEN] as const
 const updateStatusValues = [JobStatus.DRAFT, JobStatus.OPEN, JobStatus.PAUSED, JobStatus.CLOSED] as const
+const listStatusValues = [
+  JobStatus.DRAFT,
+  JobStatus.OPEN,
+  JobStatus.PAUSED,
+  JobStatus.CLOSED,
+  JobStatus.EXPIRED
+] as const
 
 const titleSchema = z
   .string({ message: UserMessages.JOB_TITLE_NOT_STRING })
@@ -124,6 +131,10 @@ const updateStatusSchema = z.enum(updateStatusValues, {
   message: UserMessages.JOB_UPDATE_STATUS_INVALID
 })
 
+const listStatusSchema = z.enum(listStatusValues, {
+  message: UserMessages.JOB_UPDATE_STATUS_INVALID
+})
+
 const quantitySchema = z.coerce
   .number({ message: UserMessages.JOB_QUANTITY_NOT_NUMBER })
   .int({ message: UserMessages.JOB_QUANTITY_NOT_INTEGER })
@@ -171,5 +182,14 @@ export const updateJobValidator = z.object({
 export const updateJobStatusValidator = z.object({
   body: z.object({
     status: updateStatusSchema
+  })
+})
+
+export const getCompanyJobsValidator = z.object({
+  query: z.object({
+    page: z.coerce.number().int().min(1).optional().default(1),
+    limit: z.coerce.number().int().min(1).max(100).optional().default(10),
+    status: listStatusSchema.optional(),
+    keyword: z.string().trim().max(100).optional()
   })
 })
