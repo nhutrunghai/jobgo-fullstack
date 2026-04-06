@@ -8,6 +8,7 @@ import {
   createCompanyJobController,
   getCompanyJobDetailController,
   getCompanyJobsController,
+  updateCompanyJobController,
   updateCompanyJobStatusController
 } from '~/controller/client/job.controller'
 import { loadCompany, requireCompany, checkCompany } from '~/middlewares/client/company.middleware'
@@ -18,6 +19,7 @@ import {
   createJobValidator,
   getCompanyJobDetailValidator,
   getCompanyJobsValidator,
+  updateJobValidator,
   updateJobStatusValidator
 } from '~/validators/job.validator'
 
@@ -29,6 +31,14 @@ companyRouter.get('/', (req, res) => {
 companyRouter.get('/me', loadCompany, requireCompany, getCompanyMeController)
 companyRouter.post('/', validate(createCompanyValidator), checkCompany, createCompanyController)
 companyRouter.patch('/', loadCompany, requireCompany, validate(updateCompanyValidator), updateCompanyController)
+companyRouter.post(
+  '/jobs',
+  loadCompany,
+  requireCompany,
+  isVerifiedCompany,
+  validate(createJobValidator),
+  createCompanyJobController
+)
 companyRouter.get('/jobs', loadCompany, requireCompany, validate(getCompanyJobsValidator), getCompanyJobsController)
 companyRouter.get(
   '/jobs/:jobId',
@@ -38,6 +48,14 @@ companyRouter.get(
   getCompanyJobDetailController
 )
 companyRouter.patch(
+  '/jobs/:jobId',
+  loadCompany,
+  requireCompany,
+  validate(getCompanyJobDetailValidator),
+  validate(updateJobValidator),
+  updateCompanyJobController
+)
+companyRouter.patch(
   '/jobs/:jobId/status',
   loadCompany,
   requireCompany,
@@ -45,13 +63,4 @@ companyRouter.patch(
   validate(updateJobStatusValidator),
   updateCompanyJobStatusController
 )
-companyRouter.post(
-  '/jobs',
-  loadCompany,
-  requireCompany,
-  isVerifiedCompany,
-  validate(createJobValidator),
-  createCompanyJobController
-)
-
 export default companyRouter

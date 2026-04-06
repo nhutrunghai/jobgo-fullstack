@@ -102,6 +102,7 @@ const UserMessages = {
   JOB_EXPIRED_AT_IN_FUTURE: 'Hạn nộp hồ sơ phải lớn hơn thời điểm hiện tại',
   JOB_NOT_VALUE_UPDATE: 'Bạn phải gửi ít nhất một trường để cập nhật tin tuyển dụng',
   JOB_CREATED_SUCCESS: 'Tạo tin tuyển dụng thành công',
+  JOB_UPDATED_SUCCESS: 'Cập nhật tin tuyển dụng thành công',
   JOB_STATUS_UPDATED_SUCCESS: 'Cập nhật trạng thái tin tuyển dụng thành công',
   JOB_ID_INVALID: 'Mã tin tuyển dụng không hợp lệ',
   JOB_NOT_FOUND: 'Không tìm thấy tin tuyển dụng'
