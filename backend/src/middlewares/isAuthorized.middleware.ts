@@ -20,7 +20,7 @@ const isAuthorized = async (req: Request, res: Response, next: NextFunction) => 
   try {
     const verifyAccessToken = await verifyToken(accessToken, env.SECRET_ACCESS_TOKEN)
     req.decodeToken = verifyAccessToken
-    const isBlacklisted = await RedisService.getInstance().get(`blacklist:${accessToken}`)
+    const isBlacklisted = await RedisService.getInstance().get(`blacklist:${verifyAccessToken.jti}`)
     if (isBlacklisted) {
       return next(
         new AppError({

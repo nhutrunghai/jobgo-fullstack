@@ -1,6 +1,6 @@
 import { env } from 'process'
 import { createApp } from './app.js'
-(async () => {
+;(async () => {
   const app = createApp()
   app.listen(env.PORT, () => {
     console.log(`API listening on port ${env.PORT}`)

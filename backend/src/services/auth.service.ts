@@ -43,15 +43,14 @@ class AuthService {
     await databaseService.otpCodes.insertOne(new OtpCode(payload))
   }
   private async signAccessAndRefresh(userInfo: object, device_info: string, option?: { expiresAt: Date }) {
-    const jtiAcessToken = uuidv4()
+    const jtiAccessToken = uuidv4()
     const jtiRefreshToken = uuidv4()
-    const userInfoAccessToken = { ...userInfo, jti: jtiAcessToken, typeJwt: 'ACCESS_TOKEN' } as userInfo
+    const userInfoAccessToken = { ...userInfo, jti: jtiAccessToken, typeJwt: 'ACCESS_TOKEN' } as userInfo
     const userInfoRefreshToken = { ...userInfo, jti: jtiRefreshToken, typeJwt: 'REFRESH_TOKEN' } as userInfo
     let expiresAt
     if (!option) {
       expiresAt = new Date()
       expiresAt.setDate(expiresAt.getDate() + parseInt(env.ExpiresIn_REFRESH_TOKEN?.split(' ')[0]))
-      expiresAt.setDate(expiresAt.getDate() + 30)
     } else {
       expiresAt = option.expiresAt
     }
@@ -72,7 +71,7 @@ class AuthService {
       : this.signRefreshToken({ userInfoRefreshToken })
     return Promise.all([this.signAccessToken({ userInfoAccessToken }), refreshTokenPromise])
   }
-  async regiter(payload: User, device_info: string) {
+  async register(payload: User, device_info: string) {
     if (!payload.is_verified) {
       payload.password = await hashPassword(payload.password)
     }
@@ -87,7 +86,7 @@ class AuthService {
     const [AccessToken, RefreshToken] = await this.signAccessAndRefresh(userInfo, device_info)
     return { id: user._id, AccessToken, RefreshToken }
   }
-  private async getOauthGooleToken(code: string) {
+  private async getOauthGoogleToken(code: string) {
     const body = {
       code,
       client_id: env.GOOGLE_CLIENT_ID,
@@ -105,7 +104,7 @@ class AuthService {
     return userResponse.data
   }
   async loginOauthGoogle(code: string, device_info: string) {
-    const access_token = await this.getOauthGooleToken(code)
+    const access_token = await this.getOauthGoogleToken(code)
     const userInfo = await this.getGoogleUserInfo(access_token)
     if (!userInfo.email_verified) {
       throw new AppError({ statusCode: StatusCodes.FORBIDDEN, message: UserMessages.OAUTH_GOOGLE_EMAIL_NOT_VERIFIED })
@@ -130,7 +129,7 @@ class AuthService {
         is_verified: true,
         role: UserRole.CANDIDATE
       }
-      return this.regiter(payload, device_info)
+      return this.register(payload, device_info)
     }
   }
   async refreshToken(payload: userInfo, device_info: string) {

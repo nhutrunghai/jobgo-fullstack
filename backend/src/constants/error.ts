@@ -5,4 +5,5 @@ const ErrorCode = {
   TOKEN_REVOKED: 'TOKEN_REVOKED',
   EMAIL_UNVERIFIED: 'EMAIL_UNVERIFIED'
 } as const
+
 export default ErrorCode

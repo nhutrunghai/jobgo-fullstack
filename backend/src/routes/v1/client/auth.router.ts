@@ -5,7 +5,7 @@ import {
   LogoutController,
   OauthGoogleController,
   RefreshController,
-  RegiterController,
+  RegisterController,
   resetPasswordController,
   verifyEmailController
 } from '~/controller/client/auth.controller.js'
@@ -14,7 +14,7 @@ import {
   LogoutMiddleware,
   OauthGoogleMiddleware,
   RefreshMiddleware,
-  regiterMiddleware,
+  registerMiddleware,
   resetPasswordMiddleware,
   verifyEmailMiddleware
 } from '~/middlewares/client/auth.middleware.js'
@@ -23,16 +23,17 @@ import validate from '~/middlewares/validator.middleware.js'
 import {
   forgotPasswordValidator,
   loginValidator,
+  logoutValidator,
   refreshValidator,
   registerValidator,
   resetPasswordValidator,
   verifyEmailValidator
 } from '~/validators/auth.validator.js'
 const authRouter = Router()
-authRouter.post('/register', validate(registerValidator), regiterMiddleware, RegiterController)
+authRouter.post('/register', validate(registerValidator), registerMiddleware, RegisterController)
 authRouter.post('/login', validate(loginValidator), LoginMiddleware, LoginController)
 authRouter.get('/oauth/google', OauthGoogleMiddleware, OauthGoogleController)
-authRouter.post('/logout', LogoutMiddleware, LogoutController)
+authRouter.post('/logout', validate(logoutValidator), LogoutMiddleware, LogoutController)
 authRouter.post('/refresh-token', validate(refreshValidator), RefreshMiddleware, RefreshController)
 authRouter.post('/verify-email', validate(verifyEmailValidator), verifyEmailMiddleware, verifyEmailController)
 authRouter.post('/forgot-password', validate(forgotPasswordValidator), mailLimiter, forgotPasswordController)

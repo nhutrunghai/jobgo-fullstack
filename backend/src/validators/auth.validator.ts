@@ -1,3 +1,4 @@
+import bodyParser from 'body-parser'
 import { z } from 'zod'
 import UserMessages from '~/constants/messages.js'
 const emailSchema = z
@@ -61,4 +62,9 @@ export const resetPasswordValidator = z.object({
       message: UserMessages.CONFIRM_PASSWORD_MISMATCH,
       path: ['confirmPassword']
     })
+})
+export const logoutValidator = z.object({
+  body: z.object({
+    refresh_token: z.string({ message: UserMessages.REFRESH_TOKEN_NOT_FOUND })
+  })
 })
