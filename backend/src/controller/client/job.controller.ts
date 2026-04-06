@@ -2,19 +2,14 @@ import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
+import databaseService from '~/configs/database.config'
 import { JobStatus } from '~/constants/enum'
 import UserMessages from '~/constants/messages'
+import { AppError } from '~/models/appError'
 import { CompanyLocals } from '~/models/requests/responseType'
 import Company from '~/models/schema/companies.schema'
 import Job from '~/models/schema/jobs.schena'
 import jobsService from '~/services/job.service'
-
-type GetCompanyJobsQuery = {
-  page: number
-  limit: number
-  status?: JobStatus
-  keyword?: string
-}
 
 export const createCompanyJobController = async (
   req: Request<ParamsDictionary, unknown, Job>,
@@ -69,14 +64,17 @@ export const createCompanyJobController = async (
 
 export const getCompanyJobsController = async (req: Request, res: Response<unknown, CompanyLocals>) => {
   const company = res.locals.company as Company
-  const query = req.query as unknown as GetCompanyJobsQuery
+  const page = Number(req.query.page || 1)
+  const limit = Number(req.query.limit || 10)
+  const status = req.query.status as JobStatus | undefined
+  const keyword = typeof req.query.keyword === 'string' ? req.query.keyword.trim() : undefined
 
   const result = await jobsService.getCompanyJobs({
     companyId: company._id as ObjectId,
-    status: query.status,
-    keyword: query.keyword?.trim(),
-    page: Number(query.page || 1),
-    limit: Number(query.limit || 10)
+    status,
+    keyword,
+    page,
+    limit
   })
 
   return res.status(StatusCodes.OK).json({
@@ -96,6 +94,46 @@ export const getCompanyJobsController = async (req: Request, res: Response<unkno
         updated_at: job.updated_at
       })),
       pagination: result.pagination
+    }
+  })
+}
+
+export const getCompanyJobDetailController = async (req: Request, res: Response<unknown, CompanyLocals>) => {
+  const company = res.locals.company as Company
+  const jobId = req.params.jobId as string
+
+  const job = await databaseService.jobs.findOne({
+    _id: new ObjectId(jobId),
+    company_id: company._id
+  })
+
+  if (!job) {
+    throw new AppError({
+      statusCode: StatusCodes.NOT_FOUND,
+      message: UserMessages.JOB_NOT_FOUND
+    })
+  }
+
+  return res.status(StatusCodes.OK).json({
+    status: 'success',
+    data: {
+      _id: job._id,
+      title: job.title,
+      description: job.description,
+      requirements: job.requirements,
+      benefits: job.benefits,
+      salary: job.salary,
+      location: job.location,
+      job_type: job.job_type,
+      level: job.level,
+      status: job.status,
+      category: job.category,
+      skills: job.skills,
+      quantity: job.quantity,
+      expired_at: job.expired_at,
+      published_at: job.published_at,
+      created_at: job.created_at,
+      updated_at: job.updated_at
     }
   })
 }
