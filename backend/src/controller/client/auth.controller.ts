@@ -19,12 +19,12 @@ import { getDeviceInfo } from '~/utils/deviceInfo.util.js'
 import ms, { StringValue } from 'ms'
 import resendProvider from '~/providers/resend.provider.js'
 import userService from '~/services/users.service.js'
-import { VerifyOtpLocals } from '~/models/requests/reponseType.js'
+import { VerifyOtpLocals } from '~/models/requests/responseType.js'
 import _ from 'lodash'
-export const RegiterController = async (req: Request<ParamsDictionary, any, RegisterRqType>, res: Response) => {
-  req.body.device_info = getDeviceInfo(req.headers['user-agent'] as string)
+export const RegisterController = async (req: Request<ParamsDictionary, any, RegisterRqType>, res: Response) => {
+  const device_info = getDeviceInfo(req.headers['user-agent'] as string)
   req.body.role = UserRole.CANDIDATE
-  const result = await authService.regiter(_.omit(req.body, ['device_info']) as User, req.body.device_info)
+  const result = await authService.register(req.body, device_info)
   const { rawToken, hashedToken } = generateToken()
   const ttl = ms(env.ExpiresIn_EMAIL_VERIFY_TOKEN as StringValue) as number
   const payloadOtp = {
@@ -67,8 +67,8 @@ export const OauthGoogleController = async (req: Request, res: Response) => {
   const { code } = req.query
   const device_info = getDeviceInfo(req.headers['user-agent'] as string)
   const result = await authService.loginOauthGoogle(code as string, device_info)
-  // đoạn này sẽ redirect đến url của font-end kèm theo acces_token và refrech_token gắn vào query 
-  res.send('ok')
+  const url_redirect = `${env.FRONTEND_URL}/oauth/callback?access_token=${result.AccessToken}&refresh_token=${result.RefreshToken}`
+  res.redirect(url_redirect)
 }
 export const LogoutController = async (req: Request, res: Response) => {
   return res.status(StatusCodes.OK).json({

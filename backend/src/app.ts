@@ -17,7 +17,7 @@ export const createApp = () => {
     app.use(morgan('dev'))
   }
   app.disable('etag')
-  // Xử lý no-cache cho các API request 
+  // Xử lý no-cache cho các API request
   app.use((req, res, next) => {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate')
     res.setHeader('Pragma', 'no-cache')

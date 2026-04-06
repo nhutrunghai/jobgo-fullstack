@@ -18,7 +18,7 @@ import env from '~/configs/env.config.js'
 import RedisService from '~/configs/redis.config.js'
 import { comparePassword, hashToken } from '~/utils/crypto.utils.js'
 import { OtpType } from '~/constants/enum.js'
-import { VerifyOtpLocals } from '~/models/requests/reponseType.js'
+import { VerifyOtpLocals } from '~/models/requests/responseType.js'
 import OtpCode from '~/models/schema/otpCodes.schema.js'
 export const checkOtpVerify = async (condition: { code: string; type: OtpType }, next: NextFunction) => {
   const result = await databaseService.otpCodes.findOne(condition)
@@ -31,7 +31,7 @@ export const checkOtpVerify = async (condition: { code: string; type: OtpType },
   }
   return result
 }
-export const regiterMiddleware = async (
+export const registerMiddleware = async (
   req: Request<ParamsDictionary, any, RegisterRqType>,
   res: Response,
   next: NextFunction
@@ -89,7 +89,7 @@ export const LogoutMiddleware = async (req: Request, res: Response, next: NextFu
         await redis.set(`blacklist:${payload.jti}`, '1', 'EX', ttl)
       }
     } catch {
-      // next
+      return next(new AppError({ statusCode: StatusCodes.UNAUTHORIZED, message: UserMessages.ACCESS_TOKEN_INVALID }))
     }
   }
   const refresh_token = req.body?.refresh_token
@@ -98,7 +98,7 @@ export const LogoutMiddleware = async (req: Request, res: Response, next: NextFu
       const payload = await verifyToken(refresh_token, env.SECRET_REFRESH_TOKEN)
       await databaseService.refreshTokens.deleteOne({ user_id: new ObjectId(payload.userId), jti: payload.jti })
     } catch {
-      // next
+      return next(new AppError({ statusCode: StatusCodes.UNAUTHORIZED, message: UserMessages.REFRESH_TOKEN_INVALID }))
     }
   }
   next()
@@ -119,9 +119,9 @@ export const RefreshMiddleware = async (
     if (result) {
       return next()
     }
-    next(new AppError({ statusCode: StatusCodes.UNAUTHORIZED, message: UserMessages.REFRESH_TOKEN_ERROR }))
+    next(new AppError({ statusCode: StatusCodes.UNAUTHORIZED, message: UserMessages.REFRESH_TOKEN_INVALID }))
   } catch {
-    next(new AppError({ statusCode: StatusCodes.UNAUTHORIZED, message: UserMessages.REFRESH_TOKEN_ERROR }))
+    next(new AppError({ statusCode: StatusCodes.UNAUTHORIZED, message: UserMessages.REFRESH_TOKEN_INVALID }))
   }
 }
 export const verifyEmailMiddleware = async (

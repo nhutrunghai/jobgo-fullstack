@@ -33,4 +33,5 @@ userRouter.post(
   newPasswordMiddleware,
   newPasswordController
 ) // ( rate limit theo tài khoản )
+// Còn thiếu chức năng upload ảnh bìa và ảnh thumnail ... 
 export default userRouter
