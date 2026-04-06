@@ -137,3 +137,47 @@ export const getCompanyJobDetailController = async (req: Request, res: Response<
     }
   })
 }
+
+export const updateCompanyJobStatusController = async (
+  req: Request<ParamsDictionary, unknown, { status: JobStatus }>,
+  res: Response<unknown, CompanyLocals>
+) => {
+  const company = res.locals.company as Company
+  const jobId = req.params.jobId as string
+
+  const job = await databaseService.jobs.findOne({
+    _id: new ObjectId(jobId),
+    company_id: company._id
+  })
+
+  if (!job) {
+    throw new AppError({
+      statusCode: StatusCodes.NOT_FOUND,
+      message: UserMessages.JOB_NOT_FOUND
+    })
+  }
+
+  const payload: Partial<Job> = {
+    status: req.body.status,
+    updated_at: new Date()
+  }
+
+  if (req.body.status === JobStatus.OPEN && !job.published_at) {
+    payload.published_at = new Date()
+  }
+
+  const updatedJob = await jobsService.updateCompanyJob(job._id as ObjectId, payload)
+
+  return res.status(StatusCodes.OK).json({
+    status: 'success',
+    message: UserMessages.JOB_STATUS_UPDATED_SUCCESS,
+    data: {
+      _id: updatedJob?._id,
+      title: updatedJob?.title,
+      status: updatedJob?.status,
+      published_at: updatedJob?.published_at,
+      expired_at: updatedJob?.expired_at,
+      updated_at: updatedJob?.updated_at
+    }
+  })
+}

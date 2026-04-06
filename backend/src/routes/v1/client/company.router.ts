@@ -7,13 +7,19 @@ import {
 import {
   createCompanyJobController,
   getCompanyJobDetailController,
-  getCompanyJobsController
+  getCompanyJobsController,
+  updateCompanyJobStatusController
 } from '~/controller/client/job.controller'
 import { loadCompany, requireCompany, checkCompany } from '~/middlewares/client/company.middleware'
 import { isVerifiedCompany } from '~/middlewares/client/Verified.middleware'
 import validate from '~/middlewares/validator.middleware'
 import { createCompanyValidator, updateCompanyValidator } from '~/validators/company.validator'
-import { createJobValidator, getCompanyJobDetailValidator, getCompanyJobsValidator } from '~/validators/job.validator'
+import {
+  createJobValidator,
+  getCompanyJobDetailValidator,
+  getCompanyJobsValidator,
+  updateJobStatusValidator
+} from '~/validators/job.validator'
 
 const companyRouter = Router()
 
@@ -30,6 +36,14 @@ companyRouter.get(
   requireCompany,
   validate(getCompanyJobDetailValidator),
   getCompanyJobDetailController
+)
+companyRouter.patch(
+  '/jobs/:jobId/status',
+  loadCompany,
+  requireCompany,
+  validate(getCompanyJobDetailValidator),
+  validate(updateJobStatusValidator),
+  updateCompanyJobStatusController
 )
 companyRouter.post(
   '/jobs',

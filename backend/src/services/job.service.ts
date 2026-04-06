@@ -9,6 +9,18 @@ class JobsService {
     return databaseService.jobs.insertOne(job)
   }
 
+  async updateCompanyJob(jobId: ObjectId, payload: Partial<Job>) {
+    return databaseService.jobs.findOneAndUpdate(
+      { _id: jobId },
+      {
+        $set: payload
+      },
+      {
+        returnDocument: 'after'
+      }
+    )
+  }
+
   async getCompanyJobs({
     companyId,
     status,
