@@ -1,8 +1,9 @@
 import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
+import { JobApplicationStatus } from '~/constants/enum'
 import UserMessages from '~/constants/messages'
-import { ApplyJobLocals } from '~/models/requests/responseType'
+import { ApplyJobLocals, CompanyLocals, JobLocals } from '~/models/requests/responseType'
 import JobApplication from '~/models/schema/jobApplications.schema'
 import jobApplicationService from '~/services/job-application.service'
 
@@ -46,6 +47,43 @@ export const applyJobController = async (
       status: newApplication.status,
       applied_at: newApplication.applied_at,
       updated_at: newApplication.updated_at
+    }
+  })
+}
+
+export const getCompanyJobApplicationsController = async (
+  req: Request,
+  res: Response<unknown, CompanyLocals & JobLocals>
+) => {
+  const job = res.locals.job!
+  const page = Number(req.query.page || 1)
+  const limit = Number(req.query.limit || 10)
+  const status = req.query.status as JobApplicationStatus | undefined
+
+  const result = await jobApplicationService.getCompanyJobApplications({
+    jobId: job._id!,
+    status,
+    page,
+    limit
+  })
+
+  return res.status(StatusCodes.OK).json({
+    status: 'success',
+    data: {
+      applications: result.applications.map((application) => ({
+        _id: application._id,
+        candidate_id: application.candidate_id,
+        resume_snapshot: {
+          full_name: application.resume_snapshot?.full_name,
+          email: application.resume_snapshot?.email,
+          phone: application.resume_snapshot?.phone,
+          cv_url: application.resume_snapshot?.cv_url
+        },
+        status: application.status,
+        applied_at: application.applied_at,
+        updated_at: application.updated_at
+      })),
+      pagination: result.pagination
     }
   })
 }
