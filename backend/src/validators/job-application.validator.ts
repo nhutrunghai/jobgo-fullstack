@@ -32,3 +32,14 @@ export const getCompanyJobApplicationsValidator = z.object({
     status: z.enum(applicationStatusValues).optional()
   })
 })
+
+export const getCompanyApplicationDetailValidator = z.object({
+  params: z.object({
+    applicationId: z
+      .string()
+      .trim()
+      .regex(/^[a-fA-F0-9]{24}$/, {
+        message: UserMessages.APPLICATION_ID_INVALID
+      })
+  })
+})

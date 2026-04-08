@@ -112,7 +112,9 @@ const UserMessages = {
   RESUME_ID_INVALID: 'Ma CV khong hop le',
   RESUME_NOT_FOUND: 'CV khong ton tai hoac khong thuoc ve ban',
   RESUME_NOT_ENOUGH_INFORMATION: 'CV phai co toi thieu ho ten va email de ung tuyen',
-  COVER_LETTER_MAX_LENGTH: 'Thu gioi thieu khong duoc vuot qua 2000 ky tu'
+  COVER_LETTER_MAX_LENGTH: 'Thu gioi thieu khong duoc vuot qua 2000 ky tu',
+  APPLICATION_ID_INVALID: 'Ma application khong hop le',
+  APPLICATION_NOT_FOUND: 'Khong tim thay application'
 } as const
 
 export default UserMessages

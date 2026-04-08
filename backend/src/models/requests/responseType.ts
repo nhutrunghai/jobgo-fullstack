@@ -47,3 +47,29 @@ export type ApplyJobLocals = {
   applyJob: PublicApplyJob | null
   applyResume: Resume | null
 }
+export type CompanyApplicationDetail = {
+  _id: ObjectId
+  job: {
+    _id: ObjectId
+    title: string
+  }
+  candidate: {
+    _id: ObjectId
+    full_name?: string
+    avatar?: string
+  }
+  resume_snapshot?: {
+    full_name?: string
+    email?: string
+    phone?: string
+    cv_url?: string
+    skills?: string[]
+  }
+  cover_letter?: string
+  status?: string
+  applied_at?: Date
+  updated_at?: Date
+}
+export type CompanyApplicationDetailLocals = {
+  companyApplication: CompanyApplicationDetail | null
+}

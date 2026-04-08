@@ -3,7 +3,12 @@ import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
 import { JobApplicationStatus } from '~/constants/enum'
 import UserMessages from '~/constants/messages'
-import { ApplyJobLocals, CompanyLocals, JobLocals } from '~/models/requests/responseType'
+import {
+  ApplyJobLocals,
+  CompanyApplicationDetailLocals,
+  CompanyLocals,
+  JobLocals
+} from '~/models/requests/responseType'
 import JobApplication from '~/models/schema/jobApplications.schema'
 import jobApplicationService from '~/services/job-application.service'
 
@@ -85,5 +90,15 @@ export const getCompanyJobApplicationsController = async (
       })),
       pagination: result.pagination
     }
+  })
+}
+
+export const getCompanyApplicationDetailController = async (
+  req: Request,
+  res: Response<unknown, CompanyApplicationDetailLocals>
+) => {
+  return res.status(StatusCodes.OK).json({
+    status: 'success',
+    data: res.locals.companyApplication
   })
 }
