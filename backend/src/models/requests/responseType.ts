@@ -1,9 +1,39 @@
+import { ObjectId } from 'mongodb'
 import OtpCode from '../schema/otpCodes.schema.js'
 import User from '../schema/user.schema.js'
 import Company from '../schema/companies.schema.js'
-import Job from '../schema/jobs.schena.js'
+import Job from '../schema/jobs.schema.js'
 
 export type VerifyOtpLocals = { otpVerify: OtpCode }
 export type UserLocals = { user: User }
 export type CompanyLocals = { company: Company | null }
 export type JobLocals = { job: Job | null }
+export type PublicJobDetail = {
+  job: {
+    _id: ObjectId
+    title: string
+    description: string
+    requirements: string
+    benefits: string
+    salary: Job['salary']
+    location: string
+    job_type: Job['job_type']
+    level: Job['level']
+    category: string[]
+    skills: string[]
+    quantity: number
+    expired_at: Date
+    published_at?: Date
+    created_at?: Date
+    updated_at?: Date
+  }
+  company: {
+    _id: ObjectId
+    company_name: string
+    logo?: string
+    website?: string
+    address: string
+    description?: string
+  }
+}
+export type PublicJobLocals = { publicJob: PublicJobDetail | null }

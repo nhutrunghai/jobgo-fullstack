@@ -5,7 +5,7 @@ import { ObjectId } from 'mongodb'
 import { JobStatus } from '~/constants/enum'
 import UserMessages from '~/constants/messages'
 import { CompanyLocals, JobLocals } from '~/models/requests/responseType'
-import Job from '~/models/schema/jobs.schena'
+import Job from '~/models/schema/jobs.schema'
 import jobsService from '~/services/job.service'
 
 export const createCompanyJobController = async (

@@ -2,7 +2,7 @@ import { Collection, CreateIndexesOptions, Db, IndexSpecification, MongoClient }
 import env from './env.config.js'
 import Company from '~/models/schema/companies.schema.js'
 import JobApplication from '~/models/schema/jobApplications.schema.js'
-import Job from '~/models/schema/jobs.schena.js'
+import Job from '~/models/schema/jobs.schema.js'
 import OtpCode from '~/models/schema/otpCodes.schema.js'
 import Resume from '~/models/schema/resumes.schema.js'
 import RefreshToken from '~/models/schema/refreshTokens.schema.js'
