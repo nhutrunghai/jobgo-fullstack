@@ -3,6 +3,7 @@ import OtpCode from '../schema/otpCodes.schema.js'
 import User from '../schema/user.schema.js'
 import Company from '../schema/companies.schema.js'
 import Job from '../schema/jobs.schema.js'
+import Resume from '../schema/resumes.schema.js'
 
 export type VerifyOtpLocals = { otpVerify: OtpCode }
 export type UserLocals = { user: User }
@@ -37,3 +38,12 @@ export type PublicJobDetail = {
   }
 }
 export type PublicJobLocals = { publicJob: PublicJobDetail | null }
+export type PublicApplyJob = {
+  _id: ObjectId
+  company_id: ObjectId
+  owner_user_id: ObjectId
+}
+export type ApplyJobLocals = {
+  applyJob: PublicApplyJob | null
+  applyResume: Resume | null
+}

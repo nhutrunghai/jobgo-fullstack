@@ -106,6 +106,13 @@ const UserMessages = {
   JOB_STATUS_UPDATED_SUCCESS: 'Cập nhật trạng thái tin tuyển dụng thành công',
   JOB_ID_INVALID: 'Mã tin tuyển dụng không hợp lệ',
   JOB_NOT_FOUND: 'Không tìm thấy tin tuyển dụng'
+  , JOB_CANNOT_APPLY_OWN: 'Ban khong the ung tuyen vao cong viec do chinh minh dang',
+  JOB_ALREADY_APPLIED: 'Ban da ung tuyen cong viec nay roi',
+  JOB_APPLIED_SUCCESS: 'Ung tuyen thanh cong',
+  RESUME_ID_INVALID: 'Ma CV khong hop le',
+  RESUME_NOT_FOUND: 'CV khong ton tai hoac khong thuoc ve ban',
+  RESUME_NOT_ENOUGH_INFORMATION: 'CV phai co toi thieu ho ten va email de ung tuyen',
+  COVER_LETTER_MAX_LENGTH: 'Thu gioi thieu khong duoc vuot qua 2000 ky tu'
 } as const
 
 export default UserMessages
