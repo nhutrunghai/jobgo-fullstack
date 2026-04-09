@@ -147,3 +147,22 @@ export const getMyAppliedJobsController = async (req: Request, res: Response) =>
     data: result
   })
 }
+
+export const withdrawMyJobApplicationController = async (
+  req: Request,
+  res: Response<unknown, CompanyApplicationLocals>
+) => {
+  const application = res.locals.companyApplication!
+  const result = await jobApplicationService.withdrawMyJobApplication(application._id!)
+
+  return res.status(StatusCodes.OK).json({
+    status: 'success',
+    message: UserMessages.APPLICATION_WITHDRAWN_SUCCESS,
+    data: {
+      _id: result?._id,
+      job_id: result?.job_id,
+      status: result?.status,
+      updated_at: result?.updated_at
+    }
+  })
+}

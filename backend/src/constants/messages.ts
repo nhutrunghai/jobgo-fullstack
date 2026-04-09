@@ -116,7 +116,9 @@ const UserMessages = {
   APPLICATION_ID_INVALID: 'Ma application khong hop le',
   APPLICATION_NOT_FOUND: 'Khong tim thay application',
   APPLICATION_STATUS_UPDATED_SUCCESS: 'Cap nhat trang thai application thanh cong',
-  APPLICATION_STATUS_TRANSITION_INVALID: 'Khong the chuyen trang thai application nhu yeu cau'
+  APPLICATION_STATUS_TRANSITION_INVALID: 'Khong the chuyen trang thai application nhu yeu cau',
+  APPLICATION_WITHDRAWN_SUCCESS: 'Rut ho so thanh cong',
+  APPLICATION_CANNOT_WITHDRAW: 'Khong the rut ho so o trang thai hien tai'
 } as const
 
 export default UserMessages

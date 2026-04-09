@@ -1,12 +1,19 @@
 import { Router } from 'express'
-import { applyJobController, getMyAppliedJobsController } from '~/controller/client/job-application.controller'
+import {
+  applyJobController,
+  getMyAppliedJobsController,
+  withdrawMyJobApplicationController
+} from '~/controller/client/job-application.controller'
 import { getPublicJobDetailController } from '~/controller/client/public-job.controller'
 import isAuthorized from '~/middlewares/isAuthorized.middleware.js'
 import {
+  ensureCanWithdrawApplication,
   ensureNotAppliedYet,
   ensureNotOwnJob,
+  loadMyJobApplicationByJobId,
   loadPublicJobForApply,
   loadResumeForApply,
+  requireMyJobApplication,
   requirePublicJobForApply,
   requireResumeForApply
 } from '~/middlewares/client/job-application.middleware'
@@ -37,6 +44,15 @@ jobsRouter.post(
   requireResumeForApply,
   ensureNotAppliedYet,
   applyJobController
+)
+jobsRouter.patch(
+  '/:jobId/withdraw',
+  isAuthorized,
+  validate(getCompanyJobDetailValidator),
+  loadMyJobApplicationByJobId,
+  requireMyJobApplication,
+  ensureCanWithdrawApplication,
+  withdrawMyJobApplicationController
 )
 
 export default jobsRouter

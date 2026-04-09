@@ -191,6 +191,21 @@ class JobApplicationService {
       }
     }
   }
+
+  async withdrawMyJobApplication(applicationId: ObjectId) {
+    return databaseService.jobApplications.findOneAndUpdate(
+      { _id: applicationId },
+      {
+        $set: {
+          status: JobApplicationStatus.WITHDRAWN,
+          updated_at: new Date()
+        }
+      },
+      {
+        returnDocument: 'after'
+      }
+    )
+  }
 }
 
 const jobApplicationService = new JobApplicationService()

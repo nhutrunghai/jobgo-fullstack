@@ -2,10 +2,10 @@ import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config'
-import { JobStatus, ResumeStatus } from '~/constants/enum'
+import { JobApplicationStatus, JobStatus, ResumeStatus } from '~/constants/enum'
 import UserMessages from '~/constants/messages'
 import { AppError } from '~/models/appError'
-import { ApplyJobLocals } from '~/models/requests/responseType'
+import { ApplyJobLocals, CompanyApplicationLocals } from '~/models/requests/responseType'
 
 type ApplyJobBody = {
   cv_id: string
@@ -72,11 +72,7 @@ export const requirePublicJobForApply = async (
   next()
 }
 
-export const ensureNotOwnJob = async (
-  req: Request,
-  res: Response<unknown, ApplyJobLocals>,
-  next: NextFunction
-) => {
+export const ensureNotOwnJob = async (req: Request, res: Response<unknown, ApplyJobLocals>, next: NextFunction) => {
   const currentUserId = req.decodeToken?.userId as string
   const job = res.locals.applyJob as NonNullable<ApplyJobLocals['applyJob']>
 
@@ -138,11 +134,7 @@ export const requireResumeForApply = async (
   next()
 }
 
-export const ensureNotAppliedYet = async (
-  req: Request,
-  res: Response<unknown, ApplyJobLocals>,
-  next: NextFunction
-) => {
+export const ensureNotAppliedYet = async (req: Request, res: Response<unknown, ApplyJobLocals>, next: NextFunction) => {
   const userId = new ObjectId(req.decodeToken?.userId as string)
   const job = res.locals.applyJob as NonNullable<ApplyJobLocals['applyJob']>
 
@@ -156,6 +148,65 @@ export const ensureNotAppliedYet = async (
       new AppError({
         statusCode: StatusCodes.CONFLICT,
         message: UserMessages.JOB_ALREADY_APPLIED
+      })
+    )
+  }
+
+  next()
+}
+
+export const loadMyJobApplicationByJobId = async (
+  req: Request,
+  res: Response<unknown, CompanyApplicationLocals>,
+  next: NextFunction
+) => {
+  const userId = new ObjectId(req.decodeToken?.userId as string)
+  const jobId = new ObjectId(req.params.jobId as string)
+
+  const application = await databaseService.jobApplications.findOne({
+    job_id: jobId,
+    candidate_id: userId
+  })
+
+  res.locals.companyApplication = application || null
+  next()
+}
+
+export const requireMyJobApplication = async (
+  req: Request,
+  res: Response<unknown, CompanyApplicationLocals>,
+  next: NextFunction
+) => {
+  if (!res.locals.companyApplication) {
+    return next(
+      new AppError({
+        statusCode: StatusCodes.NOT_FOUND,
+        message: UserMessages.APPLICATION_NOT_FOUND
+      })
+    )
+  }
+
+  next()
+}
+
+export const ensureCanWithdrawApplication = async (
+  req: Request,
+  res: Response<unknown, CompanyApplicationLocals>,
+  next: NextFunction
+) => {
+  const application = res.locals.companyApplication!
+  const allowedStatuses = [
+    JobApplicationStatus.SUBMITTED,
+    JobApplicationStatus.REVIEWING,
+    JobApplicationStatus.SHORTLISTED,
+    JobApplicationStatus.INTERVIEWING
+  ]
+
+  if (!allowedStatuses.includes(application.status || JobApplicationStatus.SUBMITTED)) {
+    return next(
+      new AppError({
+        statusCode: StatusCodes.UNPROCESSABLE_ENTITY,
+        message: UserMessages.APPLICATION_CANNOT_WITHDRAW
       })
     )
   }
