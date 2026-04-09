@@ -5,7 +5,7 @@ import databaseService from '~/configs/database.config'
 import { JobStatus } from '~/constants/enum'
 import UserMessages from '~/constants/messages'
 import { AppError } from '~/models/appError'
-import { PublicJobLocals } from '~/models/requests/responseType'
+import { PublicJobLocals, PublicJobWithApplicationLocals } from '~/models/requests/responseType'
 
 export const loadPublicJobDetail = async (
   req: Request,
@@ -87,5 +87,37 @@ export const requirePublicJobDetail = async (
     )
   }
 
+  next()
+}
+
+export const attachMyApplicationIfLoggedIn = async (
+  req: Request,
+  res: Response<unknown, PublicJobWithApplicationLocals>,
+  next: NextFunction
+) => {
+  if (!req.decodeToken) {
+    res.locals.myApplication = null
+    return next()
+  }
+
+  const publicJob = res.locals.publicJob!
+  const candidateId = new ObjectId(req.decodeToken.userId as string)
+
+  const application = await databaseService.jobApplications.findOne(
+    {
+      job_id: publicJob.job._id,
+      candidate_id: candidateId
+    },
+    {
+      projection: {
+        _id: 1,
+        status: 1,
+        applied_at: 1,
+        updated_at: 1
+      }
+    }
+  )
+
+  res.locals.myApplication = application || null
   next()
 }

@@ -39,6 +39,16 @@ export type PublicJobDetail = {
   }
 }
 export type PublicJobLocals = { publicJob: PublicJobDetail | null }
+export type MyApplicationSummary = {
+  _id: ObjectId
+  status?: JobApplication['status']
+  applied_at?: Date
+  updated_at?: Date
+}
+export type PublicJobWithApplicationLocals = {
+  publicJob: PublicJobDetail | null
+  myApplication: MyApplicationSummary | null
+}
 export type PublicApplyJob = {
   _id: ObjectId
   company_id: ObjectId

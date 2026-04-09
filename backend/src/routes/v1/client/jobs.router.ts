@@ -6,6 +6,7 @@ import {
 } from '~/controller/client/job-application.controller'
 import { getPublicJobDetailController } from '~/controller/client/public-job.controller'
 import isAuthorized from '~/middlewares/isAuthorized.middleware.js'
+import optionalDecodeToken from '~/middlewares/optionalDecodeToken.middleware'
 import {
   ensureCanWithdrawApplication,
   ensureNotAppliedYet,
@@ -17,7 +18,11 @@ import {
   requirePublicJobForApply,
   requireResumeForApply
 } from '~/middlewares/client/job-application.middleware'
-import { loadPublicJobDetail, requirePublicJobDetail } from '~/middlewares/client/public-job.middleware'
+import {
+  attachMyApplicationIfLoggedIn,
+  loadPublicJobDetail,
+  requirePublicJobDetail
+} from '~/middlewares/client/public-job.middleware'
 import validate from '~/middlewares/validator.middleware'
 import { applyJobValidator, getMyAppliedJobsValidator } from '~/validators/job-application.validator'
 import { getCompanyJobDetailValidator } from '~/validators/job.validator'
@@ -30,6 +35,8 @@ jobsRouter.get(
   validate(getCompanyJobDetailValidator),
   loadPublicJobDetail,
   requirePublicJobDetail,
+  optionalDecodeToken,
+  attachMyApplicationIfLoggedIn,
   getPublicJobDetailController
 )
 jobsRouter.post(
