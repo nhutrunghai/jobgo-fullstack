@@ -128,3 +128,22 @@ export const updateCompanyApplicationStatusController = async (
     }
   })
 }
+
+export const getMyAppliedJobsController = async (req: Request, res: Response) => {
+  const candidateId = new ObjectId(req.decodeToken?.userId as string)
+  const page = Number(req.query.page || 1)
+  const limit = Number(req.query.limit || 10)
+  const status = req.query.status as JobApplicationStatus | undefined
+
+  const result = await jobApplicationService.getMyAppliedJobs({
+    candidateId,
+    status,
+    page,
+    limit
+  })
+
+  return res.status(StatusCodes.OK).json({
+    status: 'success',
+    data: result
+  })
+}

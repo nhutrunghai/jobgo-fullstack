@@ -63,3 +63,11 @@ export const updateCompanyApplicationStatusValidator = z.object({
     ])
   })
 })
+
+export const getMyAppliedJobsValidator = z.object({
+  query: z.object({
+    page: z.coerce.number().int().min(1).optional().default(1),
+    limit: z.coerce.number().int().min(1).max(100).optional().default(10),
+    status: z.enum(applicationStatusValues).optional()
+  })
+})

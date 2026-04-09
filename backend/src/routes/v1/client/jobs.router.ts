@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { applyJobController } from '~/controller/client/job-application.controller'
+import { applyJobController, getMyAppliedJobsController } from '~/controller/client/job-application.controller'
 import { getPublicJobDetailController } from '~/controller/client/public-job.controller'
 import isAuthorized from '~/middlewares/isAuthorized.middleware.js'
 import {
@@ -12,11 +12,12 @@ import {
 } from '~/middlewares/client/job-application.middleware'
 import { loadPublicJobDetail, requirePublicJobDetail } from '~/middlewares/client/public-job.middleware'
 import validate from '~/middlewares/validator.middleware'
-import { applyJobValidator } from '~/validators/job-application.validator'
+import { applyJobValidator, getMyAppliedJobsValidator } from '~/validators/job-application.validator'
 import { getCompanyJobDetailValidator } from '~/validators/job.validator'
 
 const jobsRouter = Router()
 
+jobsRouter.get('/me/applied', isAuthorized, validate(getMyAppliedJobsValidator), getMyAppliedJobsController)
 jobsRouter.get(
   '/:jobId',
   validate(getCompanyJobDetailValidator),
