@@ -26,6 +26,7 @@ const envSchema = z.object({
   DB_USER_NAME: z.string().min(1, { message: 'DB_USER_NAME khong duoc rong' }),
   DB_COMPANY_NAME: z.string().min(1, { message: 'DB_COMPANY_NAME khong duoc rong' }),
   DB_JOB_NAME: z.string().min(1, { message: 'DB_JOB_NAME khong duoc rong' }),
+  DB_RESUME_NAME: z.string().min(1, { message: 'DB_RESUME_NAME khong duoc rong' }),
   DB_JOB_APPLICATION_NAME: z.string().min(1, { message: 'DB_JOB_APPLICATION_NAME khong duoc rong' }),
   DB_REFRESH_TOKEN_NAME: z.string().min(1, { message: 'DB_REFRESH_TOKEN_NAME khong duoc rong' }),
   DB_OTP_CODE_NAME: z.string().min(1, { message: 'DB_OTP_CODE_NAME khong duoc rong' }),

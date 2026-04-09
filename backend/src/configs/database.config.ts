@@ -2,8 +2,9 @@ import { Collection, CreateIndexesOptions, Db, IndexSpecification, MongoClient }
 import env from './env.config.js'
 import Company from '~/models/schema/companies.schema.js'
 import JobApplication from '~/models/schema/jobApplications.schema.js'
-import Job from '~/models/schema/jobs.schena.js'
+import Job from '~/models/schema/jobs.schema.js'
 import OtpCode from '~/models/schema/otpCodes.schema.js'
+import Resume from '~/models/schema/resumes.schema.js'
 import RefreshToken from '~/models/schema/refreshTokens.schema.js'
 import User from '~/models/schema/user.schema.js'
 
@@ -99,6 +100,28 @@ class DatabaseService {
         option: { name: 'status_updated_at' }
       },
       {
+        collection: env.DB_RESUME_NAME,
+        key: { candidate_id: 1, updated_at: -1 },
+        option: { name: 'candidate_id_updated_at' }
+      },
+      {
+        collection: env.DB_RESUME_NAME,
+        key: { candidate_id: 1, is_default: 1 },
+        option: { name: 'candidate_id_is_default' }
+      },
+      {
+        collection: env.DB_RESUME_NAME,
+        key: { candidate_id: 1, is_default: 1 },
+        option: {
+          name: 'candidate_default_active_unique',
+          unique: true,
+          partialFilterExpression: {
+            is_default: true,
+            status: 'active'
+          }
+        }
+      },
+      {
         collection: env.DB_JOB_APPLICATION_NAME,
         key: { job_id: 1, candidate_id: 1 },
         option: { unique: true, name: 'job_id_candidate_id' }
@@ -143,6 +166,10 @@ class DatabaseService {
 
   get jobs(): Collection<Job> {
     return this.db.collection(env.DB_JOB_NAME)
+  }
+
+  get resumes(): Collection<Resume> {
+    return this.db.collection(env.DB_RESUME_NAME)
   }
 
   get jobApplications(): Collection<JobApplication> {

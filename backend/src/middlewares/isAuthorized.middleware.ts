@@ -19,7 +19,6 @@ const isAuthorized = async (req: Request, res: Response, next: NextFunction) => 
   }
   try {
     const verifyAccessToken = await verifyToken(accessToken, env.SECRET_ACCESS_TOKEN)
-    req.decodeToken = verifyAccessToken
     const isBlacklisted = await RedisService.getInstance().get(`blacklist:${verifyAccessToken.jti}`)
     if (isBlacklisted) {
       return next(
@@ -30,6 +29,7 @@ const isAuthorized = async (req: Request, res: Response, next: NextFunction) => 
         })
       )
     }
+    req.decodeToken = verifyAccessToken
   } catch (err: any) {
     if (err.name === 'TokenExpiredError') {
       return next(

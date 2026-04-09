@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { ObjectId } from 'mongodb'
 import { JobStatus } from '~/constants/enum'
 import databaseService from '~/configs/database.config'
-import Job from '~/models/schema/jobs.schena'
+import Job from '~/models/schema/jobs.schema'
 
 class JobsService {
   async createJob(job: Job) {
