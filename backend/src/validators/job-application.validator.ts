@@ -3,10 +3,7 @@ import { z } from 'zod'
 import { JobApplicationStatus } from '~/constants/enum'
 import UserMessages from '~/constants/messages'
 
-const applicationStatusValues = Object.values(JobApplicationStatus) as [
-  JobApplicationStatus,
-  ...JobApplicationStatus[]
-]
+const applicationStatusValues = Object.values(JobApplicationStatus) as [JobApplicationStatus, ...JobApplicationStatus[]]
 
 export const applyJobValidator = z.object({
   body: z.object({
