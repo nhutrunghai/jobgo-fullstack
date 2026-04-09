@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: "JobGo API"
   version: "0.2.0"
-  description: "Tai lieu API backend hien tai, cap nhat theo source code."
+  description: "Tài liệu API backend hiện tại, cập nhật theo source code."
 servers:
   - url: "http://localhost:4000/api/v1"
 tags:
@@ -15,7 +15,7 @@ paths:
   /auth/register:
     post:
       tags: ["Auth"]
-      summary: "Dang ky tai khoan candidate"
+      summary: "Đăng ký tài khoản candidate"
       requestBody:
         required: true
         content:
@@ -24,7 +24,7 @@ paths:
               $ref: "#/components/schemas/RegisterRequest"
       responses:
         "201":
-          description: "Dang ky thanh cong"
+          description: "Đăng ký thành công"
           content:
             application/json:
               schema:
@@ -32,7 +32,7 @@ paths:
   /auth/login:
     post:
       tags: ["Auth"]
-      summary: "Dang nhap"
+      summary: "Đăng nhập"
       requestBody:
         required: true
         content:
@@ -41,7 +41,7 @@ paths:
               $ref: "#/components/schemas/LoginRequest"
       responses:
         "201":
-          description: "Dang nhap thanh cong"
+          description: "Đăng nhập thành công"
           content:
             application/json:
               schema:
@@ -49,7 +49,7 @@ paths:
   /auth/oauth/google:
     get:
       tags: ["Auth"]
-      summary: "Dang nhap bang Google"
+      summary: "Đăng nhập bằng Google"
       parameters:
         - name: "code"
           in: "query"
@@ -58,11 +58,11 @@ paths:
             type: "string"
       responses:
         "302":
-          description: "Redirect ve front-end"
+          description: "Redirect về front-end"
   /auth/logout:
     post:
       tags: ["Auth"]
-      summary: "Dang xuat"
+      summary: "Đăng xuất"
       requestBody:
         required: true
         content:
@@ -71,7 +71,7 @@ paths:
               $ref: "#/components/schemas/LogoutRequest"
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -79,7 +79,7 @@ paths:
   /auth/refresh-token:
     post:
       tags: ["Auth"]
-      summary: "Lam moi token"
+      summary: "Làm mới token"
       requestBody:
         required: true
         content:
@@ -88,7 +88,7 @@ paths:
               $ref: "#/components/schemas/RefreshRequest"
       responses:
         "201":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -96,7 +96,7 @@ paths:
   /auth/verify-email:
     post:
       tags: ["Auth"]
-      summary: "Xac minh email"
+      summary: "Xác minh email"
       requestBody:
         required: true
         content:
@@ -105,7 +105,7 @@ paths:
               $ref: "#/components/schemas/VerifyEmailRequest"
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -113,7 +113,7 @@ paths:
   /auth/forgot-password:
     post:
       tags: ["Auth"]
-      summary: "Gui email quen mat khau"
+      summary: "Gửi email quên mật khẩu"
       requestBody:
         required: true
         content:
@@ -122,7 +122,7 @@ paths:
               $ref: "#/components/schemas/ForgotPasswordRequest"
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -130,7 +130,7 @@ paths:
   /auth/reset-password:
     post:
       tags: ["Auth"]
-      summary: "Dat lai mat khau"
+      summary: "Đặt lại mật khẩu"
       requestBody:
         required: true
         content:
@@ -139,7 +139,7 @@ paths:
               $ref: "#/components/schemas/ResetPasswordRequest"
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -148,12 +148,12 @@ paths:
   /user/me:
     get:
       tags: ["User"]
-      summary: "Lay profile cua chinh minh"
+      summary: "Lấy profile của chính mình"
       security:
         - bearerAuth: []
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -161,12 +161,12 @@ paths:
   /user/profile/{id}:
     get:
       tags: ["User"]
-      summary: "Lay profile public theo username"
+      summary: "Lấy profile public theo username"
       parameters:
         - $ref: "#/components/parameters/UserNameParam"
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -174,7 +174,7 @@ paths:
   /user/profile:
     patch:
       tags: ["User"]
-      summary: "Cap nhat profile"
+      summary: "Cập nhật profile"
       security:
         - bearerAuth: []
       requestBody:
@@ -185,7 +185,7 @@ paths:
               $ref: "#/components/schemas/UpdateProfileRequest"
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -193,19 +193,19 @@ paths:
   /user/setting:
     get:
       tags: ["User"]
-      summary: "Lay setting cua user"
+      summary: "Lấy setting của user"
       security:
         - bearerAuth: []
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GenericSuccess"
     patch:
       tags: ["User"]
-      summary: "Cap nhat setting cua user"
+      summary: "Cập nhật setting của user"
       security:
         - bearerAuth: []
       requestBody:
@@ -216,7 +216,7 @@ paths:
               $ref: "#/components/schemas/UpdateUserSettingRequest"
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -224,12 +224,12 @@ paths:
   /user/setting/resend-mail:
     post:
       tags: ["User"]
-      summary: "Gui lai email xac minh"
+      summary: "Gửi lại email xác minh"
       security:
         - bearerAuth: []
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -237,12 +237,12 @@ paths:
   /user/setting/change-password:
     post:
       tags: ["User"]
-      summary: "Gui OTP doi mat khau"
+      summary: "Gửi OTP đổi mật khẩu"
       security:
         - bearerAuth: []
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -250,7 +250,7 @@ paths:
   /user/setting/new-password:
     post:
       tags: ["User"]
-      summary: "Dat mat khau moi bang OTP"
+      summary: "Đặt mật khẩu mới bằng OTP"
       security:
         - bearerAuth: []
       requestBody:
@@ -261,7 +261,7 @@ paths:
               $ref: "#/components/schemas/NewPasswordRequest"
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -270,7 +270,7 @@ paths:
   /jobs/me/applied:
     get:
       tags: ["Jobs"]
-      summary: "Lay danh sach job da ung tuyen"
+      summary: "Lấy danh sách job đã ứng tuyển"
       security:
         - bearerAuth: []
       parameters:
@@ -282,7 +282,7 @@ paths:
             $ref: "#/components/schemas/JobApplicationStatus"
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -290,13 +290,13 @@ paths:
   /jobs/{jobId}:
     get:
       tags: ["Jobs"]
-      summary: "Lay chi tiet job public"
-      description: "Public endpoint. Neu gui access token hop le thi response co them my_application."
+      summary: "Lấy chi tiết job public"
+      description: "Public endpoint. Nếu gửi access token hợp lệ thì response có thêm my_application."
       parameters:
         - $ref: "#/components/parameters/JobIdParam"
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -304,7 +304,7 @@ paths:
   /jobs/{jobId}/apply:
     post:
       tags: ["Jobs"]
-      summary: "Ung tuyen vao job"
+      summary: "Ứng tuyển vào job"
       security:
         - bearerAuth: []
       parameters:
@@ -317,7 +317,7 @@ paths:
               $ref: "#/components/schemas/ApplyJobRequest"
       responses:
         "201":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -325,14 +325,14 @@ paths:
   /jobs/{jobId}/withdraw:
     patch:
       tags: ["Jobs"]
-      summary: "Rut ho so da ung tuyen"
+      summary: "Rút hồ sơ đã ứng tuyển"
       security:
         - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/JobIdParam"
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -341,7 +341,7 @@ paths:
   /company:
     post:
       tags: ["Company"]
-      summary: "Tao company profile"
+      summary: "Tạo company profile"
       security:
         - bearerAuth: []
       requestBody:
@@ -352,14 +352,14 @@ paths:
               $ref: "#/components/schemas/CreateCompanyRequest"
       responses:
         "201":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GenericSuccess"
     patch:
       tags: ["Company"]
-      summary: "Cap nhat company profile"
+      summary: "Cập nhật company profile"
       security:
         - bearerAuth: []
       requestBody:
@@ -370,7 +370,7 @@ paths:
               $ref: "#/components/schemas/UpdateCompanyRequest"
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -378,12 +378,12 @@ paths:
   /company/me:
     get:
       tags: ["Company"]
-      summary: "Lay company profile cua chinh minh"
+      summary: "Lấy company profile của chính mình"
       security:
         - bearerAuth: []
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -391,7 +391,7 @@ paths:
   /company/jobs:
     post:
       tags: ["Company"]
-      summary: "Tao job"
+      summary: "Tạo job"
       security:
         - bearerAuth: []
       requestBody:
@@ -402,14 +402,14 @@ paths:
               $ref: "#/components/schemas/CreateJobRequest"
       responses:
         "201":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GenericSuccess"
     get:
       tags: ["Company"]
-      summary: "Lay danh sach jobs cua employer"
+      summary: "Lấy danh sách jobs của employer"
       security:
         - bearerAuth: []
       parameters:
@@ -425,7 +425,7 @@ paths:
             type: "string"
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -433,21 +433,21 @@ paths:
   /company/jobs/{jobId}:
     get:
       tags: ["Company"]
-      summary: "Lay chi tiet mot job cua employer"
+      summary: "Lấy chi tiết một job của employer"
       security:
         - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/JobIdParam"
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GenericSuccess"
     patch:
       tags: ["Company"]
-      summary: "Cap nhat job"
+      summary: "Cập nhật job"
       security:
         - bearerAuth: []
       parameters:
@@ -460,7 +460,7 @@ paths:
               $ref: "#/components/schemas/UpdateJobRequest"
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -468,7 +468,7 @@ paths:
   /company/jobs/{jobId}/status:
     patch:
       tags: ["Company"]
-      summary: "Cap nhat trang thai job"
+      summary: "Cập nhật trạng thái job"
       security:
         - bearerAuth: []
       parameters:
@@ -481,7 +481,7 @@ paths:
               $ref: "#/components/schemas/UpdateJobStatusRequest"
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -489,7 +489,7 @@ paths:
   /company/jobs/{jobId}/applications:
     get:
       tags: ["Applications"]
-      summary: "Lay danh sach applications cua mot job"
+      summary: "Lấy danh sách applications của một job"
       security:
         - bearerAuth: []
       parameters:
@@ -502,7 +502,7 @@ paths:
             $ref: "#/components/schemas/JobApplicationStatus"
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -510,14 +510,14 @@ paths:
   /company/applications/{applicationId}:
     get:
       tags: ["Applications"]
-      summary: "Lay chi tiet application"
+      summary: "Lấy chi tiết application"
       security:
         - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/ApplicationIdParam"
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
@@ -525,7 +525,7 @@ paths:
   /company/applications/{applicationId}/status:
     patch:
       tags: ["Applications"]
-      summary: "Cap nhat trang thai application"
+      summary: "Cập nhật trạng thái application"
       security:
         - bearerAuth: []
       parameters:
@@ -538,7 +538,7 @@ paths:
               $ref: "#/components/schemas/UpdateApplicationStatusRequest"
       responses:
         "200":
-          description: "Thanh cong"
+          description: "Thành công"
           content:
             application/json:
               schema:
