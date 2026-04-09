@@ -5,6 +5,7 @@ import {
   updateCompanyController
 } from '~/controller/client/company.controller'
 import {
+  updateCompanyApplicationStatusController,
   getCompanyApplicationDetailController,
   getCompanyJobApplicationsController
 } from '~/controller/client/job-application.controller'
@@ -17,7 +18,10 @@ import {
 } from '~/controller/client/job.controller'
 import { loadCompany, requireCompany, checkCompany } from '~/middlewares/client/company.middleware'
 import {
+  ensureValidApplicationStatusTransition,
+  loadCompanyApplication,
   loadCompanyApplicationDetail,
+  requireCompanyApplication,
   requireCompanyApplicationDetail
 } from '~/middlewares/client/company-application.middleware'
 import { loadCompanyJob, requireCompanyJob } from '~/middlewares/client/job.middleware'
@@ -26,7 +30,8 @@ import validate from '~/middlewares/validator.middleware'
 import { createCompanyValidator, updateCompanyValidator } from '~/validators/company.validator'
 import {
   getCompanyApplicationDetailValidator,
-  getCompanyJobApplicationsValidator
+  getCompanyJobApplicationsValidator,
+  updateCompanyApplicationStatusValidator
 } from '~/validators/job-application.validator'
 import {
   createJobValidator,
@@ -80,6 +85,16 @@ companyRouter.get(
   loadCompanyApplicationDetail,
   requireCompanyApplicationDetail,
   getCompanyApplicationDetailController
+)
+companyRouter.patch(
+  '/applications/:applicationId/status',
+  loadCompany,
+  requireCompany,
+  validate(updateCompanyApplicationStatusValidator),
+  loadCompanyApplication,
+  requireCompanyApplication,
+  ensureValidApplicationStatusTransition,
+  updateCompanyApplicationStatusController
 )
 companyRouter.patch(
   '/jobs/:jobId',

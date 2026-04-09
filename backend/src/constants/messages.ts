@@ -114,7 +114,9 @@ const UserMessages = {
   RESUME_NOT_ENOUGH_INFORMATION: 'CV phai co toi thieu ho ten va email de ung tuyen',
   COVER_LETTER_MAX_LENGTH: 'Thu gioi thieu khong duoc vuot qua 2000 ky tu',
   APPLICATION_ID_INVALID: 'Ma application khong hop le',
-  APPLICATION_NOT_FOUND: 'Khong tim thay application'
+  APPLICATION_NOT_FOUND: 'Khong tim thay application',
+  APPLICATION_STATUS_UPDATED_SUCCESS: 'Cap nhat trang thai application thanh cong',
+  APPLICATION_STATUS_TRANSITION_INVALID: 'Khong the chuyen trang thai application nhu yeu cau'
 } as const
 
 export default UserMessages

@@ -5,6 +5,7 @@ import { JobApplicationStatus } from '~/constants/enum'
 import UserMessages from '~/constants/messages'
 import {
   ApplyJobLocals,
+  CompanyApplicationLocals,
   CompanyApplicationDetailLocals,
   CompanyLocals,
   JobLocals
@@ -15,6 +16,10 @@ import jobApplicationService from '~/services/job-application.service'
 type ApplyJobBody = {
   cv_id: string
   cover_letter?: string
+}
+
+type UpdateCompanyApplicationStatusBody = {
+  status: JobApplicationStatus
 }
 
 export const applyJobController = async (
@@ -100,5 +105,26 @@ export const getCompanyApplicationDetailController = async (
   return res.status(StatusCodes.OK).json({
     status: 'success',
     data: res.locals.companyApplication
+  })
+}
+
+export const updateCompanyApplicationStatusController = async (
+  req: Request<Record<string, string>, unknown, UpdateCompanyApplicationStatusBody>,
+  res: Response<unknown, CompanyApplicationLocals>
+) => {
+  const application = res.locals.companyApplication!
+  const result = await jobApplicationService.updateCompanyApplicationStatus({
+    applicationId: application._id!,
+    status: req.body.status
+  })
+
+  return res.status(StatusCodes.OK).json({
+    status: 'success',
+    message: UserMessages.APPLICATION_STATUS_UPDATED_SUCCESS,
+    data: {
+      _id: result?._id,
+      status: result?.status,
+      updated_at: result?.updated_at
+    }
   })
 }

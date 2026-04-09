@@ -50,6 +50,27 @@ class JobApplicationService {
       }
     }
   }
+
+  async updateCompanyApplicationStatus({
+    applicationId,
+    status
+  }: {
+    applicationId: ObjectId
+    status: JobApplicationStatus
+  }) {
+    return databaseService.jobApplications.findOneAndUpdate(
+      { _id: applicationId },
+      {
+        $set: {
+          status,
+          updated_at: new Date()
+        }
+      },
+      {
+        returnDocument: 'after'
+      }
+    )
+  }
 }
 
 const jobApplicationService = new JobApplicationService()

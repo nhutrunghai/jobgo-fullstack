@@ -2,9 +2,73 @@ import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config'
+import { JobApplicationStatus } from '~/constants/enum'
 import UserMessages from '~/constants/messages'
 import { AppError } from '~/models/appError'
-import { CompanyApplicationDetailLocals, CompanyLocals } from '~/models/requests/responseType'
+import {
+  CompanyApplicationDetailLocals,
+  CompanyApplicationLocals,
+  CompanyLocals
+} from '~/models/requests/responseType'
+
+const allowedTransitions: Record<JobApplicationStatus, JobApplicationStatus[]> = {
+  [JobApplicationStatus.SUBMITTED]: [
+    JobApplicationStatus.REVIEWING,
+    JobApplicationStatus.SHORTLISTED,
+    JobApplicationStatus.INTERVIEWING,
+    JobApplicationStatus.REJECTED,
+    JobApplicationStatus.HIRED
+  ],
+  [JobApplicationStatus.REVIEWING]: [
+    JobApplicationStatus.SHORTLISTED,
+    JobApplicationStatus.INTERVIEWING,
+    JobApplicationStatus.REJECTED,
+    JobApplicationStatus.HIRED
+  ],
+  [JobApplicationStatus.SHORTLISTED]: [
+    JobApplicationStatus.INTERVIEWING,
+    JobApplicationStatus.REJECTED,
+    JobApplicationStatus.HIRED
+  ],
+  [JobApplicationStatus.INTERVIEWING]: [JobApplicationStatus.REJECTED, JobApplicationStatus.HIRED],
+  [JobApplicationStatus.REJECTED]: [],
+  [JobApplicationStatus.HIRED]: [],
+  [JobApplicationStatus.WITHDRAWN]: []
+}
+
+export const loadCompanyApplication = async (
+  req: Request,
+  res: Response<unknown, CompanyLocals & CompanyApplicationLocals>,
+  next: NextFunction
+) => {
+  const company = res.locals.company!
+  const applicationId = new ObjectId(req.params.applicationId as string)
+
+  const application = await databaseService.jobApplications.findOne({
+    _id: applicationId,
+    company_id: company._id
+  })
+
+  res.locals.companyApplication = application
+  next()
+}
+
+export const requireCompanyApplication = async (
+  req: Request,
+  res: Response<unknown, CompanyApplicationLocals>,
+  next: NextFunction
+) => {
+  if (!res.locals.companyApplication) {
+    return next(
+      new AppError({
+        statusCode: StatusCodes.NOT_FOUND,
+        message: UserMessages.APPLICATION_NOT_FOUND
+      })
+    )
+  }
+
+  next()
+}
 
 export const loadCompanyApplicationDetail = async (
   req: Request,
@@ -80,6 +144,27 @@ export const requireCompanyApplicationDetail = async (
       new AppError({
         statusCode: StatusCodes.NOT_FOUND,
         message: UserMessages.APPLICATION_NOT_FOUND
+      })
+    )
+  }
+
+  next()
+}
+
+export const ensureValidApplicationStatusTransition = async (
+  req: Request,
+  res: Response<unknown, CompanyApplicationLocals>,
+  next: NextFunction
+) => {
+  const application = res.locals.companyApplication!
+  const currentStatus = application.status || JobApplicationStatus.SUBMITTED
+  const nextStatus = req.body.status as JobApplicationStatus
+
+  if (!allowedTransitions[currentStatus].includes(nextStatus)) {
+    return next(
+      new AppError({
+        statusCode: StatusCodes.UNPROCESSABLE_ENTITY,
+        message: UserMessages.APPLICATION_STATUS_TRANSITION_INVALID
       })
     )
   }
