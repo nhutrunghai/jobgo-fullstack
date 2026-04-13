@@ -3,14 +3,17 @@ import { ObjectId } from 'mongodb'
 import { JobStatus } from '~/constants/enum'
 import databaseService from '~/configs/database.config'
 import Job from '~/models/schema/jobs.schema'
+import jobSearchService from '~/services/job-search.service'
 
 class JobsService {
   async createJob(job: Job) {
-    return databaseService.jobs.insertOne(job)
+    const result = await databaseService.jobs.insertOne(job)
+    await jobSearchService.upsertJobDocument(result.insertedId)
+    return result
   }
 
   async updateCompanyJob(jobId: ObjectId, payload: Partial<Job>) {
-    return databaseService.jobs.findOneAndUpdate(
+    const updatedJob = await databaseService.jobs.findOneAndUpdate(
       { _id: jobId },
       {
         $set: payload
@@ -19,6 +22,12 @@ class JobsService {
         returnDocument: 'after'
       }
     )
+
+    if (updatedJob?._id) {
+      await jobSearchService.upsertJobDocument(updatedJob._id)
+    }
+
+    return updatedJob
   }
 
   async getCompanyJobs({

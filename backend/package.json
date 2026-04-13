@@ -47,6 +47,7 @@
     "typescript-eslint": "^8.52.0"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^8.19.1",
     "@huggingface/inference": "^4.13.11",
     "axios": "^1.13.2",
     "bcryptjs": "^3.0.3",
