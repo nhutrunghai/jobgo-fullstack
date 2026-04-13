@@ -50,6 +50,8 @@ const envSchema = z.object({
   BUILD_MODE: z.enum(['dev', 'production', 'test']).default('dev'),
   // ELASTICSEARCH
   ELASTICSEARCH_URL: z.string().min(1, { message: 'Khong ton tai ELASTICSEARCH_URL' }),
+  // Embedding service
+  EMBEDDING_API_URL: z.url({ message: 'EMBEDDING_API_URL phai la mot duong dan hop le' }).default('http://localhost:8000'),
   // Hugging Face
   HUGGINGFACE_API_KEY: z.string().min(1, { message: 'Khong ton tai HUGGINGFACE_API_KEY' }).optional()
 })

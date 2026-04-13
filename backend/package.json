@@ -7,6 +7,7 @@
     "dev": "cross-env BUILD_MODE=dev nodemon",
     "build": "rimraf ./dist && tsc && tsc-alias",
     "start": "cross-env BUILD_MODE=production node dist/index.js",
+    "embedding:demo": "tsx src/scripts/embedding-demo.ts",
     "test": "jest --no-cache",
     "test:watch": "jest --watchAll --no-cache",
     "test:ci": "jest --ci --coverage --no-cache",

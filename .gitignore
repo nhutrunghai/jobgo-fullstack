@@ -1,0 +1,5 @@
+embedding-api/.venv/
+embedding-api/.venv_local/
+embedding-api/.cache/
+embedding-api/.models/
+embedding-api/__pycache__/

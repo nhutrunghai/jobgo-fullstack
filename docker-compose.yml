@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build: ./backend
@@ -10,6 +8,8 @@ services:
       - DB_URL=mongodb://host.docker.internal:27017/jobgo
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - EMBEDDING_API_URL=http://embedding-api:8000
       # Keep other envs from .env file or override here if needed
     env_file:
       - ./backend/.env
@@ -17,11 +17,26 @@ services:
       # - mongo
       - redis
       - elasticsearch
+      - embedding-api
     volumes:
       - ./backend:/app
       - /app/node_modules
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+  embedding-api:
+    build: ./embedding-api
+    ports:
+      - "8000:8000"
+    environment:
+      - MODEL_DIR=/app/.models/dangvantuan__vietnamese-document-embedding
+      - HF_HOME=/app/.cache/huggingface
+      - HF_MODULES_CACHE=/app/.cache/hf_modules
+      - TORCH_HOME=/app/.cache/torch
+      - HF_HUB_OFFLINE=1
+      - TRANSFORMERS_OFFLINE=1
+    volumes:
+      - ./embedding-api:/app
 
   # mongo:
   #   image: mongo:latest
@@ -32,6 +47,7 @@ services:
  
   redis:
     image: redis:alpine
+    command: redis-server --requirepass 30122005
     ports:
       - "6379:6379"
   elasticsearch:

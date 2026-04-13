@@ -44,7 +44,7 @@ class RedisService {
 
 export default RedisService
 
-/*1 số lượng ích của việc (I) export class , thay vì (II) tạo đối tượng rồi mới export như databaseServices
+/*1 số lợi ích của việc (I) export class , thay vì (II) tạo đối tượng rồi mới export như databaseServices
 Cách (II) cũng rất phổ biến nhưng nó phù hợp với hệ thống nhỏ muốn triển khai nhanh vì vậy hãy xem qua
 1 số lợi ích của cách (I) vượt trội hơn 
 1. Kiểm soát thời điểm kết nối (Lazy Initialization)
