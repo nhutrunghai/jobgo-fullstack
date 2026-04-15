@@ -4,7 +4,7 @@ import {
   getMyAppliedJobsController,
   withdrawMyJobApplicationController
 } from '~/controller/client/job-application.controller'
-import { getPublicJobDetailController } from '~/controller/client/public-job.controller'
+import { getPublicJobDetailController, searchPublicJobsController } from '~/controller/client/public-job.controller'
 import isAuthorized from '~/middlewares/isAuthorized.middleware.js'
 import optionalDecodeToken from '~/middlewares/optionalDecodeToken.middleware'
 import {
@@ -25,11 +25,12 @@ import {
 } from '~/middlewares/client/public-job.middleware'
 import validate from '~/middlewares/validator.middleware'
 import { applyJobValidator, getMyAppliedJobsValidator } from '~/validators/job-application.validator'
-import { getCompanyJobDetailValidator } from '~/validators/job.validator'
+import { getCompanyJobDetailValidator, searchPublicJobsValidator } from '~/validators/job.validator'
 
 const jobsRouter = Router()
 
 jobsRouter.get('/me/applied', isAuthorized, validate(getMyAppliedJobsValidator), getMyAppliedJobsController)
+jobsRouter.get('/search', validate(searchPublicJobsValidator), searchPublicJobsController)
 jobsRouter.get(
   '/:jobId',
   validate(getCompanyJobDetailValidator),

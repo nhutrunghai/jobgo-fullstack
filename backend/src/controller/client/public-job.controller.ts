@@ -1,6 +1,8 @@
 import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
+import { JobLevel, JobType } from '~/constants/enum'
 import { PublicJobWithApplicationLocals } from '~/models/requests/responseType'
+import jobsService from '~/services/job.service'
 
 export const getPublicJobDetailController = async (
   req: Request,
@@ -12,5 +14,21 @@ export const getPublicJobDetailController = async (
       ...res.locals.publicJob,
       my_application: res.locals.myApplication
     }
+  })
+}
+
+export const searchPublicJobsController = async (req: Request, res: Response) => {
+  const result = await jobsService.searchPublicJobs({
+    q: req.query.q as string,
+    location: req.query.location as string | undefined,
+    job_type: req.query.job_type as JobType | undefined,
+    level: req.query.level as JobLevel | undefined,
+    page: Number(req.query.page || 1),
+    limit: Number(req.query.limit || 10)
+  })
+
+  return res.status(StatusCodes.OK).json({
+    status: 'success',
+    data: result
   })
 }

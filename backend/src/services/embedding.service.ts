@@ -1,8 +1,10 @@
 import axios from 'axios'
-import env from '../configs/env.config'
+import env from '~/configs/env.config'
 
 const DEFAULT_EMBEDDING_MODEL = 'dangvantuan/vietnamese-document-embedding'
+const GEMINI_EMBEDDING_MODEL = 'gemini-embedding-001'
 const EMBEDDING_API_URL = env.EMBEDDING_API_URL.replace(/\/+$/, '')
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models'
 
 export const generateEmbedding = async (text: string, model = DEFAULT_EMBEDDING_MODEL): Promise<number[]> => {
   const normalizedText = text.trim()
@@ -29,3 +31,59 @@ export const generateEmbedding = async (text: string, model = DEFAULT_EMBEDDING_
 }
 
 export const EMBEDDING_MODEL = DEFAULT_EMBEDDING_MODEL
+export const EMBEDDING_MODEL_2 = GEMINI_EMBEDDING_MODEL
+
+export const generateEmbedding2 = async (
+  text: string,
+  {
+    model = GEMINI_EMBEDDING_MODEL,
+    outputDimensionality
+  }: {
+    model?: string
+    outputDimensionality?: number
+  } = {}
+): Promise<number[]> => {
+  const normalizedText = text.trim()
+
+  if (!normalizedText) {
+    throw new Error('Text to embed must not be empty')
+  }
+
+  if (!env.GEMINI_API_KEY) {
+    throw new Error('GEMINI_API_KEY is required to call Gemini Embedding API')
+  }
+
+  const requestBody: {
+    model: string
+    content: {
+      parts: Array<{
+        text: string
+      }>
+    }
+    outputDimensionality?: number
+  } = {
+    model: `models/${model}`,
+    content: {
+      parts: [{ text: normalizedText }]
+    }
+  }
+
+  if (outputDimensionality) {
+    requestBody.outputDimensionality = outputDimensionality
+  }
+
+  const response = await axios.post(`${GEMINI_API_URL}/${model}:embedContent`, requestBody, {
+    timeout: 30000,
+    headers: {
+      'x-goog-api-key': env.GEMINI_API_KEY
+    }
+  })
+
+  const output = response.data?.embedding?.values
+
+  if (!Array.isArray(output)) {
+    throw new Error(`Gemini Embedding API returned an invalid response for model ${model}`)
+  }
+
+  return output as number[]
+}
