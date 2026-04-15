@@ -7,7 +7,8 @@
     "dev": "cross-env BUILD_MODE=dev nodemon",
     "build": "rimraf ./dist && tsc && tsc-alias",
     "start": "cross-env BUILD_MODE=production node dist/index.js",
-    "embedding:demo": "tsx src/scripts/embedding-demo.ts",
+    "embedding:demo": "npm run build && node dist/scripts/embedding-demo.js",
+    "embedding:demo:tsx": "tsx src/scripts/embedding-demo.ts",
     "test": "jest --no-cache",
     "test:watch": "jest --watchAll --no-cache",
     "test:ci": "jest --ci --coverage --no-cache",
@@ -47,6 +48,7 @@
     "typescript-eslint": "^8.52.0"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^8.19.1",
     "@huggingface/inference": "^4.13.11",
     "axios": "^1.13.2",
     "bcryptjs": "^3.0.3",

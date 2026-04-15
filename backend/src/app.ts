@@ -2,14 +2,16 @@ import express from 'express'
 import 'dotenv/config'
 import env from './configs/env.config.js'
 import databaseService from './configs/database.config.js'
+import { ensurePublicJobsSearchIndex } from './configs/search.config.js'
 import BASE_PATH from './constants/path.js'
 import globalErrorHandle from './middlewares/errorHandle.middleware.js'
 import v1Router from './routes/v1/index.js'
 import cors from 'cors'
 import corsOptions from '~/configs/cors.config.js'
 import morgan from 'morgan'
-export const createApp = () => {
+export const createApp = async () => {
   databaseService.connect()
+  await ensurePublicJobsSearchIndex()
   const app = express()
   app.set('trust proxy', true)
   const isDev = env.BUILD_MODE === 'dev'

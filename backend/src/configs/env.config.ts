@@ -50,10 +50,13 @@ const envSchema = z.object({
   BUILD_MODE: z.enum(['dev', 'production', 'test']).default('dev'),
   // ELASTICSEARCH
   ELASTICSEARCH_URL: z.string().min(1, { message: 'Khong ton tai ELASTICSEARCH_URL' }),
+  PUBLIC_JOBS_SEARCH_INDEX: z.string().min(1, { message: 'PUBLIC_JOBS_SEARCH_INDEX khong duoc rong' }),
   // Embedding service
   EMBEDDING_API_URL: z.url({ message: 'EMBEDDING_API_URL phai la mot duong dan hop le' }).default('http://localhost:8000'),
   // Hugging Face
-  HUGGINGFACE_API_KEY: z.string().min(1, { message: 'Khong ton tai HUGGINGFACE_API_KEY' }).optional()
+  HUGGINGFACE_API_KEY: z.string().min(1, { message: 'Khong ton tai HUGGINGFACE_API_KEY' }).optional(),
+  // Gemini
+  GEMINI_API_KEY: z.string().min(1, { message: 'Khong ton tai GEMINI_API_KEY' }).optional()
 })
 
 const envServer = envSchema.safeParse(process.env)

@@ -1,0 +1,175 @@
+# History Admin
+
+## 2026-04-14
+
+### Bối cảnh ban đầu
+- Người dùng yêu cầu terminal này chỉ làm các chức năng liên quan đến `admin`.
+- Trước đó đã đọc file `history_admin.md` để lấy lại ngữ cảnh.
+- Repo có `backend` dùng Node.js, Express, TypeScript và `embedding-api` dùng Python.
+- Backend đã có các module client như `auth`, `user`, `company`, `jobs`.
+- Hệ thống đã có `UserRole.ADMIN`, nhưng chưa có route/controller/middleware riêng cho admin.
+- Chưa thấy frontend `client` hoặc `admin` riêng trong workspace hiện tại.
+
+### Quy trình làm việc đã chốt
+- Không tự ý code ngay.
+- Luồng làm việc với người dùng:
+  1. Cùng bàn chức năng cần làm.
+  2. Bàn flow chức năng.
+  3. Đưa preview implement/code.
+  4. Chỉ khi người dùng duyệt mới thực hiện thay đổi.
+- Người dùng chú trọng thiết kế hệ thống, nên mọi phần admin cần tách boundary rõ ràng.
+
+### Scope admin auth đã bàn
+- Admin auth phải là luồng riêng, tách khỏi client login.
+- Client có thể tiếp tục dùng JWT.
+- Admin backend sẽ không dùng JWT, mà dùng session-based auth.
+- Scope hiện tại của admin auth:
+  - `Admin login`
+  - `Admin logout`
+  - `Auth middleware`
+  - `Authorization middleware`
+  - Session chỉ làm phần tối thiểu để phục vụ các mục trên.
+
+### Phần tạm hoãn
+- Change password.
+- Forgot/reset password.
+- 2FA.
+- Quản lý nhiều session nâng cao.
+- Audit log chi tiết.
+- Lock account / risk detection.
+- Các flow bảo mật mở rộng khác.
+
+### Flow admin session đã giải thích
+- Session admin là server-side session.
+- Client chỉ giữ cookie chứa `sessionId`.
+- Server dùng `sessionId` để tra Redis hoặc session store.
+- Session có thể hết hạn theo:
+  - `idle timeout`: không hoạt động một thời gian thì hết hạn.
+  - `absolute timeout`: dù còn hoạt động, đến mốc tối đa vẫn hết hạn.
+- Khác JWT:
+  - JWT tự chứa payload và server verify chữ ký để đọc thông tin.
+  - Session cookie chỉ chứa mã tra cứu, thông tin thật nằm phía server.
+- Kết luận thiết kế:
+  - Admin nên dùng session vì dễ revoke, logout, quản lý timeout, force logout và mở rộng bảo mật.
+
+### Flow chức năng admin login đã bàn
+- Endpoint dự kiến:
+  - `POST /api/v1/admin/auth/login`
+  - `POST /api/v1/admin/auth/logout`
+  - `GET /api/v1/admin/auth/me`
+- Login flow:
+  - Validate `email`, `password`.
+  - Tìm user theo email.
+  - Nếu không có user thì login fail.
+  - Nếu `role !== ADMIN` thì từ chối.
+  - Nếu account không active thì từ chối.
+  - Compare password.
+  - Nếu đúng thì tạo session server-side.
+  - Set cookie `HttpOnly`.
+  - Trả profile admin tối thiểu.
+- Auth middleware:
+  - Đọc cookie session.
+  - Tra session trong store.
+  - Nếu session không tồn tại hoặc hết hạn thì trả `401`.
+  - Có thể re-check user còn active/admin không.
+  - Gắn admin auth context vào request.
+- Authorization middleware:
+  - Tách riêng khỏi auth middleware.
+  - Phase đầu chỉ check role `ADMIN`.
+  - Thiết kế dạng có thể mở rộng permission sau.
+- Logout:
+  - Xóa session khỏi store.
+  - Clear cookie.
+  - Nên idempotent.
+
+## 2026-04-15
+
+### Preview code admin auth đã từng đưa
+- Đã preview cấu trúc admin auth theo hướng:
+  - `backend/src/routes/v1/admin/index.ts`
+  - `backend/src/routes/v1/admin/auth.router.ts`
+  - `backend/src/controller/admin/auth.controller.ts`
+  - `backend/src/services/admin/auth.service.ts`
+  - `backend/src/middlewares/admin/auth.middleware.ts`
+  - `backend/src/middlewares/admin/authorization.middleware.ts`
+  - `backend/src/validators/admin/auth.validator.ts`
+- Preview dùng Redis để lưu session theo dạng tối giản:
+  - key: `${ADMIN_SESSION_PREFIX}:${sessionId}`
+  - value: `{ sessionId, userId, role }`
+  - ttl: `ADMIN_SESSION_TTL`
+- Cookie dự kiến:
+  - `HttpOnly`
+  - `Secure` theo env
+  - `SameSite` theo env
+  - path: `/api/v1/admin`
+
+### Trao đổi lại về thiết kế folder
+- Người dùng chỉ ra cấu trúc hệ thống cần tách rõ `client` và `admin`.
+- Các folder dùng chung toàn hệ thống không chia:
+  - `configs`
+  - `constants`
+  - `utils`
+  - `models/requests`
+- Các folder cần tách `client/admin`:
+  - `validators`
+  - `services`
+  - `models/schema`
+- Middleware:
+  - Nhiều middleware đã có `middlewares/client`.
+  - `isAuthorized.middleware.ts` là JWT auth cho client nên nên chuyển vào `middlewares/client`.
+  - Các middleware shared như `validator`, `errorHandle`, `rateLimit`, `checkConflict` tạm giữ root-level.
+
+### Refactor folder đã thử thực hiện
+- Đã từng thử chuyển:
+  - `backend/src/validators/*` vào `backend/src/validators/client/*`
+  - `backend/src/services/*` vào `backend/src/services/client/*`
+  - `backend/src/models/schema/*` vào `backend/src/models/schema/client/*`
+  - `backend/src/middlewares/isAuthorized.middleware.ts` vào `backend/src/middlewares/client/isAuthorized.middleware.ts`
+- Đã cập nhật import path và build pass.
+- Nhưng phát hiện vấn đề về nhánh.
+
+### Sự cố nhánh cần ghi nhớ
+- Ban đầu nhánh `feature/admin-auth-foundation` được tạo khi đang đứng trên `feature/semantic-job-search`.
+- Vì vậy nhánh admin cũ trỏ cùng commit với search:
+  - `feature/semantic-job-search`: `b32b02a Add Elasticsearch job indexing flow`
+  - `feature/admin-auth-foundation`: cũng từng trỏ `b32b02a`
+  - `main`: `911a791`
+- Điều này làm nhánh admin bị kéo theo phần semantic search dang dở.
+- Sau đó có thử xóa và tạo lại `feature/admin-auth-foundation` từ `main`.
+- Refactor folder được làm lại trên nhánh admin sạch và build pass.
+- Tuy nhiên người dùng yêu cầu restore lại toàn bộ thay đổi vừa làm để tập trung hoàn thiện một nhánh trước.
+
+### Stash và khôi phục generateEmbedding2
+- Trước khi dọn worktree đã tạo stash:
+  - `stash@{0}: On feature/semantic-job-search: safety-before-recreate-admin-auth-foundation`
+- Stash này chứa toàn bộ dirty worktree tại thời điểm đó, bao gồm cả thay đổi search đang dang dở và refactor folder cũ.
+- Sau restore, người dùng phát hiện `generateEmbedding2` biến mất khỏi nhánh `feature/semantic-job-search`.
+- Nguyên nhân:
+  - `generateEmbedding2` chưa được commit.
+  - Nó nằm trong dirty worktree và đã bị cất vào stash.
+- Đã khôi phục riêng các phần liên quan `generateEmbedding2` từ stash, không apply lại refactor admin:
+  - `backend/src/services/embedding.service.ts`
+  - `backend/src/scripts/embedding-demo.ts`
+  - `backend/src/configs/env.config.ts` với `GEMINI_API_KEY`
+- Sau khôi phục:
+  - `rg "generateEmbedding2|EMBEDDING_MODEL_2|GEMINI_API_KEY" backend/src -S` thấy lại đủ.
+  - `cmd /c npm run build` trong backend đã pass.
+- Working tree lúc đó chỉ còn modified:
+  - `backend/src/configs/env.config.ts`
+  - `backend/src/scripts/embedding-demo.ts`
+  - `backend/src/services/embedding.service.ts`
+
+### Trạng thái sau yêu cầu mới nhất
+- Người dùng yêu cầu xóa nhánh `feature/admin-auth-foundation`.
+- Đã xóa nhánh `feature/admin-auth-foundation`.
+- Hiện người dùng muốn tập trung làm xong một nhánh trước để tránh xung đột.
+- Terminal này nên tạm dừng mọi việc admin cho đến khi người dùng yêu cầu lại.
+
+### Nguyên tắc cần tuân thủ tiếp theo
+- Không tạo lại nhánh admin khi chưa được yêu cầu.
+- Không refactor folder admin trong lúc người dùng đang tập trung nhánh search.
+- Nếu sau này quay lại admin:
+  - Tạo nhánh admin sạch từ `main`, không tạo từ nhánh feature search.
+  - Trước khi checkout/switch, đảm bảo working tree sạch hoặc stash rõ ràng.
+  - Nếu cần refactor folder, làm thành commit riêng trước khi implement admin auth.
+  - Không dùng `stash pop` bừa với `stash@{0}` vì stash đó chứa lẫn nhiều thay đổi cũ.
