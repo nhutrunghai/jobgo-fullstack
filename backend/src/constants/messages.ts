@@ -130,7 +130,9 @@ const UserMessages = {
   ADMIN_ACCOUNT_DISABLED: 'Tài khoản admin đã bị vô hiệu hóa',
   ADMIN_SESSION_NOT_FOUND: 'Phiên đăng nhập admin không tồn tại',
   ADMIN_SESSION_EXPIRED: 'Phiên đăng nhập admin đã hết hạn',
-  ADMIN_COMPANY_VERIFICATION_UPDATED_SUCCESS: 'Cập nhật trạng thái xác minh công ty thành công'
+  ADMIN_COMPANY_VERIFICATION_UPDATED_SUCCESS: 'Cập nhật trạng thái xác minh công ty thành công',
+  INVALID_ROLE: 'Vai trò không hợp lệ',
+  INVALID_STATUS: 'Trạng thái không hợp lệ'
 } as const
 
 export default UserMessages

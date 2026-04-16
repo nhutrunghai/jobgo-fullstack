@@ -91,7 +91,7 @@ Pham vi:
 
 ### Cum B. Admin companies
 
-Trang thai: done cho phase 1
+Trang thai: done cho module dau tien
 
 Pham vi:
 
@@ -100,6 +100,16 @@ Pham vi:
 - verify/unverify qua `PATCH /status`
 - xem jobs cua company
 - xem applications cua company
+
+Da chot theo cach lam viec vua xong:
+
+- da co route, controller, service, validator, middleware day du cho module nay
+- cac endpoint nested dung 1 validator gop `params + query`
+- `status` o endpoint jobs la optional
+- applications filter optional theo `status`, `jobId`, `candidateId`
+- da them request vao Postman folder `admin > companies`
+- backend build da pass
+- da verify flow thuc te: company chi dang job duoc khi `verified = true`
 
 Mo rong co the de sau:
 
@@ -229,6 +239,12 @@ Ly do chon cum nay truoc:
 - user detail
 - ban/unban user qua update `status`
 
+Thu tu de lam trong module nay:
+
+1. `GET /api/v1/admin/users`
+2. `GET /api/v1/admin/users/:userId`
+3. `PATCH /api/v1/admin/users/:userId/status`
+
 ### Chua nen dua vao phase nay
 
 - role management cho admin
@@ -241,6 +257,6 @@ Ly do chon cum nay truoc:
 Sau khi quet toan bo du an, trang thai dung cua admin la:
 
 - `Admin Auth`: da co
-- `Admin Companies`: da co phase 1
+- `Admin Companies`: da hoan thanh module dau tien va da co Postman
 - `Admin Users`: la cum chuc nang tiep theo
 - sau do moi den `Admin Jobs`, `Dashboard`, `Admin Applications`

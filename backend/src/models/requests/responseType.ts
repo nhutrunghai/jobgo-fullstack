@@ -10,6 +10,7 @@ export type VerifyOtpLocals = { otpVerify: OtpCode }
 export type UserLocals = { user: User }
 export type CompanyLocals = { company: Company | null }
 export type AdminCompanyLocals = { adminCompany: Company }
+export type AdminUserLocals = { adminUser: User }
 export type JobLocals = { job: Job | null }
 export type PublicJobDetail = {
   job: {
