@@ -65,6 +65,9 @@ const UserMessages = {
   COMPANY_PROFILE_UPDATED_SUCCESS: 'Cập nhật hồ sơ công ty thành công',
   COMPANY_PROFILE_NOT_FOUND: 'Bạn chưa tạo hồ sơ công ty',
   COMPANY_PROFILE_UNVERIFIED: 'Công ty của bạn chưa được xác minh',
+  COMPANY_ID_INVALID: 'Mã công ty không hợp lệ',
+  COMPANY_NOT_FOUND: 'Không tìm thấy công ty',
+  COMPANY_VERIFIED_STATUS_INVALID: 'Trạng thái xác minh công ty không hợp lệ',
   JOB_TITLE_NOT_STRING: 'Tiêu đề tin tuyển dụng không đúng định dạng string',
   JOB_TITLE_MIN_LENGTH: 'Tiêu đề tin tuyển dụng phải có ít nhất 2 ký tự',
   JOB_TITLE_MAX_LENGTH: 'Tiêu đề tin tuyển dụng không được vượt quá 200 ký tự',
@@ -126,7 +129,8 @@ const UserMessages = {
   ADMIN_FORBIDDEN: 'Bạn không có quyền truy cập khu vực admin',
   ADMIN_ACCOUNT_DISABLED: 'Tài khoản admin đã bị vô hiệu hóa',
   ADMIN_SESSION_NOT_FOUND: 'Phiên đăng nhập admin không tồn tại',
-  ADMIN_SESSION_EXPIRED: 'Phiên đăng nhập admin đã hết hạn'
+  ADMIN_SESSION_EXPIRED: 'Phiên đăng nhập admin đã hết hạn',
+  ADMIN_COMPANY_VERIFICATION_UPDATED_SUCCESS: 'Cập nhật trạng thái xác minh công ty thành công'
 } as const
 
 export default UserMessages
