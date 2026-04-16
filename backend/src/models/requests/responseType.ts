@@ -9,6 +9,7 @@ import Resume from '../schema/client/resumes.schema.js'
 export type VerifyOtpLocals = { otpVerify: OtpCode }
 export type UserLocals = { user: User }
 export type CompanyLocals = { company: Company | null }
+export type AdminCompanyLocals = { adminCompany: Company }
 export type JobLocals = { job: Job | null }
 export type PublicJobDetail = {
   job: {
