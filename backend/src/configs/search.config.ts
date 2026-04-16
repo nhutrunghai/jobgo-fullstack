@@ -9,7 +9,15 @@ export const JOB_EMBEDDING_DIMS = 768
 
 export const PUBLIC_JOB_SEARCHABLE_FIELDS = ['title', 'description', 'requirements', 'benefits', 'search_text'] as const
 
-export const PUBLIC_JOB_FILTER_FIELDS = ['location', 'job_type', 'level', 'category', 'skills', 'status'] as const
+export const PUBLIC_JOB_FILTER_FIELDS = [
+  'location',
+  'job_type',
+  'level',
+  'category',
+  'skills',
+  'status',
+  'moderation_status'
+] as const
 
 // Schema field cua document search job public
 export const publicJobsSearchSchema = {
@@ -28,6 +36,7 @@ export const publicJobsSearchSchema = {
   category: { type: 'keyword' },
   skills: { type: 'keyword' },
   status: { type: 'keyword' },
+  moderation_status: { type: 'keyword' },
 
   published_at: { type: 'date' },
   expired_at: { type: 'date' },

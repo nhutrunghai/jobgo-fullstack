@@ -91,6 +91,16 @@ class DatabaseService {
       },
       {
         collection: env.DB_JOB_NAME,
+        key: { moderation_status: 1, updated_at: -1 },
+        option: { name: 'moderation_status_updated_at' }
+      },
+      {
+        collection: env.DB_JOB_NAME,
+        key: { status: 1, moderation_status: 1, expired_at: 1 },
+        option: { name: 'status_moderation_status_expired_at' }
+      },
+      {
+        collection: env.DB_JOB_NAME,
         key: { status: 1, expired_at: 1 },
         option: { name: 'status_expired_at' }
       },

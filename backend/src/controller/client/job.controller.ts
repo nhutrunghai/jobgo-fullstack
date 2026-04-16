@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
-import { JobStatus } from '~/constants/enum'
+import { JobModerationStatus, JobStatus } from '~/constants/enum'
 import UserMessages from '~/constants/messages'
 import { CompanyLocals, JobLocals } from '~/models/requests/responseType'
 import Job from '~/models/schema/client/jobs.schema'
@@ -29,6 +29,7 @@ export const createCompanyJobController = async (
     skills: req.body.skills,
     quantity: req.body.quantity,
     expired_at: req.body.expired_at,
+    moderation_status: JobModerationStatus.ACTIVE,
     published_at: req.body.status === JobStatus.OPEN ? new Date() : undefined
   })
 
@@ -48,6 +49,7 @@ export const createCompanyJobController = async (
       job_type: newJob.job_type,
       level: newJob.level,
       status: newJob.status,
+      moderation_status: newJob.moderation_status,
       category: newJob.category,
       skills: newJob.skills,
       quantity: newJob.quantity,
@@ -84,6 +86,7 @@ export const getCompanyJobsController = async (req: Request, res: Response<unkno
         job_type: job.job_type,
         level: job.level,
         status: job.status,
+        moderation_status: job.moderation_status,
         quantity: job.quantity,
         expired_at: job.expired_at,
         published_at: job.published_at,
@@ -114,6 +117,7 @@ export const getCompanyJobDetailController = async (
       job_type: job.job_type,
       level: job.level,
       status: job.status,
+      moderation_status: job.moderation_status,
       category: job.category,
       skills: job.skills,
       quantity: job.quantity,
@@ -152,6 +156,7 @@ export const updateCompanyJobController = async (
       job_type: updatedJob?.job_type,
       level: updatedJob?.level,
       status: updatedJob?.status,
+      moderation_status: updatedJob?.moderation_status,
       category: updatedJob?.category,
       skills: updatedJob?.skills,
       quantity: updatedJob?.quantity,
@@ -187,6 +192,7 @@ export const updateCompanyJobStatusController = async (
       _id: updatedJob?._id,
       title: updatedJob?.title,
       status: updatedJob?.status,
+      moderation_status: updatedJob?.moderation_status,
       published_at: updatedJob?.published_at,
       expired_at: updatedJob?.expired_at,
       updated_at: updatedJob?.updated_at

@@ -54,7 +54,6 @@ Filter bo sung da co trong nested endpoints:
 
 Chua thay route/controller/service/validator rieng cho:
 
-- admin users
 - admin jobs toan he thong
 - admin applications toan he thong
 - admin dashboard summary
@@ -119,11 +118,9 @@ Mo rong co the de sau:
 
 ### Cum C. Admin users
 
-Trang thai: chua lam
+Trang thai: done cho module dau tien
 
-Do uu tien: cao nhat tiep theo
-
-Can co:
+Pham vi:
 
 - `GET /api/v1/admin/users`
 - `GET /api/v1/admin/users/:userId`
@@ -137,11 +134,24 @@ Nen ho tro filter:
 - `page`
 - `limit`
 
+Da chot theo cach lam viec vua xong:
+
+- da co route, controller, service, validator, middleware day du cho module nay
+- da mount `admin/users` vao admin router
+- list users support filter optional theo `role`, `status`, `keyword`, `page`, `limit`
+- `keyword` search theo `email`, `username`, `fullName`
+- detail user dung middleware check ton tai dung chung
+- update status chi cho `ACTIVE` va `BANNED`
+- update status co idempotent behavior
+- admin khong the tu ban chinh minh
+- da them request vao Postman folder `admin > users`
+- backend build da pass
+
 Co the can nhac sau:
 
 - `PATCH /api/v1/admin/users/:userId/role`
 
-Nhung khong nen dua vao phase tiep theo neu chua co nhu cau business ro rang.
+Nhung tam thoi chua nen lam phan `role`, vi sau nay con can mo rong role va permission model.
 
 ### Cum D. Admin jobs moderation toan he thong
 
@@ -216,41 +226,40 @@ Vi du:
 
 ## 5. Thu tu trien khai de xuat moi
 
-1. Admin Users
-2. Admin Jobs moderation
-3. Admin Dashboard Summary
-4. Admin Applications
-5. Audit va session management
+1. Admin Jobs moderation
+2. Admin Dashboard Summary
+3. Admin Applications
+4. Audit va session management
 
 ## 6. Cum chuc nang tiep theo nen lam ngay
 
-### De xuat: Admin Users
+### De xuat: Admin Jobs moderation
 
 Ly do chon cum nay truoc:
 
-- Day la cum admin con thieu nhung dung sat voi model hien co nhat.
-- `User` da co san `role`, `status`, `is_verified`, nen implementation ngan va ro.
-- Can de admin khoa/mo tai khoan va tra soat user truoc khi di sau vao moderation jobs toan he thong.
-- Boundary ky thuat se rat giong cum `Admin Companies`, nen co the tai su dung pattern route -> validator -> middleware -> controller -> service.
+- Day la cum con thieu tiep theo sau khi `Admin Companies` va `Admin Users` da hoan tat.
+- `Job` da co san `status`, `published_at`, `expired_at`, nen rat hop de admin moderation toan he thong.
+- Gia tri van hanh cao: admin co the xem, tam dung, dong cac job vi pham hoac can tra soat.
+- Boundary ky thuat tiep tuc tai su dung pattern da on dinh cua `Admin Companies` va `Admin Users`.
 
 ### Scope phase tiep theo
 
-- list users
-- user detail
-- ban/unban user qua update `status`
+- list jobs toan he thong
+- job detail
+- update job status tu phia admin
 
 Thu tu de lam trong module nay:
 
-1. `GET /api/v1/admin/users`
-2. `GET /api/v1/admin/users/:userId`
-3. `PATCH /api/v1/admin/users/:userId/status`
+1. `GET /api/v1/admin/jobs`
+2. `GET /api/v1/admin/jobs/:jobId`
+3. `PATCH /api/v1/admin/jobs/:jobId/status`
 
 ### Chua nen dua vao phase nay
 
-- role management cho admin
-- permission matrix chi tiet
-- soft delete / restore user
+- role/permission matrix chi tiet cho admin
 - audit log day du
+- dashboard phuc tap
+- moderation workflow nhieu buoc
 
 ## 7. Ket luan
 
@@ -258,5 +267,6 @@ Sau khi quet toan bo du an, trang thai dung cua admin la:
 
 - `Admin Auth`: da co
 - `Admin Companies`: da hoan thanh module dau tien va da co Postman
-- `Admin Users`: la cum chuc nang tiep theo
-- sau do moi den `Admin Jobs`, `Dashboard`, `Admin Applications`
+- `Admin Users`: da hoan thanh module dau tien va da co Postman
+- `Admin Jobs`: la cum chuc nang tiep theo
+- sau do moi den `Dashboard`, `Admin Applications`, va `Audit`

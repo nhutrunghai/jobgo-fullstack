@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { JobLevel, JobStatus, JobType } from '~/constants/enum.js'
+import { JobLevel, JobModerationStatus, JobStatus, JobType } from '~/constants/enum.js'
 
 export interface SalaryType {
   min?: number
@@ -24,6 +24,10 @@ interface JobTypeSchema {
   quantity: number
   expired_at: Date
   status?: JobStatus
+  moderation_status?: JobModerationStatus
+  blocked_reason?: string
+  blocked_at?: Date
+  blocked_by?: ObjectId
   published_at?: Date
   created_at?: Date
   updated_at?: Date
@@ -45,6 +49,10 @@ export default class Job {
   quantity: number
   expired_at: Date
   status?: JobStatus
+  moderation_status?: JobModerationStatus
+  blocked_reason?: string
+  blocked_at?: Date
+  blocked_by?: ObjectId
   published_at?: Date
   created_at?: Date
   updated_at?: Date
@@ -72,6 +80,10 @@ export default class Job {
     this.quantity = job.quantity
     this.expired_at = job.expired_at
     this.status = job.status || JobStatus.DRAFT
+    this.moderation_status = job.moderation_status || JobModerationStatus.ACTIVE
+    this.blocked_reason = job.blocked_reason
+    this.blocked_at = job.blocked_at
+    this.blocked_by = job.blocked_by
     this.published_at = job.published_at
     this.created_at = job.created_at || date
     this.updated_at = job.updated_at || date

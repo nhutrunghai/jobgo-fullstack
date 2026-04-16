@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config'
 import ElasticsearchConfig from '~/configs/elasticsearch.config'
 import env from '~/configs/env.config'
-import { JobLevel, JobStatus, JobType } from '~/constants/enum'
+import { JobLevel, JobModerationStatus, JobStatus, JobType } from '~/constants/enum'
 import Job from '~/models/schema/client/jobs.schema'
 import { generateEmbedding } from '~/services/embedding.service'
 import jobSearchService from '~/services/job-search.service'
@@ -245,6 +245,7 @@ class JobsService {
   private buildPublicSearchFilters(params: SearchPublicJobsParams) {
     const filters: object[] = [
       { term: { status: JobStatus.OPEN } },
+      { term: { moderation_status: JobModerationStatus.ACTIVE } },
       { exists: { field: 'published_at' } },
       { range: { expired_at: { gt: new Date().toISOString() } } }
     ]
@@ -410,6 +411,7 @@ class JobsService {
           $match: {
             _id: { $in: objectIds },
             status: JobStatus.OPEN,
+            moderation_status: JobModerationStatus.ACTIVE,
             published_at: { $ne: null },
             expired_at: { $gt: new Date() }
           }
