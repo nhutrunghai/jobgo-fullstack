@@ -10,14 +10,14 @@ import {
   updateSettingUserController
 } from '~/controller/client/user.controller'
 import { newPasswordMiddleware, resendMailMiddleware } from '~/middlewares/client/user.middleware'
-import isAuthorized from '~/middlewares/isAuthorized.middleware'
+import isAuthorized from '~/middlewares/client/isAuthorized.middleware'
 import { mailLimiter } from '~/middlewares/rateLimit.middleware'
 import validate from '~/middlewares/validator.middleware'
 import {
   newPasswordValidator,
   updateProfileUserValidator,
   updateSettingUserValidator
-} from '~/validators/user.validator'
+} from '~/validators/client/user.validator'
 const userRouter = Router()
 userRouter.get('/me', isAuthorized, getProfileMeController)
 userRouter.get('/profile/:id', getProfileUserController)
@@ -35,3 +35,4 @@ userRouter.post(
 ) // ( rate limit theo tài khoản )
 // Còn thiếu chức năng upload ảnh bìa và ảnh thumnail ... 
 export default userRouter
+

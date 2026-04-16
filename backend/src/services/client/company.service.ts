@@ -1,6 +1,6 @@
 import databaseService from '~/configs/database.config'
 import { ObjectId } from 'mongodb'
-import Company from '~/models/schema/companies.schema'
+import Company from '~/models/schema/client/companies.schema'
 
 class CompanyService {
   async createCompany(data: Company) {
@@ -22,3 +22,4 @@ class CompanyService {
 
 const companyService = new CompanyService()
 export default companyService
+

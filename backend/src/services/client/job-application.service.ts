@@ -1,9 +1,9 @@
 import { ObjectId } from 'mongodb'
 import { JobApplicationStatus } from '~/constants/enum'
 import databaseService from '~/configs/database.config'
-import Company from '~/models/schema/companies.schema'
-import JobApplication from '~/models/schema/jobApplications.schema'
-import Job from '~/models/schema/jobs.schema'
+import Company from '~/models/schema/client/companies.schema'
+import JobApplication from '~/models/schema/client/jobApplications.schema'
+import Job from '~/models/schema/client/jobs.schema'
 
 type AppliedJobListItem = {
   _id?: ObjectId
@@ -210,3 +210,4 @@ class JobApplicationService {
 
 const jobApplicationService = new JobApplicationService()
 export default jobApplicationService
+

@@ -5,8 +5,8 @@ import { ObjectId } from 'mongodb'
 import { JobStatus } from '~/constants/enum'
 import UserMessages from '~/constants/messages'
 import { CompanyLocals, JobLocals } from '~/models/requests/responseType'
-import Job from '~/models/schema/jobs.schema'
-import jobsService from '~/services/job.service'
+import Job from '~/models/schema/client/jobs.schema'
+import jobsService from '~/services/client/job.service'
 
 export const createCompanyJobController = async (
   req: Request<ParamsDictionary, unknown, Job>,
@@ -193,3 +193,4 @@ export const updateCompanyJobStatusController = async (
     }
   })
 }
+

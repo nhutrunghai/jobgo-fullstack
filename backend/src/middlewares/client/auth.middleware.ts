@@ -19,7 +19,7 @@ import RedisService from '~/configs/redis.config.js'
 import { comparePassword, hashToken } from '~/utils/crypto.utils.js'
 import { OtpType } from '~/constants/enum.js'
 import { VerifyOtpLocals } from '~/models/requests/responseType.js'
-import OtpCode from '~/models/schema/otpCodes.schema.js'
+import OtpCode from '~/models/schema/client/otpCodes.schema.js'
 export const checkOtpVerify = async (condition: { code: string; type: OtpType }, next: NextFunction) => {
   const result = await databaseService.otpCodes.findOne(condition)
   if (!result) {
@@ -154,3 +154,4 @@ export const resetPasswordMiddleware = async (
   res.locals.otpVerify = result as OtpCode
   next()
 }
+

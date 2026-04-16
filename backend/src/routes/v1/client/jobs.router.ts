@@ -5,7 +5,7 @@ import {
   withdrawMyJobApplicationController
 } from '~/controller/client/job-application.controller'
 import { getPublicJobDetailController, searchPublicJobsController } from '~/controller/client/public-job.controller'
-import isAuthorized from '~/middlewares/isAuthorized.middleware.js'
+import isAuthorized from '~/middlewares/client/isAuthorized.middleware.js'
 import optionalDecodeToken from '~/middlewares/optionalDecodeToken.middleware'
 import {
   ensureCanWithdrawApplication,
@@ -24,8 +24,8 @@ import {
   requirePublicJobDetail
 } from '~/middlewares/client/public-job.middleware'
 import validate from '~/middlewares/validator.middleware'
-import { applyJobValidator, getMyAppliedJobsValidator } from '~/validators/job-application.validator'
-import { getCompanyJobDetailValidator, searchPublicJobsValidator } from '~/validators/job.validator'
+import { applyJobValidator, getMyAppliedJobsValidator } from '~/validators/client/job-application.validator'
+import { getCompanyJobDetailValidator, searchPublicJobsValidator } from '~/validators/client/job.validator'
 
 const jobsRouter = Router()
 
@@ -64,3 +64,4 @@ jobsRouter.patch(
 )
 
 export default jobsRouter
+

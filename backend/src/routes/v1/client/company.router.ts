@@ -27,19 +27,19 @@ import {
 import { loadCompanyJob, requireCompanyJob } from '~/middlewares/client/job.middleware'
 import { isVerifiedCompany } from '~/middlewares/client/Verified.middleware'
 import validate from '~/middlewares/validator.middleware'
-import { createCompanyValidator, updateCompanyValidator } from '~/validators/company.validator'
+import { createCompanyValidator, updateCompanyValidator } from '~/validators/client/company.validator'
 import {
   getCompanyApplicationDetailValidator,
   getCompanyJobApplicationsValidator,
   updateCompanyApplicationStatusValidator
-} from '~/validators/job-application.validator'
+} from '~/validators/client/job-application.validator'
 import {
   createJobValidator,
   getCompanyJobDetailValidator,
   getCompanyJobsValidator,
   updateJobValidator,
   updateJobStatusValidator
-} from '~/validators/job.validator'
+} from '~/validators/client/job.validator'
 
 const companyRouter = Router()
 
@@ -117,3 +117,4 @@ companyRouter.patch(
   updateCompanyJobStatusController
 )
 export default companyRouter
+

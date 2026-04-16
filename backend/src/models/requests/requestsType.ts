@@ -12,6 +12,10 @@ export interface LoginRqType {
   email: string
   password: string
 }
+export interface AdminLoginRqType {
+  email: string
+  password: string
+}
 export interface RefreshRqType {
   refresh_token: string
 }
