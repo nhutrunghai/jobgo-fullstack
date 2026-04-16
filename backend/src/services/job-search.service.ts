@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config'
 import ElasticsearchConfig from '~/configs/elasticsearch.config'
 import env from '~/configs/env.config'
-import Job from '~/models/schema/jobs.schema'
+import Job from '~/models/schema/client/jobs.schema'
 import { generateEmbedding } from '~/services/embedding.service'
 
 export interface PublicJobSearchDocument {
@@ -75,3 +75,4 @@ class JobSearchService {
 
 const jobSearchService = new JobSearchService()
 export default jobSearchService
+

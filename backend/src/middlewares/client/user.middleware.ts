@@ -5,7 +5,7 @@ import { ObjectId } from 'mongodb'
 import { OtpType } from '~/constants/enum'
 import UserMessages from '~/constants/messages'
 import { newPasswordRqType } from '~/models/requests/requestsType'
-import userService from '~/services/users.service'
+import userService from '~/services/client/users.service'
 import { checkOtpVerify } from './auth.middleware'
 export const resendMailMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const user = await userService.findUser('_id', new ObjectId(req.decodeToken?.userId))
@@ -28,3 +28,4 @@ export const newPasswordMiddleware = async (
   if (!result) return
   next()
 }
+

@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config.js'
 import { OtpType } from '~/constants/enum'
 import authService from './auth.service'
-import OtpCode from '~/models/schema/otpCodes.schema'
+import OtpCode from '~/models/schema/client/otpCodes.schema'
 class UserService {
   async findUser(key: string, value: string | ObjectId, projection?: object) {
     return await databaseService.users.findOne({ [key]: value }, { projection: projection || {} })
@@ -26,3 +26,4 @@ class UserService {
 }
 const userService = new UserService()
 export default userService
+

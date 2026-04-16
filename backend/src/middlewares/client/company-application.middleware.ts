@@ -157,7 +157,7 @@ export const ensureValidApplicationStatusTransition = async (
   next: NextFunction
 ) => {
   const application = res.locals.companyApplication!
-  const currentStatus = application.status || JobApplicationStatus.SUBMITTED
+  const currentStatus = (application.status || JobApplicationStatus.SUBMITTED) as JobApplicationStatus
   const nextStatus = req.body.status as JobApplicationStatus
 
   if (!allowedTransitions[currentStatus].includes(nextStatus)) {

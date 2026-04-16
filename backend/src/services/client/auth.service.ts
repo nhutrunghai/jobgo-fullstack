@@ -2,13 +2,13 @@ import { SignOptions } from 'jsonwebtoken'
 import { generateJwt } from '~/utils/jwt.util.js'
 import userInfo from '~/models/userInfo.js'
 import databaseService from '~/configs/database.config.js'
-import User from '~/models/schema/user.schema.js'
-import RefreshToken from '~/models/schema/refreshTokens.schema.js'
+import User from '~/models/schema/client/user.schema.js'
+import RefreshToken from '~/models/schema/client/refreshTokens.schema.js'
 import { v4 as uuidv4 } from 'uuid'
 import env from '~/configs/env.config.js'
 import { ObjectId } from 'mongodb'
 import { hashPassword } from '~/utils/crypto.utils.js'
-import OtpCode from '~/models/schema/otpCodes.schema.js'
+import OtpCode from '~/models/schema/client/otpCodes.schema.js'
 import axios from 'axios'
 import { GoogleTokenResponse } from '~/models/oauth.js'
 import { AppError } from '~/models/appError.js'
@@ -168,3 +168,4 @@ class AuthService {
 }
 const authService = new AuthService()
 export default authService
+

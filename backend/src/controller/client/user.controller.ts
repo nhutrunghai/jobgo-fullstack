@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes'
 import UserMessages from '~/constants/messages'
 import { AppError } from '~/models/appError'
 import { GetUserRqType, newPasswordRqType } from '~/models/requests/requestsType'
-import userService from '~/services/users.service'
+import userService from '~/services/client/users.service'
 import { ObjectId } from 'mongodb'
 import env from '~/configs/env.config'
 import { OtpType, TemplateResendId } from '~/constants/enum'
@@ -12,7 +12,7 @@ import ms, { StringValue } from 'ms'
 import databaseService from '~/configs/database.config'
 import resendProvider from '~/providers/resend.provider'
 import { UserLocals } from '~/models/requests/responseType'
-import User from '~/models/schema/user.schema'
+import User from '~/models/schema/client/user.schema'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { hashPassword } from '~/utils/crypto.utils'
 export const getProfileMeController = async (req: Request, res: Response) => {
@@ -125,3 +125,4 @@ export const newPasswordController = async (req: Request<ParamsDictionary, any, 
     message: UserMessages.FORGOT_PASSWORD_SUCCESS
   })
 }
+

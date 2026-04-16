@@ -4,65 +4,74 @@ const envSchema = z.object({
   // App
   PORT: z.coerce
     .number()
-    .min(1, { message: 'PORT phai lon hon 0' })
-    .max(6553, { message: 'PORT khong duoc vuot qua 6553' })
+    .min(1, { message: 'PORT phải lớn hơn 0' })
+    .max(6553, { message: 'PORT không được vượt quá 6553' })
     .default(3000),
   // Allow Origin Cors
   ALLOWED_ORIGINS: z
     .string()
-    .min(1, 'ORIGIN_ALLOW_CORS khong hop le')
+    .min(1, 'ORIGIN_ALLOW_CORS không hợp lệ')
     .transform((item) => item.split(',') || []),
   // Redis
   REDIS_PORT: z.coerce
     .number()
-    .min(1, { message: 'REDIS_PORT phai lon hon 0' })
-    .max(6553, { message: 'REDIS_PORT khong duoc vuot qua 6553' })
+    .min(1, { message: 'REDIS_PORT phải lớn hơn 0' })
+    .max(6553, { message: 'REDIS_PORT không được vượt quá 6553' })
     .default(6379),
-  REDIS_HOST: z.string().min(1, { message: 'REDIS_HOST khong duoc rong' }).default('127.0.0.1'),
-  REDIS_PASSWORD: z.string().min(1, { message: 'REDIS_PASSWORD khong duoc rong' }).optional(),
+  REDIS_HOST: z.string().min(1, { message: 'REDIS_HOST không được rỗng' }).default('127.0.0.1'),
+  REDIS_PASSWORD: z.string().min(1, { message: 'REDIS_PASSWORD không được rỗng' }).optional(),
   // Database
-  DB_URL: z.url({ message: 'DB_URL phai la mot duong dan hop le' }),
-  DB_NAME: z.string().min(1, { message: 'DB_NAME khong duoc rong' }),
-  DB_USER_NAME: z.string().min(1, { message: 'DB_USER_NAME khong duoc rong' }),
-  DB_COMPANY_NAME: z.string().min(1, { message: 'DB_COMPANY_NAME khong duoc rong' }),
-  DB_JOB_NAME: z.string().min(1, { message: 'DB_JOB_NAME khong duoc rong' }),
-  DB_RESUME_NAME: z.string().min(1, { message: 'DB_RESUME_NAME khong duoc rong' }),
-  DB_JOB_APPLICATION_NAME: z.string().min(1, { message: 'DB_JOB_APPLICATION_NAME khong duoc rong' }),
-  DB_REFRESH_TOKEN_NAME: z.string().min(1, { message: 'DB_REFRESH_TOKEN_NAME khong duoc rong' }),
-  DB_OTP_CODE_NAME: z.string().min(1, { message: 'DB_OTP_CODE_NAME khong duoc rong' }),
-  ExpiresIn_EMAIL_VERIFY_TOKEN: z.string().min(1, { message: 'ExpiresIn_EMAIL_VERIFY_TOKEN khong duoc rong' }),
-  ExpiresIn_FORGOT_PASSWORD_TOKEN: z.string().min(1, { message: 'ExpiresIn_FORGOT_PASSWORD_TOKEN khong duoc rong' }),
+  DB_URL: z.url({ message: 'DB_URL phải là một đường dẫn hợp lệ' }),
+  DB_NAME: z.string().min(1, { message: 'DB_NAME không được rỗng' }),
+  DB_USER_NAME: z.string().min(1, { message: 'DB_USER_NAME không được rỗng' }),
+  DB_COMPANY_NAME: z.string().min(1, { message: 'DB_COMPANY_NAME không được rỗng' }),
+  DB_JOB_NAME: z.string().min(1, { message: 'DB_JOB_NAME không được rỗng' }),
+  DB_RESUME_NAME: z.string().min(1, { message: 'DB_RESUME_NAME không được rỗng' }),
+  DB_JOB_APPLICATION_NAME: z.string().min(1, { message: 'DB_JOB_APPLICATION_NAME không được rỗng' }),
+  DB_REFRESH_TOKEN_NAME: z.string().min(1, { message: 'DB_REFRESH_TOKEN_NAME không được rỗng' }),
+  DB_OTP_CODE_NAME: z.string().min(1, { message: 'DB_OTP_CODE_NAME không được rỗng' }),
+  ExpiresIn_EMAIL_VERIFY_TOKEN: z.string().min(1, { message: 'ExpiresIn_EMAIL_VERIFY_TOKEN không được rỗng' }),
+  ExpiresIn_FORGOT_PASSWORD_TOKEN: z.string().min(1, { message: 'ExpiresIn_FORGOT_PASSWORD_TOKEN không được rỗng' }),
   // JWT
-  SECRET_ACCESS_TOKEN: z.string().min(32, { message: 'Access Token Secret qua ngan' }),
-  SECRET_REFRESH_TOKEN: z.string().min(32, { message: 'Refresh Token Secret qua ngan' }),
-  ExpiresIn_ACCESS_TOKEN: z.string().min(1, { message: 'ExpiresIn_ACCESS_TOKEN khong duoc rong' }),
-  ExpiresIn_REFRESH_TOKEN: z.string().min(1, { message: 'ExpiresIn_REFRESH_TOKEN khong duoc rong' }),
+  SECRET_ACCESS_TOKEN: z.string().min(32, { message: 'Access Token Secret quá ngắn' }),
+  SECRET_REFRESH_TOKEN: z.string().min(32, { message: 'Refresh Token Secret quá ngắn' }),
+  ExpiresIn_ACCESS_TOKEN: z.string().min(1, { message: 'ExpiresIn_ACCESS_TOKEN không được rỗng' }),
+  ExpiresIn_REFRESH_TOKEN: z.string().min(1, { message: 'ExpiresIn_REFRESH_TOKEN không được rỗng' }),
   // Provider - Resend
-  RESEND_API_KEY: z.string().min(1, { message: 'Khong ton tai Resend api key' }),
-  MAIL_FROM_ADDRESS: z.string().min(1, { message: 'Khong ton tai domain mail' }),
-  MAIL_FROM_NAME: z.string().min(1, { message: 'MAIL_FROM_NAME khong duoc rong' }),
-  FRONTEND_URL: z.url({ message: 'FONDEND_URL phai la mot duong dan hop le' }),
+  RESEND_API_KEY: z.string().min(1, { message: 'Không tồn tại Resend API key' }),
+  MAIL_FROM_ADDRESS: z.string().min(1, { message: 'Không tồn tại domain mail' }),
+  MAIL_FROM_NAME: z.string().min(1, { message: 'MAIL_FROM_NAME không được rỗng' }),
+  FRONTEND_URL: z.url({ message: 'FRONTEND_URL phải là một đường dẫn hợp lệ' }),
   // Oauth google
-  GOOGLE_CLIENT_ID: z.string().min(1, { message: 'Khong ton tai GOOGLE_CLIENT_ID' }),
-  GOOGLE_CLIENT_SECRET: z.string().min(1, { message: 'Khong ton tai GOOGLE_CLIENT_SECRET' }),
-  GOOGLE_REDIRECT_URL: z.url({ message: 'GOOGLE_REDIRECT_URL phai la mot duong dan hop le' }),
+  GOOGLE_CLIENT_ID: z.string().min(1, { message: 'Không tồn tại GOOGLE_CLIENT_ID' }),
+  GOOGLE_CLIENT_SECRET: z.string().min(1, { message: 'Không tồn tại GOOGLE_CLIENT_SECRET' }),
+  GOOGLE_REDIRECT_URL: z.url({ message: 'GOOGLE_REDIRECT_URL phải là một đường dẫn hợp lệ' }),
   // BUILD_MODE
   BUILD_MODE: z.enum(['dev', 'production', 'test']).default('dev'),
   // ELASTICSEARCH
-  ELASTICSEARCH_URL: z.string().min(1, { message: 'Khong ton tai ELASTICSEARCH_URL' }),
-  PUBLIC_JOBS_SEARCH_INDEX: z.string().min(1, { message: 'PUBLIC_JOBS_SEARCH_INDEX khong duoc rong' }),
+  ELASTICSEARCH_URL: z.string().min(1, { message: 'Không tồn tại ELASTICSEARCH_URL' }),
+  PUBLIC_JOBS_SEARCH_INDEX: z.string().min(1, { message: 'PUBLIC_JOBS_SEARCH_INDEX không được rỗng' }),
   // Embedding service
-  EMBEDDING_API_URL: z.url({ message: 'EMBEDDING_API_URL phai la mot duong dan hop le' }).default('http://localhost:8000'),
+  EMBEDDING_API_URL: z.url({ message: 'EMBEDDING_API_URL phải là một đường dẫn hợp lệ' }).default('http://localhost:8000'),
   // Hugging Face
-  HUGGINGFACE_API_KEY: z.string().min(1, { message: 'Khong ton tai HUGGINGFACE_API_KEY' }).optional(),
+  HUGGINGFACE_API_KEY: z.string().min(1, { message: 'Không tồn tại HUGGINGFACE_API_KEY' }).optional(),
   // Gemini
-  GEMINI_API_KEY: z.string().min(1, { message: 'Khong ton tai GEMINI_API_KEY' }).optional()
+  GEMINI_API_KEY: z.string().min(1, { message: 'Không tồn tại GEMINI_API_KEY' }).optional(),
+  // Admin session
+  ADMIN_SESSION_COOKIE_NAME: z.string().min(1).default('admin_sid'),
+  ADMIN_SESSION_PREFIX: z.string().min(1).default('admin:sessions'),
+  ADMIN_SESSION_TTL: z.coerce
+    .number()
+    .min(60)
+    .default(60 * 30),
+  ADMIN_COOKIE_SECURE: z.preprocess((value) => value === 'true' || value === true, z.boolean()).default(false),
+  ADMIN_COOKIE_SAME_SITE: z.enum(['lax', 'strict', 'none']).default('lax')
 })
 
 const envServer = envSchema.safeParse(process.env)
 
 if (!envServer.success) {
-  console.error('Bien moi truong khong hop le:')
+  console.error('Biến môi trường không hợp lệ:')
   console.error(JSON.stringify(envServer.error.flatten().fieldErrors, null, 2))
   process.exit(1)
 }

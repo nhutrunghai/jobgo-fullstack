@@ -10,15 +10,15 @@ import {
   RegisterRqType,
   ResetPasswordRqType
 } from '~/models/requests/requestsType.js'
-import User from '~/models/schema/user.schema.js'
-import type OtpCode from '~/models/schema/otpCodes.schema.js'
+import User from '~/models/schema/client/user.schema.js'
+import type OtpCode from '~/models/schema/client/otpCodes.schema.js'
 import userInfo from '~/models/userInfo.js'
-import authService from '~/services/auth.service.js'
+import authService from '~/services/client/auth.service.js'
 import { generateToken } from '~/utils/crypto.utils.js'
 import { getDeviceInfo } from '~/utils/deviceInfo.util.js'
 import ms, { StringValue } from 'ms'
 import resendProvider from '~/providers/resend.provider.js'
-import userService from '~/services/users.service.js'
+import userService from '~/services/client/users.service.js'
 import { VerifyOtpLocals } from '~/models/requests/responseType.js'
 import _ from 'lodash'
 export const RegisterController = async (req: Request<ParamsDictionary, any, RegisterRqType>, res: Response) => {
@@ -139,3 +139,4 @@ export const resetPasswordController = async (
     message: UserMessages.FORGOT_PASSWORD_SUCCESS
   })
 }
+

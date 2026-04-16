@@ -5,7 +5,7 @@ import databaseService from '~/configs/database.config'
 import ElasticsearchConfig from '~/configs/elasticsearch.config'
 import env from '~/configs/env.config'
 import { JobLevel, JobStatus, JobType } from '~/constants/enum'
-import Job from '~/models/schema/jobs.schema'
+import Job from '~/models/schema/client/jobs.schema'
 import { generateEmbedding } from '~/services/embedding.service'
 import jobSearchService from '~/services/job-search.service'
 
@@ -456,3 +456,4 @@ main().catch((error) => {
   console.error('Search benchmark failed:', error)
   process.exit(1)
 })
+

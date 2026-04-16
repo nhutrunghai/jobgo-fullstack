@@ -1,12 +1,12 @@
 import { Collection, CreateIndexesOptions, Db, IndexSpecification, MongoClient } from 'mongodb'
 import env from './env.config.js'
-import Company from '~/models/schema/companies.schema.js'
-import JobApplication from '~/models/schema/jobApplications.schema.js'
-import Job from '~/models/schema/jobs.schema.js'
-import OtpCode from '~/models/schema/otpCodes.schema.js'
-import Resume from '~/models/schema/resumes.schema.js'
-import RefreshToken from '~/models/schema/refreshTokens.schema.js'
-import User from '~/models/schema/user.schema.js'
+import Company from '~/models/schema/client/companies.schema.js'
+import JobApplication from '~/models/schema/client/jobApplications.schema.js'
+import Job from '~/models/schema/client/jobs.schema.js'
+import OtpCode from '~/models/schema/client/otpCodes.schema.js'
+import Resume from '~/models/schema/client/resumes.schema.js'
+import RefreshToken from '~/models/schema/client/refreshTokens.schema.js'
+import User from '~/models/schema/client/user.schema.js'
 
 class DatabaseService {
   private client: MongoClient
@@ -187,3 +187,4 @@ class DatabaseService {
 
 const databaseService = new DatabaseService()
 export default databaseService
+

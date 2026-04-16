@@ -1,10 +1,10 @@
 import { ObjectId } from 'mongodb'
-import OtpCode from '../schema/otpCodes.schema.js'
-import User from '../schema/user.schema.js'
-import Company from '../schema/companies.schema.js'
-import Job from '../schema/jobs.schema.js'
-import JobApplication from '../schema/jobApplications.schema.js'
-import Resume from '../schema/resumes.schema.js'
+import OtpCode from '../schema/client/otpCodes.schema.js'
+import User from '../schema/client/user.schema.js'
+import Company from '../schema/client/companies.schema.js'
+import Job from '../schema/client/jobs.schema.js'
+import JobApplication from '../schema/client/jobApplications.schema.js'
+import Resume from '../schema/client/resumes.schema.js'
 
 export type VerifyOtpLocals = { otpVerify: OtpCode }
 export type UserLocals = { user: User }

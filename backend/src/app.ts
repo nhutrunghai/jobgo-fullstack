@@ -1,4 +1,5 @@
 import express from 'express'
+import cookieParser from 'cookie-parser'
 import 'dotenv/config'
 import env from './configs/env.config.js'
 import databaseService from './configs/database.config.js'
@@ -29,6 +30,7 @@ export const createApp = async () => {
   app.use(cors(corsOptions))
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
+  app.use(cookieParser())
   app.get('/', (req, res) => {
     res.send('Hello World')
   })

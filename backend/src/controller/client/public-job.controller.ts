@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { JobLevel, JobType } from '~/constants/enum'
 import { PublicJobWithApplicationLocals } from '~/models/requests/responseType'
-import jobsService from '~/services/job.service'
+import jobsService from '~/services/client/job.service'
 
 export const getPublicJobDetailController = async (
   req: Request,
@@ -32,3 +32,4 @@ export const searchPublicJobsController = async (req: Request, res: Response) =>
     data: result
   })
 }
+

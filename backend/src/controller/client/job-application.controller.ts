@@ -10,8 +10,8 @@ import {
   CompanyLocals,
   JobLocals
 } from '~/models/requests/responseType'
-import JobApplication from '~/models/schema/jobApplications.schema'
-import jobApplicationService from '~/services/job-application.service'
+import JobApplication from '~/models/schema/client/jobApplications.schema'
+import jobApplicationService from '~/services/client/job-application.service'
 
 type ApplyJobBody = {
   cv_id: string
@@ -166,3 +166,4 @@ export const withdrawMyJobApplicationController = async (
     }
   })
 }
+

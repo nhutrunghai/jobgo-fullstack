@@ -28,7 +28,7 @@ import {
   registerValidator,
   resetPasswordValidator,
   verifyEmailValidator
-} from '~/validators/auth.validator.js'
+} from '~/validators/client/auth.validator.js'
 const authRouter = Router()
 authRouter.post('/register', validate(registerValidator), registerMiddleware, RegisterController)
 authRouter.post('/login', validate(loginValidator), LoginMiddleware, LoginController)
@@ -39,3 +39,4 @@ authRouter.post('/verify-email', validate(verifyEmailValidator), verifyEmailMidd
 authRouter.post('/forgot-password', validate(forgotPasswordValidator), mailLimiter, forgotPasswordController)
 authRouter.post('/reset-password', validate(resetPasswordValidator), resetPasswordMiddleware, resetPasswordController)
 export default authRouter
+
