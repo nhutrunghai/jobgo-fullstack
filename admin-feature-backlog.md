@@ -1,194 +1,246 @@
 # Admin Feature Backlog
 
-## Mục tiêu hiện tại
+## 1. Ket qua quet du an
 
-Backend hiện đã có đủ các miền nghiệp vụ phía client:
+### Client/backend da co san
 
-- auth người dùng
-- hồ sơ và cài đặt người dùng
-- company profile
+- auth nguoi dung
+- profile va setting nguoi dung
+- company profile cho employer
 - company jobs
 - public job search
-- job application
+- job application workflow
+- semantic job search service va embedding integration
 
-Phía admin hiện mới có:
+### Admin da co san trong code
+
+#### Admin auth
+
+Da co:
 
 - `POST /api/v1/admin/auth/login`
 - `POST /api/v1/admin/auth/logout`
 - `GET /api/v1/admin/auth/me`
 
-Điều đó có nghĩa là hệ thống đã có dữ liệu nền để quản trị, nhưng chưa có API admin cho các nghiệp vụ vận hành.
+Da co nen:
 
-## Dữ liệu và rule đã có sẵn
+- session-based admin auth luu Redis
+- `adminAuthMiddleware`
+- `authorizeAdmin([UserRole.ADMIN])`
 
-- `User` có `role`, `status`, `is_verified`
-- `Company` có `verified`
-- `Job` có `status`, `published_at`, `expired_at`
-- `JobApplication` có workflow trạng thái đầy đủ
-- MongoDB đã có index cho `users`, `jobs`, `jobApplications`
-- Admin auth đã có nền session-based riêng
+#### Admin companies
 
-## Backlog chức năng admin
-
-### 1. Quản lý company verification
-
-Độ ưu tiên: cao nhất
-
-Lý do:
-
-- Employer chỉ đăng job khi `company.verified === true`
-- Hệ thống đã có middleware `isVerifiedCompany`
-- Business rule duyệt công ty đã tồn tại, nhưng admin chưa có API để thao tác
-
-Chức năng nên có:
+Da co:
 
 - `GET /api/v1/admin/companies`
 - `GET /api/v1/admin/companies/:companyId`
-- `PATCH /api/v1/admin/companies/:companyId/verify`
-- `PATCH /api/v1/admin/companies/:companyId/unverify`
+- `GET /api/v1/admin/companies/:companyId/jobs`
+- `GET /api/v1/admin/companies/:companyId/applications`
+- `PATCH /api/v1/admin/companies/:companyId/status`
 
-Filter nên hỗ trợ:
+Filter da co:
 
 - `verified`
 - `keyword`
 - `page`
 - `limit`
 
-### 2. Quản lý user
+Filter bo sung da co trong nested endpoints:
 
-Độ ưu tiên: rất cao
+- jobs theo `status`, `keyword`
+- applications theo `status`, `jobId`, `candidateId`
 
-Lý do:
+### Phan admin chua co
 
-- `User` đã có `role` và `status`
-- `status` hiện có `ACTIVE`, `BANNED`, `DELETED`
-- Hiện chưa có API admin để khóa hoặc mở user
+Chua thay route/controller/service/validator rieng cho:
 
-Chức năng nên có:
+- admin users
+- admin jobs toan he thong
+- admin applications toan he thong
+- admin dashboard summary
+- admin audit log / session management
+
+## 2. Danh gia backlog hien tai
+
+Backlog cu khong con dung o 2 diem:
+
+- Phia admin khong con "moi co auth". Hien tai da co nguyen cum `Admin Companies`.
+- Cum `company verification` khong con la muc tiep theo, vi da duoc implement o muc co the dung backend.
+
+## 3. Cac rule va du lieu nen co the tan dung tiep
+
+- `User` co `role`, `status`, `is_verified`
+- `Company` co `verified`
+- `Job` co `status`, `published_at`, `expired_at`
+- `JobApplication` co workflow trang thai day du
+- MongoDB da co schema va collection rieng cho `users`, `companies`, `jobs`, `jobApplications`
+- Admin auth da tach boundary rieng khoi client auth
+
+## 4. Trang thai backlog sau khi cap nhat
+
+### Cum A. Admin auth
+
+Trang thai: done
+
+Pham vi:
+
+- login
+- logout
+- me
+- session-based auth
+
+### Cum B. Admin companies
+
+Trang thai: done cho phase 1
+
+Pham vi:
+
+- list companies
+- company detail
+- verify/unverify qua `PATCH /status`
+- xem jobs cua company
+- xem applications cua company
+
+Mo rong co the de sau:
+
+- ly do verify/unverify
+- lich su moderation
+- note noi bo cho company
+
+### Cum C. Admin users
+
+Trang thai: chua lam
+
+Do uu tien: cao nhat tiep theo
+
+Can co:
 
 - `GET /api/v1/admin/users`
 - `GET /api/v1/admin/users/:userId`
 - `PATCH /api/v1/admin/users/:userId/status`
-- có thể cân nhắc `PATCH /api/v1/admin/users/:userId/role` nếu thật sự cần
 
-Filter nên hỗ trợ:
+Nen ho tro filter:
 
 - `role`
 - `status`
 - `keyword` theo `email`, `username`, `fullName`
+- `page`
+- `limit`
 
-### 3. Quản lý job moderation
+Co the can nhac sau:
 
-Độ ưu tiên: cao
+- `PATCH /api/v1/admin/users/:userId/role`
 
-Lý do:
+Nhung khong nen dua vao phase tiep theo neu chua co nhu cau business ro rang.
 
-- Job hiện có `draft`, `open`, `paused`, `closed`, `expired`
-- Company tự quản job của họ
-- Chưa có lớp kiểm soát toàn hệ thống từ admin
+### Cum D. Admin jobs moderation toan he thong
 
-Chức năng nên có:
+Trang thai: chua lam
+
+Do uu tien: cao
+
+Can co:
 
 - `GET /api/v1/admin/jobs`
 - `GET /api/v1/admin/jobs/:jobId`
 - `PATCH /api/v1/admin/jobs/:jobId/status`
 
-Admin cần ít nhất khả năng:
+Filter nen ho tro:
 
-- xem job toàn hệ thống
-- lọc theo company, status, keyword
-- đóng hoặc tạm dừng job vi phạm
+- `companyId`
+- `status`
+- `keyword`
+- `page`
+- `limit`
 
-### 4. Dashboard summary
+### Cum E. Admin dashboard summary
 
-Độ ưu tiên: trung bình cao
+Trang thai: chua lam
 
-Lý do:
+Do uu tien: trung binh cao
 
-- Dễ làm
-- Có giá trị vận hành ngay
-
-Chức năng nên có:
+Can co:
 
 - `GET /api/v1/admin/dashboard/summary`
 
-Số liệu nên trả:
+So lieu nen tra:
 
-- tổng users
-- tổng companies
-- số companies chưa verify
-- tổng jobs
-- số jobs đang open
-- tổng applications
+- tong users
+- tong companies
+- so companies chua verify
+- tong jobs
+- so jobs dang open
+- tong applications
 
-### 5. Xem applications toàn hệ thống
+### Cum F. Admin applications toan he thong
 
-Độ ưu tiên: trung bình
+Trang thai: chua lam
 
-Lý do:
+Do uu tien: trung binh
 
-- Dữ liệu application đã có
-- Hữu ích cho tra soát
-- Chưa cấp thiết bằng verify company, user management, job moderation
-
-Chức năng nên có:
+Can co:
 
 - `GET /api/v1/admin/applications`
 - `GET /api/v1/admin/applications/:applicationId`
 
-Filter nên hỗ trợ:
+Filter nen ho tro:
 
 - `status`
 - `jobId`
 - `companyId`
 - `candidateId`
+- `page`
+- `limit`
 
-### 6. Audit và session management
+### Cum G. Audit va session management
 
-Độ ưu tiên: thấp hơn
+Trang thai: chua lam
 
-Ví dụ:
+Do uu tien: thap hon
+
+Vi du:
 
 - list admin sessions
 - force logout admin
-- audit log hành động admin
+- audit log hanh dong admin
 
-Đây là phần nên để sau khi các nghiệp vụ vận hành cốt lõi đã hoàn thành.
+## 5. Thu tu trien khai de xuat moi
 
-## Thứ tự triển khai khuyến nghị
+1. Admin Users
+2. Admin Jobs moderation
+3. Admin Dashboard Summary
+4. Admin Applications
+5. Audit va session management
 
-1. Admin Companies
-- list
-- detail
-- verify/unverify
+## 6. Cum chuc nang tiep theo nen lam ngay
 
-2. Admin Users
-- list
-- detail
-- ban/unban
+### De xuat: Admin Users
 
-3. Admin Jobs
-- list
-- detail
-- pause/close/open từ admin
+Ly do chon cum nay truoc:
 
-4. Admin Dashboard Summary
+- Day la cum admin con thieu nhung dung sat voi model hien co nhat.
+- `User` da co san `role`, `status`, `is_verified`, nen implementation ngan va ro.
+- Can de admin khoa/mo tai khoan va tra soat user truoc khi di sau vao moderation jobs toan he thong.
+- Boundary ky thuat se rat giong cum `Admin Companies`, nen co the tai su dung pattern route -> validator -> middleware -> controller -> service.
 
-5. Admin Applications
+### Scope phase tiep theo
 
-## Những thứ chưa nên làm ngay
+- list users
+- user detail
+- ban/unban user qua update `status`
 
-- permission matrix chi tiết kiểu `admin.user.read`, `admin.company.verify`
-- multi-role admin như `SUPER_ADMIN`, `MODERATOR`
-- audit log đầy đủ
-- admin CRUD cho `resume`, `otpCodes`, `refreshTokens`
+### Chua nen dua vao phase nay
 
-## Kết luận
+- role management cho admin
+- permission matrix chi tiet
+- soft delete / restore user
+- audit log day du
 
-Bộ admin nên làm tiếp theo, bám sát đúng hệ thống hiện có, là:
+## 7. Ket luan
 
-- quản lý duyệt company
-- quản lý user
-- quản lý job toàn hệ thống
-- dashboard thống kê
-- rồi mới tới tra soát application và audit
+Sau khi quet toan bo du an, trang thai dung cua admin la:
+
+- `Admin Auth`: da co
+- `Admin Companies`: da co phase 1
+- `Admin Users`: la cum chuc nang tiep theo
+- sau do moi den `Admin Jobs`, `Dashboard`, `Admin Applications`
