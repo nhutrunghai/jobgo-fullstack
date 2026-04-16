@@ -9,6 +9,7 @@
     "start": "cross-env BUILD_MODE=production node dist/index.js",
     "embedding:demo": "npm run build && node dist/scripts/embedding-demo.js",
     "embedding:demo:tsx": "tsx src/scripts/embedding-demo.ts",
+    "jobs:backfill-moderation": "tsx src/scripts/backfill-job-moderation.ts",
     "test": "jest --no-cache",
     "test:watch": "jest --watchAll --no-cache",
     "test:ci": "jest --ci --coverage --no-cache",

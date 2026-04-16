@@ -173,3 +173,179 @@
   - Trước khi checkout/switch, đảm bảo working tree sạch hoặc stash rõ ràng.
   - Nếu cần refactor folder, làm thành commit riêng trước khi implement admin auth.
   - Không dùng `stash pop` bừa với `stash@{0}` vì stash đó chứa lẫn nhiều thay đổi cũ.
+
+## 2026-04-16
+
+### Phong cách làm việc đã chốt trong phiên này
+- Không nhảy vào code ngay.
+- Luôn đi theo nhịp:
+  1. bàn chức năng
+  2. chốt flow endpoint
+  3. đưa preview code
+  4. chỉ implement khi người dùng duyệt
+- Khi có nhiều endpoint trong cùng một module, ưu tiên làm theo thứ tự:
+  - endpoint list
+  - endpoint detail
+  - endpoint update/action
+- Khi xong một endpoint thì:
+  - build backend để xác nhận
+  - thêm request vào Postman
+  - rồi mới chuyển sang endpoint tiếp theo
+- Khi xong một module thì:
+  - cập nhật `admin-feature-backlog.md`
+  - nếu cần tạo nhánh riêng thì gom theo module, không commit lẻ từng endpoint
+- Người dùng thích tách boundary rõ ràng:
+  - auth riêng
+  - companies riêng
+  - users riêng
+  - jobs riêng
+- Người dùng ưu tiên đọc được logic triển khai hơn là tối ưu validator quá sớm.
+- Với validator enum số, người dùng chấp nhận kiểu `includes(...)` hiện tại vì dễ đọc logic implement.
+- Phần `role` tạm thời chưa làm, vì sau này người dùng còn muốn mở rộng:
+  - thêm role
+  - gắn quyền theo từng role
+  - thiết kế permission model rõ ràng hơn
+
+### Trạng thái code admin đã hoàn thành tính đến hiện tại
+
+#### 1. Admin auth
+Đã có:
+- `POST /api/v1/admin/auth/login`
+- `POST /api/v1/admin/auth/logout`
+- `GET /api/v1/admin/auth/me`
+
+Đặc điểm:
+- session-based auth riêng cho admin
+- dùng `adminAuthMiddleware`
+- dùng `authorizeAdmin([UserRole.ADMIN])`
+
+#### 2. Admin companies
+Đã hoàn thành module đầu tiên.
+
+Các API đã có:
+- `GET /api/v1/admin/companies`
+- `GET /api/v1/admin/companies/:companyId`
+- `PATCH /api/v1/admin/companies/:companyId/status`
+- `GET /api/v1/admin/companies/:companyId/jobs`
+- `GET /api/v1/admin/companies/:companyId/applications`
+
+Đặc điểm đã chốt:
+- nested endpoints dùng 1 validator gộp `params + query`
+- endpoint jobs:
+  - filter optional theo `status`, `keyword`
+- endpoint applications:
+  - filter optional theo `status`, `jobId`, `candidateId`
+- đã verify flow thực tế:
+  - company chỉ đăng job được khi `verified = true`
+  - khi admin chuyển `verified = false` thì đăng job bị chặn lại
+- request Postman đã được thêm vào folder:
+  - `admin > companies`
+
+#### 3. Admin users
+Đã hoàn thành module đầu tiên.
+
+Các API đã có:
+- `GET /api/v1/admin/users`
+- `GET /api/v1/admin/users/:userId`
+- `PATCH /api/v1/admin/users/:userId/status`
+
+Đặc điểm đã chốt:
+- `GET /admin/users`
+  - filter optional theo:
+    - `role`
+    - `status`
+    - `keyword`
+    - `page`
+    - `limit`
+  - `keyword` search theo:
+    - `email`
+    - `username`
+    - `fullName`
+- `GET /admin/users/:userId`
+  - dùng middleware check user tồn tại
+  - response không trả `password`
+- `PATCH /admin/users/:userId/status`
+  - chỉ đổi `status`, không đổi `role`
+  - phase đầu chỉ cho:
+    - `ACTIVE`
+    - `BANNED`
+  - có idempotent behavior
+  - có chặn admin tự ban chính mình
+- request Postman đã được thêm vào folder:
+  - `admin > users`
+
+### Những thứ đã bàn nhưng tạm thời chưa làm
+- `PATCH /api/v1/admin/users/:userId/role`
+- mọi phần liên quan mở rộng role/permission matrix
+- admin jobs moderation
+- admin dashboard summary
+- admin applications toàn hệ thống
+- audit log / session management
+
+Lý do chưa làm `role`:
+- sau này người dùng còn định:
+  - thêm role mới
+  - gắn quyền theo role
+  - thiết kế authorization model rõ hơn
+- nếu làm `role` quá sớm sẽ dễ phải sửa lại boundary
+
+### Backlog admin đã chốt lại
+Thứ tự tiếp theo nên làm:
+1. Admin Jobs moderation
+2. Admin Dashboard Summary
+3. Admin Applications toàn hệ thống
+4. Audit và session management
+
+Cụm tiếp theo được chốt là:
+- `Admin Jobs moderation`
+
+Scope dự kiến:
+- `GET /api/v1/admin/jobs`
+- `GET /api/v1/admin/jobs/:jobId`
+- `PATCH /api/v1/admin/jobs/:jobId/status`
+
+### Trạng thái nhánh và git cần ghi nhớ
+- Trong phiên này, lúc đầu các thay đổi `admin users` đang nằm trực tiếp trên `main` local chưa commit.
+- Sau đó đã tách nhánh riêng và gom commit theo module.
+
+Trạng thái cuối cùng của phiên:
+- branch hiện tại: `feature/admin-users`
+- commit hiện tại: `826451b`
+- remote branch đã push:
+  - `origin/feature/admin-users`
+- link tạo PR:
+  - `https://github.com/nhutrunghai/Project-JobGo/pull/new/feature/admin-users`
+
+Commit message đã dùng:
+- `feat(admin-users): add user moderation APIs`
+
+### PR title/description đã chốt
+Title tiếng Anh đã dùng để đề xuất:
+- `feat(admin-users): add user moderation APIs`
+
+Description tiếng Việt đã chốt theo style hiện tại:
+- mô tả ngắn gọn
+- liệt kê API
+- liệt kê chi tiết triển khai
+- validation và hành vi
+- verification
+
+### File tài liệu cần ưu tiên đọc lại ở phiên sau
+Khi mở máy lại và tiếp tục phần admin, nên đọc theo thứ tự:
+1. `history_admin.md`
+2. `admin-feature-backlog.md`
+3. các file route hiện có:
+   - `backend/src/routes/v1/admin/index.ts`
+   - `backend/src/routes/v1/admin/company.router.ts`
+   - `backend/src/routes/v1/admin/user.router.ts`
+
+### Tóm tắt nhanh để tiếp tục ngay ở phiên sau
+- Admin auth: xong
+- Admin companies: xong module đầu tiên, có Postman
+- Admin users: xong module đầu tiên, có Postman
+- Chưa làm role/permission
+- Cụm tiếp theo: `Admin Jobs moderation`
+- Cách làm tiếp tục vẫn là:
+  - bàn flow
+  - preview code
+  - duyệt xong mới implement

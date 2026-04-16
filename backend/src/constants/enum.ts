@@ -26,6 +26,11 @@ export enum JobStatus {
   EXPIRED = 'expired' // Het han
 }
 
+export enum JobModerationStatus {
+  ACTIVE = 'active', // Hien thi binh thuong
+  BLOCKED = 'blocked' // Bi admin chan
+}
+
 export enum JobType {
   FULL_TIME = 'full-time', // Toan thoi gian
   PART_TIME = 'part-time', // Ban thoi gian

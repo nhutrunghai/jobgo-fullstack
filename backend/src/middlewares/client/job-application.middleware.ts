@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config'
-import { JobApplicationStatus, JobStatus, ResumeStatus } from '~/constants/enum'
+import { JobApplicationStatus, JobModerationStatus, JobStatus, ResumeStatus } from '~/constants/enum'
 import UserMessages from '~/constants/messages'
 import { AppError } from '~/models/appError'
 import { ApplyJobLocals, CompanyApplicationLocals } from '~/models/requests/responseType'
@@ -26,6 +26,7 @@ export const loadPublicJobForApply = async (
         $match: {
           _id: jobId,
           status: JobStatus.OPEN,
+          moderation_status: JobModerationStatus.ACTIVE,
           published_at: { $ne: null },
           expired_at: { $gt: now }
         }

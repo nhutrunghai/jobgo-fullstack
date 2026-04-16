@@ -19,6 +19,7 @@ export interface PublicJobSearchDocument {
   category: string[]
   skills: string[]
   status: string
+  moderation_status: string
   published_at?: Date
   expired_at?: Date
 }
@@ -46,6 +47,7 @@ class JobSearchService {
       category: Array.isArray(job.category) ? job.category : [],
       skills: Array.isArray(job.skills) ? job.skills : [],
       status: job.status || '',
+      moderation_status: job.moderation_status || '',
       published_at: job.published_at,
       expired_at: job.expired_at
     }
