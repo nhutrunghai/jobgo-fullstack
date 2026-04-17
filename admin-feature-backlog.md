@@ -74,6 +74,14 @@ Backlog cu khong con dung o 2 diem:
 - `JobApplication` co workflow trang thai day du
 - MongoDB da co schema va collection rieng cho `users`, `companies`, `jobs`, `jobApplications`
 - Admin auth da tach boundary rieng khoi client auth
+- `Job` da co them `moderation_status = active | blocked`
+- public job detail/search/apply da chi cho qua job co:
+  - `status = open`
+  - `moderation_status = active`
+  - `published_at != null`
+  - `expired_at > now`
+- da co script backfill:
+  - `npm run jobs:backfill-moderation`
 
 ## 4. Trang thai backlog sau khi cap nhat
 
@@ -155,23 +163,44 @@ Nhung tam thoi chua nen lam phan `role`, vi sau nay con can mo rong role va perm
 
 ### Cum D. Admin jobs moderation toan he thong
 
-Trang thai: chua lam
+Trang thai: done cho module dau tien
 
 Do uu tien: cao
 
-Can co:
+Da co:
 
 - `GET /api/v1/admin/jobs`
 - `GET /api/v1/admin/jobs/:jobId`
-- `PATCH /api/v1/admin/jobs/:jobId/status`
+- `PATCH /api/v1/admin/jobs/:jobId/moderation-status`
 
-Filter nen ho tro:
+Filter da ho tro:
 
 - `companyId`
 - `status`
+- `moderation_status`
 - `keyword`
 - `page`
 - `limit`
+
+Da chot va da implement:
+
+- admin jobs phase nay chi moderation theo `moderation_status`
+- chua doi `JobStatus` nghiep vu qua endpoint admin
+- employer khong duoc sua `moderation_status`
+- public flow da dung `moderation_status = active`
+- list jobs lookup company ngay trong list response
+- detail jobs dung middleware rieng de load job + company bang aggregate
+- patch moderation-status co idempotent behavior
+- khi block thi luu `blocked_reason`, `blocked_at`, `blocked_by` trong Mongo
+- khi unblock thi clear cac field block
+- sau update se `upsertJobDocument(jobId)` de dong bo lai Elasticsearch theo `moderation_status`
+- da them request vao Postman folder `admin > jobs`
+- backend build da pass
+
+Payload update nen theo huong:
+
+- `moderation_status: active | blocked`
+- `blocked_reason?: string`
 
 ### Cum E. Admin dashboard summary
 
@@ -226,33 +255,32 @@ Vi du:
 
 ## 5. Thu tu trien khai de xuat moi
 
-1. Admin Jobs moderation
-2. Admin Dashboard Summary
-3. Admin Applications
-4. Audit va session management
+1. Admin Dashboard Summary
+2. Admin Applications
+3. Audit va session management
 
 ## 6. Cum chuc nang tiep theo nen lam ngay
 
-### De xuat: Admin Jobs moderation
+### De xuat: Admin Dashboard Summary
 
 Ly do chon cum nay truoc:
 
-- Day la cum con thieu tiep theo sau khi `Admin Companies` va `Admin Users` da hoan tat.
-- `Job` da co san `status`, `published_at`, `expired_at`, nen rat hop de admin moderation toan he thong.
-- Gia tri van hanh cao: admin co the xem, tam dung, dong cac job vi pham hoac can tra soat.
-- Boundary ky thuat tiep tuc tai su dung pattern da on dinh cua `Admin Companies` va `Admin Users`.
+- `Admin Jobs moderation` da xong module dau tien.
+- Sau jobs, dashboard summary la cum tiep theo de admin co so lieu tong quan de dieu huong moderation.
+- Cum nay co the tan dung truc tiep cac collection `users`, `companies`, `jobs`, `jobApplications` da co san.
 
 ### Scope phase tiep theo
 
-- list jobs toan he thong
-- job detail
-- update job status tu phia admin
+- tong users
+- tong companies
+- so companies chua verify
+- tong jobs
+- so jobs dang open
+- tong applications
 
 Thu tu de lam trong module nay:
 
-1. `GET /api/v1/admin/jobs`
-2. `GET /api/v1/admin/jobs/:jobId`
-3. `PATCH /api/v1/admin/jobs/:jobId/status`
+1. `GET /api/v1/admin/dashboard/summary`
 
 ### Chua nen dua vao phase nay
 
@@ -268,5 +296,6 @@ Sau khi quet toan bo du an, trang thai dung cua admin la:
 - `Admin Auth`: da co
 - `Admin Companies`: da hoan thanh module dau tien va da co Postman
 - `Admin Users`: da hoan thanh module dau tien va da co Postman
-- `Admin Jobs`: la cum chuc nang tiep theo
-- sau do moi den `Dashboard`, `Admin Applications`, va `Audit`
+- `Job moderation groundwork`: da co o public/client side va da backfill Mongo + Elasticsearch
+- `Admin Jobs`: da hoan thanh module dau tien va da co Postman
+- cum tiep theo la `Dashboard`, sau do den `Admin Applications`, va `Audit`

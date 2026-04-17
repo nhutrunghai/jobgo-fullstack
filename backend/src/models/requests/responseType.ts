@@ -11,6 +11,38 @@ export type UserLocals = { user: User }
 export type CompanyLocals = { company: Company | null }
 export type AdminCompanyLocals = { adminCompany: Company }
 export type AdminUserLocals = { adminUser: User }
+export type AdminJobDetail = {
+  _id: ObjectId
+  title: string
+  description: string
+  requirements: string
+  benefits: string
+  salary: Job['salary']
+  location: string
+  job_type: Job['job_type']
+  level: Job['level']
+  category: string[]
+  skills: string[]
+  quantity: number
+  status?: Job['status']
+  moderation_status?: Job['moderation_status']
+  blocked_reason?: string
+  blocked_at?: Date
+  blocked_by?: ObjectId
+  published_at?: Date
+  expired_at: Date
+  created_at?: Date
+  updated_at?: Date
+  company: {
+    _id: ObjectId
+    company_name: string
+    verified?: boolean
+    logo?: string
+    website?: string
+    address: string
+  }
+}
+export type AdminJobLocals = { adminJob: AdminJobDetail }
 export type JobLocals = { job: Job | null }
 export type PublicJobDetail = {
   job: {
