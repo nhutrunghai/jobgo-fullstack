@@ -349,3 +349,152 @@ Khi mở máy lại và tiếp tục phần admin, nên đọc theo thứ tự:
   - bàn flow
   - preview code
   - duyệt xong mới implement
+## 2026-04-16 (tiep)
+
+### Viec vua lam xong trong phien nay
+- Da them `JobModerationStatus`:
+  - `ACTIVE`
+  - `BLOCKED`
+- Da them `moderation_status` vao `Job schema`, mac dinh la `ACTIVE`.
+- Da cap nhat public/client flow de job chi duoc hien thi khi:
+  - `status = OPEN`
+  - `moderation_status = ACTIVE`
+  - `published_at != null`
+  - `expired_at > now`
+- Da cap nhat cac diem sau:
+  - public job detail
+  - public job search
+  - apply job
+  - search index document
+  - employer responses cua job de tra them `moderation_status`
+- Da them script:
+  - `backend/src/scripts/backfill-job-moderation.ts`
+  - command: `npm run jobs:backfill-moderation`
+
+### Du lieu da duoc dong bo
+- Mongo jobs da backfill xong `moderation_status`.
+- Elasticsearch index `public_jobs_search` da duoc xoa, tao lai va reindex sach.
+- So luong da xac nhan sau cung:
+  - Mongo jobs: `201`
+  - Elasticsearch documents: `201`
+
+### Verification da lam xong
+- `npm run build` trong `backend`: pass.
+- Smoke check public detail:
+  - job `ACTIVE` tra `200`
+  - job tam thoi set `BLOCKED` tra `404`
+- Smoke check public search:
+  - job `BLOCKED` khong con xuat hien trong search
+  - restore ve `ACTIVE` thi xuat hien lai
+- Da restore lai du lieu test, job dung de smoke test dang o:
+  - `moderation_status = active`
+
+### Ket luan domain da chot truoc khi lam Admin Jobs
+- `JobStatus` giu cho lifecycle nghiep vu.
+- `moderation_status` la lop moderation rieng cho admin.
+- Phase admin jobs tiep theo khong doi `JobStatus` nghiep vu.
+- Admin jobs se uu tien:
+  - list jobs
+  - job detail
+  - block/unblock qua `moderation_status`
+
+### Scope tiep theo da chot lai
+- Cum tiep theo van la `Admin Jobs moderation`.
+- Endpoint nen chot theo huong:
+  - `GET /api/v1/admin/jobs`
+  - `GET /api/v1/admin/jobs/:jobId`
+  - `PATCH /api/v1/admin/jobs/:jobId/moderation-status`
+- Filter list nen co:
+  - `companyId`
+  - `status`
+  - `moderation_status`
+  - `keyword`
+  - `page`
+  - `limit`
+
+### Trang thai git cuoi cung
+- Nhanh `feature/admin-users` da duoc commit them:
+  - `2a61428 feat(job-moderation): add public moderation status filtering`
+- Sau do da merge len `main`.
+- `main` local hien tai da dong bo voi `origin/main`.
+- Commit hien tai tren `main`:
+  - `938459a merge: job moderation updates from feature/admin-users`
+- Working tree hien tai: sach.
+
+### Thu tu doc lai de tiep tuc ngay mai
+1. `history_admin.md`
+2. `admin-feature-backlog.md`
+3. cac file lien quan jobs:
+   - `backend/src/models/schema/client/jobs.schema.ts`
+   - `backend/src/middlewares/client/public-job.middleware.ts`
+   - `backend/src/middlewares/client/job-application.middleware.ts`
+   - `backend/src/services/client/job.service.ts`
+4. sau do moi preview `Admin Jobs moderation`
+
+### Tom tat 1 dong de vao viec ngay
+- Nen tiep tuc bang viec preview module `Admin Jobs moderation` dua tren `moderation_status`, khong sua `JobStatus` nghiep vu.
+
+## 2026-04-17
+
+### Viec vua lam xong trong phien nay
+- Da tao nhanh `feature/admin-job` tu `main`.
+- Da implement xong module dau tien `Admin Jobs moderation`.
+
+### API da them
+- `GET /api/v1/admin/jobs`
+- `GET /api/v1/admin/jobs/:jobId`
+- `PATCH /api/v1/admin/jobs/:jobId/moderation-status`
+
+### Cach lam va boundary da giu nguyen
+- Van di dung nhip: chot flow, preview code, duyet xong moi implement.
+- Admin jobs phase nay chi moderation theo `moderation_status`.
+- Khong doi `JobStatus` nghiep vu qua endpoint admin.
+- Public flow van chi phu thuoc `moderation_status = active`.
+
+### Chi tiet implementation da xong
+- Da them route, controller, service, validator, middleware rieng cho `admin/jobs`.
+- List jobs ho tro filter:
+  - `companyId`
+  - `status`
+  - `moderation_status`
+  - `keyword`
+  - `page`
+  - `limit`
+- List jobs lookup company ngay trong response list.
+- Job detail dung middleware rieng de load `job + company` bang aggregate va `.next()`.
+- Patch moderation-status:
+  - nhan `moderation_status`
+  - nhan `blocked_reason` khi block
+  - co idempotent behavior
+  - khi block se set `blocked_reason`, `blocked_at`, `blocked_by`
+  - khi unblock se clear cac field block
+- Sau patch moderation-status, da goi `jobSearchService.upsertJobDocument(jobId)` de dong bo lai Elasticsearch theo `moderation_status`.
+
+### Ket luan ky thuat da chot trong phien nay
+- Mongo/domain model cua `Job` co:
+  - `moderation_status`
+  - `blocked_reason`
+  - `blocked_at`
+  - `blocked_by`
+- Elasticsearch public index hien chi dung:
+  - `status`
+  - `moderation_status`
+- `blocked_reason` khong dua vao Elasticsearch va khong can dua vao public search flow.
+
+### Verification da lam xong
+- `npm run build` trong `backend`: pass.
+- Da them Postman request vao collection `JobGo`, folder `admin > jobs`:
+  - `get jobs`
+  - `get job detail`
+  - `update moderation status`
+
+### Trang thai backlog sau khi xong module nay
+- `Admin Jobs moderation`: xong module dau tien.
+- Cum tiep theo nen lam:
+  1. `Admin Dashboard Summary`
+  2. `Admin Applications toan he thong`
+  3. `Audit va session management`
+
+### Trang thai git can ghi nho
+- Branch hien tai: `feature/admin-job`
+- Module nay nen gom thanh 1 commit theo module.
