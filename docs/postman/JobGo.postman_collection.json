@@ -1,0 +1,1292 @@
+{
+  "info": {
+    "_postman_id": "df537392-ffc7-424c-947a-fee32fae9cde",
+    "name": "JobGo",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Collection được đồng bộ theo router và Swagger hiện tại của dự án JobGo."
+  },
+  "variable": [
+    {
+      "key": "jobId",
+      "value": ""
+    },
+    {
+      "key": "cvId",
+      "value": ""
+    },
+    {
+      "key": "applicationId",
+      "value": ""
+    },
+    {
+      "key": "companyId",
+      "value": ""
+    },
+    {
+      "key": "candidateId",
+      "value": ""
+    },
+    {
+      "key": "userId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "shared",
+      "item": [
+        {
+          "name": "auth",
+          "item": [
+            {
+              "name": "register",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"candidate@example.com\",\n  \"password\": \"12345678\",\n  \"fullName\": \"Nguyen Van A\",\n  \"confirmPassword\": \"12345678\"\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/auth/register",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "register"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "login",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"candidate@example.com\",\n  \"password\": \"12345678\"\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/auth/login",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "login"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "logout",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{AccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"refresh_token\": \"{{RefreshToken}}\"\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/auth/logout",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "logout"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "refresh-token",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"refresh_token\": \"{{RefreshToken}}\"\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/auth/refresh-token",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "refresh-token"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "verify-email",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email_verify_token\": \"your-email-verify-token\"\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/auth/verify-email",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "verify-email"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "forgot-password",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"candidate@example.com\"\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/auth/forgot-password",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "forgot-password"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "reset-password",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"password\": \"12345678\",\n  \"confirmPassword\": \"12345678\",\n  \"forgot_password_token\": \"your-forgot-password-token\"\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/auth/reset-password",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "reset-password"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "user",
+          "item": [
+            {
+              "name": "profile",
+              "item": [
+                {
+                  "name": "get me",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{AccessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{host}}/api/v1/user/me",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "user",
+                        "me"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "get profile",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{host}}/api/v1/user/profile/{{userId}}",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "user",
+                        "profile",
+                        "{{userId}}"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "update profile",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{AccessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"fullName\": \"Nguyen Van A\",\n  \"bio\": \"Backend developer\",\n  \"address\": \"HCM City\",\n  \"skills\": [\"Node.js\", \"MongoDB\"]\n}"
+                    },
+                    "url": {
+                      "raw": "{{host}}/api/v1/user/profile",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "user",
+                        "profile"
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "settings",
+              "item": [
+                {
+                  "name": "get settings",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{AccessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{host}}/api/v1/user/setting",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "user",
+                        "setting"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "update settings",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{AccessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"phone\": \"0900000000\"\n}"
+                    },
+                    "url": {
+                      "raw": "{{host}}/api/v1/user/setting",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "user",
+                        "setting"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "resend-mail",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{AccessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "url": {
+                      "raw": "{{host}}/api/v1/user/setting/resend-mail",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "user",
+                        "setting",
+                        "resend-mail"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "change-password",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{AccessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "url": {
+                      "raw": "{{host}}/api/v1/user/setting/change-password",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "user",
+                        "setting",
+                        "change-password"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "new-password",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{AccessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"newPassword\": \"12345678\",\n  \"confirmNewPassword\": \"12345678\",\n  \"OtpCode\": \"123456\"\n}"
+                    },
+                    "url": {
+                      "raw": "{{host}}/api/v1/user/setting/new-password",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "user",
+                        "setting",
+                        "new-password"
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "favorites",
+              "item": [
+                {
+                  "name": "get favorite jobs",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{AccessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{host}}/api/v1/user/favorite-jobs?page=1&limit=10",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "user",
+                        "favorite-jobs"
+                      ],
+                      "query": [
+                        {
+                          "key": "page",
+                          "value": "1"
+                        },
+                        {
+                          "key": "limit",
+                          "value": "10"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "save favorite job",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{AccessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "url": {
+                      "raw": "{{host}}/api/v1/user/favorite-jobs/{{jobId}}",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "user",
+                        "favorite-jobs",
+                        "{{jobId}}"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "remove favorite job",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{AccessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "DELETE",
+                    "url": {
+                      "raw": "{{host}}/api/v1/user/favorite-jobs/{{jobId}}",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "user",
+                        "favorite-jobs",
+                        "{{jobId}}"
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "jobs",
+          "item": [
+            {
+              "name": "search public jobs",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/jobs/search?q=backend&page=1&limit=10",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "jobs",
+                    "search"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "backend"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "get public job detail",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/jobs/{{jobId}}",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "jobs",
+                    "{{jobId}}"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "apply job",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{AccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cv_id\": \"{{cvId}}\",\n  \"cover_letter\": \"I am interested in this role.\"\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/jobs/{{jobId}}/apply",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "jobs",
+                    "{{jobId}}",
+                    "apply"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "withdraw application",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{AccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "url": {
+                  "raw": "{{host}}/api/v1/jobs/{{jobId}}/withdraw",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "jobs",
+                    "{{jobId}}",
+                    "withdraw"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "get my applied jobs",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{AccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/jobs/me/applied?page=1&limit=10",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "jobs",
+                    "me",
+                    "applied"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "company",
+          "item": [
+            {
+              "name": "create company",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{AccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"company_name\": \"ABC Tech\",\n  \"logo\": \"https://example.com/logo.png\",\n  \"website\": \"https://example.com\",\n  \"address\": \"HCM City\",\n  \"description\": \"Product company\"\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/company",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "company"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "get company me",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{AccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/company/me",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "company",
+                    "me"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "update company",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{AccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"company_name\": \"ABC Tech Updated\",\n  \"address\": \"Ha Noi\"\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/company",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "company"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "admin",
+      "item": [
+        {
+          "name": "auth",
+          "item": [
+            {
+              "name": "login",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"12345678\"\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/auth/login",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "auth",
+                    "login"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "logout",
+              "request": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/auth/logout",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "auth",
+                    "logout"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "me",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/auth/me",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "auth",
+                    "me"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "users",
+          "item": [
+            {
+              "name": "get users",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/users?page=1&limit=10",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "users"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "get user detail",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/users/{{userId}}",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "users",
+                    "{{userId}}"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "update user status",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": 1\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/users/{{userId}}/status",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "users",
+                    "{{userId}}",
+                    "status"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "companies",
+          "item": [
+            {
+              "name": "get companies",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/companies?page=1&limit=10",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "companies"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "get company detail",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/companies/{{companyId}}",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "companies",
+                    "{{companyId}}"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "update company status",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"verified\": true\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/companies/{{companyId}}/status",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "companies",
+                    "{{companyId}}",
+                    "status"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "get company jobs",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/companies/{{companyId}}/jobs?page=1&limit=10",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "companies",
+                    "{{companyId}}",
+                    "jobs"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "get company applications",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/companies/{{companyId}}/applications?page=1&limit=10",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "companies",
+                    "{{companyId}}",
+                    "applications"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "jobs",
+          "item": [
+            {
+              "name": "get jobs",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/jobs?page=1&limit=10",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "jobs"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "get job detail",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/jobs/{{jobId}}",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "jobs",
+                    "{{jobId}}"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "update moderation status",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"moderation_status\": \"blocked\",\n  \"blocked_reason\": \"Vi phạm nội dung tuyển dụng\"\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/jobs/{{jobId}}/moderation-status",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "jobs",
+                    "{{jobId}}",
+                    "moderation-status"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "dashboard",
+          "item": [
+            {
+              "name": "get summary",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/dashboard/summary",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "dashboard",
+                    "summary"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
