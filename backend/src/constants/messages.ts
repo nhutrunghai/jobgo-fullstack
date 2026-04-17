@@ -122,6 +122,8 @@ const UserMessages = {
   APPLICATION_STATUS_TRANSITION_INVALID: 'Không thể chuyển trạng thái application như yêu cầu',
   APPLICATION_WITHDRAWN_SUCCESS: 'Rút hồ sơ thành công',
   APPLICATION_CANNOT_WITHDRAW: 'Không thể rút hồ sơ ở trạng thái hiện tại',
+  FAVORITE_JOB_SAVED_SUCCESS: 'Lưu công việc yêu thích thành công',
+  FAVORITE_JOB_REMOVED_SUCCESS: 'Bỏ lưu công việc yêu thích thành công',
   ADMIN_LOGIN_SUCCESS: 'Đăng nhập admin thành công',
   ADMIN_LOGOUT_SUCCESS: 'Đăng xuất admin thành công',
   ADMIN_ME_SUCCESS: 'Lấy thông tin admin thành công',

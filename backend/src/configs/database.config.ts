@@ -1,6 +1,7 @@
 import { Collection, CreateIndexesOptions, Db, IndexSpecification, MongoClient } from 'mongodb'
 import env from './env.config.js'
 import Company from '~/models/schema/client/companies.schema.js'
+import FavoriteJob from '~/models/schema/client/favoriteJobs.schema.js'
 import JobApplication from '~/models/schema/client/jobApplications.schema.js'
 import Job from '~/models/schema/client/jobs.schema.js'
 import OtpCode from '~/models/schema/client/otpCodes.schema.js'
@@ -110,6 +111,21 @@ class DatabaseService {
         option: { name: 'status_updated_at' }
       },
       {
+        collection: env.DB_FAVORITE_JOB_NAME,
+        key: { user_id: 1, job_id: 1 },
+        option: { unique: true, name: 'user_id_job_id_unique' }
+      },
+      {
+        collection: env.DB_FAVORITE_JOB_NAME,
+        key: { user_id: 1, created_at: -1 },
+        option: { name: 'user_id_created_at' }
+      },
+      {
+        collection: env.DB_FAVORITE_JOB_NAME,
+        key: { job_id: 1 },
+        option: { name: 'job_id' }
+      },
+      {
         collection: env.DB_RESUME_NAME,
         key: { candidate_id: 1, updated_at: -1 },
         option: { name: 'candidate_id_updated_at' }
@@ -176,6 +192,10 @@ class DatabaseService {
 
   get jobs(): Collection<Job> {
     return this.db.collection(env.DB_JOB_NAME)
+  }
+
+  get favoriteJobs(): Collection<FavoriteJob> {
+    return this.db.collection(env.DB_FAVORITE_JOB_NAME)
   }
 
   get resumes(): Collection<Resume> {
