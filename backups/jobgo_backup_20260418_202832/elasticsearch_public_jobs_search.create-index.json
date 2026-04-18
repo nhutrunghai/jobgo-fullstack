@@ -1,0 +1,64 @@
+﻿{
+    "settings":  {
+                     "number_of_shards":  1,
+                     "number_of_replicas":  0
+                 },
+    "mappings":  {
+                     "properties":  {
+                                        "benefits":  {
+                                                         "type":  "text"
+                                                     },
+                                        "category":  {
+                                                         "type":  "keyword"
+                                                     },
+                                        "company_id":  {
+                                                           "type":  "keyword"
+                                                       },
+                                        "description":  {
+                                                            "type":  "text"
+                                                        },
+                                        "embedding":  {
+                                                          "type":  "dense_vector",
+                                                          "dims":  768,
+                                                          "index":  true,
+                                                          "similarity":  "cosine"
+                                                      },
+                                        "expired_at":  {
+                                                           "type":  "date"
+                                                       },
+                                        "job_id":  {
+                                                       "type":  "keyword"
+                                                   },
+                                        "job_type":  {
+                                                         "type":  "keyword"
+                                                     },
+                                        "level":  {
+                                                      "type":  "keyword"
+                                                  },
+                                        "location":  {
+                                                         "type":  "keyword"
+                                                     },
+                                        "moderation_status":  {
+                                                                  "type":  "keyword"
+                                                              },
+                                        "published_at":  {
+                                                             "type":  "date"
+                                                         },
+                                        "requirements":  {
+                                                             "type":  "text"
+                                                         },
+                                        "search_text":  {
+                                                            "type":  "text"
+                                                        },
+                                        "skills":  {
+                                                       "type":  "keyword"
+                                                   },
+                                        "status":  {
+                                                       "type":  "keyword"
+                                                   },
+                                        "title":  {
+                                                      "type":  "text"
+                                                  }
+                                    }
+                 }
+}

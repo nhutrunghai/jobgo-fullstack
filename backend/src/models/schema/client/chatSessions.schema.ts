@@ -1,0 +1,35 @@
+import { ObjectId } from 'mongodb'
+import { ChatIntent } from '~/constants/chat-intent'
+import { ChatSessionDocument, ChatSessionTurn } from '~/models/chat/chat.type'
+
+type ChatSessionSchemaType = {
+  _id?: ObjectId
+  user_id?: ObjectId
+  turns?: ChatSessionTurn[]
+  last_intent?: ChatIntent
+  last_retrieved_job_ids?: string[]
+  created_at?: Date
+  updated_at?: Date
+}
+
+export default class ChatSession implements ChatSessionDocument {
+  _id?: ObjectId
+  user_id?: ObjectId
+  turns: ChatSessionTurn[]
+  last_intent?: ChatIntent
+  last_retrieved_job_ids: string[]
+  created_at: Date
+  updated_at: Date
+
+  constructor(session: ChatSessionSchemaType = {}) {
+    const date = new Date()
+
+    this._id = session._id
+    this.user_id = session.user_id
+    this.turns = session.turns || []
+    this.last_intent = session.last_intent
+    this.last_retrieved_job_ids = session.last_retrieved_job_ids || []
+    this.created_at = session.created_at || date
+    this.updated_at = session.updated_at || date
+  }
+}
