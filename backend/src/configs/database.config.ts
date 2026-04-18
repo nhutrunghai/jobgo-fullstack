@@ -8,6 +8,7 @@ import OtpCode from '~/models/schema/client/otpCodes.schema.js'
 import Resume from '~/models/schema/client/resumes.schema.js'
 import RefreshToken from '~/models/schema/client/refreshTokens.schema.js'
 import User from '~/models/schema/client/user.schema.js'
+import ChatSession from '~/models/schema/client/chatSessions.schema.js'
 
 class DatabaseService {
   private client: MongoClient
@@ -212,6 +213,10 @@ class DatabaseService {
 
   get otpCodes(): Collection<OtpCode> {
     return this.db.collection(env.DB_OTP_CODE_NAME)
+  }
+
+  get chatSessions(): Collection<ChatSession> {
+    return this.db.collection(env.DB_CHAT_SESSION_NAME)
   }
 }
 

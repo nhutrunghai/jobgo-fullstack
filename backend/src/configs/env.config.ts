@@ -56,8 +56,20 @@ const envSchema = z.object({
   EMBEDDING_API_URL: z.url({ message: 'EMBEDDING_API_URL phải là một đường dẫn hợp lệ' }).default('http://localhost:8000'),
   // Hugging Face
   HUGGINGFACE_API_KEY: z.string().min(1, { message: 'Không tồn tại HUGGINGFACE_API_KEY' }).optional(),
+  // LLM provider
+  LLM_PROVIDER: z.enum(['gemini', 'openai']).default('gemini'),
   // Gemini
   GEMINI_API_KEY: z.string().min(1, { message: 'Không tồn tại GEMINI_API_KEY' }).optional(),
+  GEMINI_MODEL_INTENT: z.string().min(1, { message: 'GEMINI_MODEL_INTENT không được rỗng' }).default('gemini-2.5-flash'),
+  GEMINI_MODEL_CHAT: z.string().min(1, { message: 'GEMINI_MODEL_CHAT không được rỗng' }).default('gemini-2.5-flash'),
+  GEMINI_API_TIMEOUT_MS: z.coerce.number().min(1000).default(30000),
+  // OpenAI
+  OPENAI_API_KEY: z.string().min(1, { message: 'Không tồn tại OPENAI_API_KEY' }).optional(),
+  OPENAI_BASE_URL: z.url({ message: 'OPENAI_BASE_URL phải là một đường dẫn hợp lệ' }).default('https://api.openai.com/v1'),
+  OPENAI_MODEL_INTENT: z.string().min(1, { message: 'OPENAI_MODEL_INTENT không được rỗng' }).default('gpt-4o-mini'),
+  OPENAI_MODEL_CHAT: z.string().min(1, { message: 'OPENAI_MODEL_CHAT không được rỗng' }).default('gpt-4o-mini'),
+  OPENAI_API_TIMEOUT_MS: z.coerce.number().min(1000).default(30000),
+  DB_CHAT_SESSION_NAME: z.string().min(1, { message: 'DB_CHAT_SESSION_NAME không được rỗng' }).default('chat_sessions'),
   // Admin session
   ADMIN_SESSION_COOKIE_NAME: z.string().min(1).default('admin_sid'),
   ADMIN_SESSION_PREFIX: z.string().min(1).default('admin:sessions'),
@@ -77,5 +89,11 @@ if (!envServer.success) {
   process.exit(1)
 }
 
-const env = envServer.data
+const env = {
+  ...envServer.data,
+  LLM_MODEL_INTENT:
+    envServer.data.LLM_PROVIDER === 'openai' ? envServer.data.OPENAI_MODEL_INTENT : envServer.data.GEMINI_MODEL_INTENT,
+  LLM_MODEL_CHAT:
+    envServer.data.LLM_PROVIDER === 'openai' ? envServer.data.OPENAI_MODEL_CHAT : envServer.data.GEMINI_MODEL_CHAT
+}
 export default env
