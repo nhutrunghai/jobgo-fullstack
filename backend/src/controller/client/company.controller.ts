@@ -7,6 +7,7 @@ import databaseService from '~/configs/database.config'
 import { UserRole } from '~/constants/enum'
 import UserMessages from '~/constants/messages'
 import { CompanyLocals } from '~/models/requests/responseType'
+import { UpdateCompanyLogoRqType } from '~/models/requests/requestsType'
 import Company from '~/models/schema/client/companies.schema'
 import companyService from '~/services/client/company.service'
 
@@ -58,6 +59,18 @@ export const updateCompanyController = async (req: Request, res: Response<unknow
   return res.status(StatusCodes.OK).json({
     status: 'success',
     message: UserMessages.COMPANY_PROFILE_UPDATED_SUCCESS
+  })
+}
+
+export const updateCompanyLogoController = async (
+  req: Request<ParamsDictionary, unknown, UpdateCompanyLogoRqType>,
+  res: Response<unknown, CompanyLocals>
+) => {
+  await companyService.updateLogo(res.locals.company as Company, req.body)
+
+  return res.status(StatusCodes.OK).json({
+    status: 'success',
+    message: UserMessages.COMPANY_LOGO_UPDATED_SUCCESS
   })
 }
 

@@ -42,6 +42,7 @@ const envSchema = z.object({
   RESEND_API_KEY: z.string().min(1, { message: 'Không tồn tại Resend API key' }),
   MAIL_FROM_ADDRESS: z.string().min(1, { message: 'Không tồn tại domain mail' }),
   MAIL_FROM_NAME: z.string().min(1, { message: 'MAIL_FROM_NAME không được rỗng' }),
+  UPLOADTHING_TOKEN: z.string().min(1, { message: 'Không tồn tại UPLOADTHING_TOKEN' }),
   FRONTEND_URL: z.url({ message: 'FRONTEND_URL phải là một đường dẫn hợp lệ' }),
   // Oauth google
   GOOGLE_CLIENT_ID: z.string().min(1, { message: 'Không tồn tại GOOGLE_CLIENT_ID' }),

@@ -58,3 +58,10 @@ export const updateCompanyValidator = z.object({
       message: UserMessages.NOT_VALUE_PROFILE
     })
 })
+
+export const updateCompanyLogoValidator = z.object({
+  body: z.object({
+    logo: z.url({ message: UserMessages.LOGO_INVALID }),
+    logo_file_key: z.string().trim().min(1, { message: UserMessages.LOGO_FILE_KEY_REQUIRED })
+  })
+})

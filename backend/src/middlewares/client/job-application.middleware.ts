@@ -113,6 +113,7 @@ export const requireResumeForApply = async (
   next: NextFunction
 ) => {
   const resume = res.locals.applyResume
+  const userId = new ObjectId(req.decodeToken?.userId as string)
 
   if (!resume) {
     return next(
@@ -123,7 +124,12 @@ export const requireResumeForApply = async (
     )
   }
 
-  if (!resume.full_name?.trim() || !resume.email?.trim()) {
+  const candidate = await databaseService.users.findOne(
+    { _id: userId },
+    { projection: { fullName: 1, email: 1 } }
+  )
+
+  if (!candidate?.fullName?.trim() || !candidate.email?.trim()) {
     return next(
       new AppError({
         statusCode: StatusCodes.BAD_REQUEST,
