@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
+import databaseService from '~/configs/database.config'
 import { JobApplicationStatus } from '~/constants/enum'
 import UserMessages from '~/constants/messages'
 import {
@@ -29,17 +30,21 @@ export const applyJobController = async (
   const userId = new ObjectId(req.decodeToken?.userId as string)
   const job = res.locals.applyJob as NonNullable<ApplyJobLocals['applyJob']>
   const resume = res.locals.applyResume as NonNullable<ApplyJobLocals['applyResume']>
+  const candidate = await databaseService.users.findOne(
+    { _id: userId },
+    { projection: { fullName: 1, email: 1, phone: 1, skills: 1 } }
+  )
 
   const newApplication = new JobApplication({
     job_id: job._id,
     company_id: job.company_id,
     candidate_id: userId,
     resume_snapshot: {
-      full_name: resume.full_name,
-      email: resume.email,
-      phone: resume.phone,
+      full_name: candidate?.fullName,
+      email: candidate?.email,
+      phone: candidate?.phone,
       cv_url: resume.cv_url,
-      skills: resume.skills
+      skills: candidate?.skills
     },
     cover_letter: req.body.cover_letter
   })

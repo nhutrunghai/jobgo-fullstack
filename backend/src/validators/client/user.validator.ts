@@ -47,6 +47,12 @@ export const updateSettingUserValidator = z.object({
     })
     .refine((data) => Object.keys(data).length > 0, { message: UserMessages.NOT_VALUE_PROFILE })
 })
+export const updateUserAvatarValidator = z.object({
+  body: z.object({
+    avatar: z.url({ message: UserMessages.AVATAR_INVALID }),
+    avatar_file_key: z.string().trim().min(1, { message: UserMessages.AVATAR_FILE_KEY_REQUIRED })
+  })
+})
 export const newPasswordValidator = z.object({
   body: z
     .object({

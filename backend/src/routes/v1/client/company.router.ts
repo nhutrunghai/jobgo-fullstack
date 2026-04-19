@@ -2,6 +2,7 @@ import { Router } from 'express'
 import {
   createCompanyController,
   getCompanyMeController,
+  updateCompanyLogoController,
   updateCompanyController
 } from '~/controller/client/company.controller'
 import {
@@ -27,7 +28,7 @@ import {
 import { loadCompanyJob, requireCompanyJob } from '~/middlewares/client/job.middleware'
 import { isVerifiedCompany } from '~/middlewares/client/Verified.middleware'
 import validate from '~/middlewares/validator.middleware'
-import { createCompanyValidator, updateCompanyValidator } from '~/validators/client/company.validator'
+import { createCompanyValidator, updateCompanyLogoValidator, updateCompanyValidator } from '~/validators/client/company.validator'
 import {
   getCompanyApplicationDetailValidator,
   getCompanyJobApplicationsValidator,
@@ -49,6 +50,7 @@ companyRouter.get('/', (req, res) => {
 companyRouter.get('/me', loadCompany, requireCompany, getCompanyMeController)
 companyRouter.post('/', validate(createCompanyValidator), checkCompany, createCompanyController)
 companyRouter.patch('/', loadCompany, requireCompany, validate(updateCompanyValidator), updateCompanyController)
+companyRouter.patch('/logo', loadCompany, requireCompany, validate(updateCompanyLogoValidator), updateCompanyLogoController)
 companyRouter.post(
   '/jobs',
   loadCompany,

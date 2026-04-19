@@ -10,6 +10,7 @@ import v1Router from './routes/v1/index.js'
 import cors from 'cors'
 import corsOptions from '~/configs/cors.config.js'
 import morgan from 'morgan'
+import uploadThingProvider from '~/providers/uploadthing.provider.js'
 export const createApp = async () => {
   databaseService.connect()
   await ensurePublicJobsSearchIndex()
@@ -31,6 +32,7 @@ export const createApp = async () => {
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
   app.use(cookieParser())
+  app.use('/api/uploadthing', uploadThingProvider.createExpressHandler())
   app.get('/', (req, res) => {
     res.send('Hello World')
   })

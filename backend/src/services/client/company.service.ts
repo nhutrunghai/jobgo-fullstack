@@ -1,6 +1,7 @@
 import databaseService from '~/configs/database.config'
 import { ObjectId } from 'mongodb'
 import Company from '~/models/schema/client/companies.schema'
+import uploadThingProvider from '~/providers/uploadthing.provider'
 
 class CompanyService {
   async createCompany(data: Company) {
@@ -17,6 +18,25 @@ class CompanyService {
         }
       }
     )
+  }
+
+  async updateLogo(company: Company, payload: { logo: string; logo_file_key: string }) {
+    const oldLogoFileKey = company.logo_file_key
+
+    await databaseService.companies.updateOne(
+      { _id: company._id },
+      {
+        $set: {
+          logo: payload.logo,
+          logo_file_key: payload.logo_file_key,
+          updated_at: new Date()
+        }
+      }
+    )
+
+    if (oldLogoFileKey && oldLogoFileKey !== payload.logo_file_key) {
+      await uploadThingProvider.deleteFile(oldLogoFileKey)
+    }
   }
 }
 

@@ -4,6 +4,7 @@ interface CompanyType {
   user_id: ObjectId
   company_name: string
   logo?: string
+  logo_file_key?: string
   website?: string
   address: string
   description?: string
@@ -16,6 +17,7 @@ export default class Company {
   user_id: ObjectId
   company_name: string
   logo?: string
+  logo_file_key?: string
   website?: string
   address: string
   description?: string
@@ -28,6 +30,7 @@ export default class Company {
     this.user_id = company.user_id
     this.company_name = company.company_name
     this.logo = company.logo
+    this.logo_file_key = company.logo_file_key
     this.website = company.website
     this.address = company.address
     this.description = company.description

@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import UserMessages from '~/constants/messages'
 import { AppError } from '~/models/appError'
-import { GetUserRqType, newPasswordRqType } from '~/models/requests/requestsType'
+import { GetUserRqType, newPasswordRqType, UpdateUserAvatarRqType } from '~/models/requests/requestsType'
 import userService from '~/services/client/users.service'
 import { ObjectId } from 'mongodb'
 import env from '~/configs/env.config'
@@ -38,6 +38,13 @@ export const updateProfileUserController = async (req: Request, res: Response) =
   return res.status(StatusCodes.OK).json({
     status: 'success',
     message: UserMessages.USER_UPDATE_SUCCESS
+  })
+}
+export const updateUserAvatarController = async (req: Request<ParamsDictionary, any, UpdateUserAvatarRqType>, res: Response) => {
+  await userService.updateAvatar(req.decodeToken?.userId as string, req.body)
+  return res.status(StatusCodes.OK).json({
+    status: 'success',
+    message: 'Cập nhật avatar thành công'
   })
 }
 export const getSettingUserController = async (req: Request, res: Response) => {
