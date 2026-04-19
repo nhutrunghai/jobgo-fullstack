@@ -1,10 +1,18 @@
 import { ObjectId } from 'mongodb'
+import { StatusCodes } from 'http-status-codes'
 import env from '~/configs/env.config'
 import { ChatIntent } from '~/constants/chat-intent'
-import { ChatAnswerResult, RetrievedChatJob } from '~/models/chat/chat.type'
+import ErrorCode from '~/constants/error'
+import UserMessages from '~/constants/messages'
+import { AppError } from '~/models/appError'
+import { ChatAnswerResult, RetrievedChatJob, RetrievedResumeChunk } from '~/models/chat/chat.type'
 import llmService from '~/services/llm/llm.service'
+import resumeService from '~/services/client/resume.service'
 import contextAssemblyService from './context-assembly.service'
+import cvVisualReviewService from './cv-visual-review.service'
 import intentRouterService from './intent-router.service'
+import resumeChatRetrievalService from './resume-chat-retrieval.service'
+import { buildCvReviewAnswerPrompt } from './prompts/cv-review-answer.prompt'
 import jobChatRetrievalService from './job-chat-retrieval.service'
 import { buildJobChatAnswerPrompt } from './prompts/job-chat-answer.prompt'
 import sessionService from './session.service'
@@ -12,10 +20,12 @@ import sessionService from './session.service'
 type ChatParams = {
   message: string
   session_id?: string
+  resume_id?: string
+  user_id?: string
 }
 
 class RagChatService {
-  async chat({ message, session_id }: ChatParams) {
+  async chat({ message, session_id, resume_id, user_id }: ChatParams) {
     const normalizedMessage = message.trim()
     const session = await sessionService.loadOrCreateSession(session_id)
     const sessionObjectId = session._id as ObjectId
@@ -23,6 +33,27 @@ class RagChatService {
     await sessionService.appendMessage(sessionObjectId, 'user', normalizedMessage)
 
     const intentResult = await intentRouterService.detectIntent(normalizedMessage)
+    if (intentResult.intent === 'cv_review') {
+      const response = await this.buildCvReviewAnswer({
+        message: normalizedMessage,
+        resumeId: resume_id,
+        userId: user_id
+      })
+
+      await sessionService.appendMessage(sessionObjectId, 'assistant', response.answer)
+      await sessionService.saveState(sessionObjectId, {
+        lastIntent: intentResult.intent,
+        jobIds: []
+      })
+
+      return {
+        session_id: sessionService.getSessionId(session),
+        intent: intentResult.intent,
+        answer: response.answer,
+        sources: response.sources
+      }
+    }
+
     const jobs = await this.retrieveJobsByIntent(intentResult.intent, normalizedMessage, session.last_retrieved_job_ids || [])
     const response = await this.buildAnswer(intentResult.intent, normalizedMessage, jobs)
 
@@ -40,6 +71,102 @@ class RagChatService {
     }
   }
 
+  private async buildCvReviewAnswer({
+    message,
+    resumeId,
+    userId
+  }: {
+    message: string
+    resumeId?: string
+    userId?: string
+  }): Promise<ChatAnswerResult> {
+    if (!userId) {
+      throw new AppError({
+        statusCode: StatusCodes.UNAUTHORIZED,
+        message: UserMessages.ACCESS_TOKEN_NOT_FOUND,
+        errorCode: ErrorCode.UNAUTHORIZED
+      })
+    }
+
+    const resume = await resumeService.getResumeForChat(userId, resumeId)
+    let chunks: RetrievedResumeChunk[] = []
+
+    try {
+      chunks = await resumeChatRetrievalService.retrieveForCvReview(message, resume)
+    } catch (error) {
+      console.error(
+        JSON.stringify({
+          tag: 'cv_review_text_retrieval_failed',
+          resume_id: resume._id ? String(resume._id) : null,
+          error: error instanceof Error ? error.message : String(error)
+        })
+      )
+    }
+
+    const visualReviewResult = await cvVisualReviewService.reviewResumePdf({
+      message,
+      resume
+    })
+
+    if (chunks.length === 0 && !visualReviewResult.summary) {
+      const fallbackReasons: string[] = ['Tôi chưa lấy được text CV từ Elasticsearch']
+
+      if (!resume.cv_url) {
+        fallbackReasons.push('CV này không có `cv_url` để phân tích PDF')
+      } else if (visualReviewResult.error) {
+        fallbackReasons.push(`phân tích bố cục PDF chưa thực hiện được: ${visualReviewResult.error}`)
+      }
+
+      return {
+        answer: `Hiện tôi chưa có đủ dữ liệu để đánh giá CV này. ${fallbackReasons.join(
+          ', '
+        )}. Hãy kiểm tra lại file CV hoặc chạy lại pipeline ingest để có cả text chunks và dữ liệu PDF hợp lệ.`,
+        sources: [this.buildSingleResumeSource(resume)]
+      }
+    }
+
+    const answer = await llmService.generateText({
+      model: env.LLM_MODEL_CHAT,
+      prompt: buildCvReviewAnswerPrompt({
+        message,
+        chunks,
+        visualReviewSummary: visualReviewResult.summary
+      })
+    })
+
+    return {
+      answer,
+      sources: chunks.length > 0 ? this.buildResumeSources(chunks) : [this.buildSingleResumeSource(resume)]
+    }
+  }
+
+  private buildResumeSources(chunks: RetrievedResumeChunk[]) {
+    const sourcesMap = new Map<string, ChatAnswerResult['sources'][number]>()
+
+    for (const chunk of chunks) {
+      const key = `${chunk.resume_id}:${chunk.chunk_index}`
+      if (!sourcesMap.has(key)) {
+        sourcesMap.set(key, {
+          type: 'resume',
+          resume_id: chunk.resume_id,
+          title: chunk.title,
+          chunk_index: chunk.chunk_index
+        })
+      }
+    }
+
+    return Array.from(sourcesMap.values())
+  }
+
+  private buildSingleResumeSource(resume: Awaited<ReturnType<typeof resumeService.getResumeForChat>>) {
+    return {
+      type: 'resume' as const,
+      resume_id: String(resume._id),
+      title: resume.title,
+      chunk_index: 0
+    }
+  }
+
   private async retrieveJobsByIntent(intent: ChatIntent, message: string, lastJobIds: string[]) {
     switch (intent) {
       case 'job_search':
@@ -52,7 +179,7 @@ class RagChatService {
   }
 
   private async buildAnswer(intent: ChatIntent, message: string, jobs: RetrievedChatJob[]): Promise<ChatAnswerResult> {
-    if (intent === 'cv_review' || intent === 'policy_qa' || intent === 'unsupported') {
+    if (intent === 'policy_qa' || intent === 'unsupported') {
       return {
         answer: this.buildFallbackAnswer(intent),
         sources: []
@@ -61,7 +188,8 @@ class RagChatService {
 
     if (jobs.length === 0) {
       return {
-        answer: 'Hiện tôi chưa tìm thấy job phù hợp với câu hỏi này. Bạn có thể thử nêu rõ hơn về kỹ năng, level hoặc địa điểm.',
+        answer:
+          'Hiện tôi chưa tìm thấy job phù hợp với câu hỏi này. Bạn có thể thử nêu rõ hơn về kỹ năng, level hoặc địa điểm.',
         sources: []
       }
     }

@@ -6,7 +6,7 @@ import ElasticsearchConfig from '~/configs/elasticsearch.config'
 import env from '~/configs/env.config'
 import { JobLevel, JobStatus, JobType } from '~/constants/enum'
 import Job from '~/models/schema/client/jobs.schema'
-import { generateEmbedding } from '~/services/embedding.service'
+import { generateLocalEmbedding } from '~/services/embedding.service'
 import jobSearchService from '~/services/job-search.service'
 
 type SearchHit = {
@@ -349,7 +349,7 @@ const main = async () => {
       }))
 
       const embeddingStartedAt = performance.now()
-      const queryVector = await generateEmbedding(benchmarkQuery.query)
+      const queryVector = await generateLocalEmbedding(benchmarkQuery.query)
       const embeddingElapsedMs = performance.now() - embeddingStartedAt
 
       const semanticStartedAt = performance.now()

@@ -1,10 +1,10 @@
 import 'dotenv/config'
 import { performance } from 'node:perf_hooks'
 import {
-  EMBEDDING_MODEL,
-  EMBEDDING_MODEL_2,
-  generateEmbedding,
-  generateEmbedding2
+  GEMINI_EMBEDDING_MODEL_NAME,
+  LOCAL_EMBEDDING_MODEL,
+  generateGeminiEmbedding,
+  generateLocalEmbedding
 } from '../services/embedding.service'
 
 const args = process.argv.slice(2)
@@ -44,15 +44,15 @@ const main = async () => {
   console.log('Input text:', text)
 
   if (provider === 'local') {
-    console.log('Embedding model:', EMBEDDING_MODEL)
-    await benchmark('local', () => generateEmbedding(text))
+    console.log('Embedding model:', LOCAL_EMBEDDING_MODEL)
+    await benchmark('local', () => generateLocalEmbedding(text))
     return
   }
 
   if (provider === 'gemini') {
-    console.log('Embedding model:', EMBEDDING_MODEL_2)
+    console.log('Embedding model:', GEMINI_EMBEDDING_MODEL_NAME)
     console.log('Output dimensionality:', outputDimensionality ?? 'default')
-    await benchmark('gemini', () => generateEmbedding2(text, { outputDimensionality }))
+    await benchmark('gemini', () => generateGeminiEmbedding(text, { outputDimensionality }))
     return
   }
 

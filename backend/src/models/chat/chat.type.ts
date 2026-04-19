@@ -1,12 +1,22 @@
 import { ObjectId } from 'mongodb'
 import { ChatIntent } from '~/constants/chat-intent'
+import { ResumeStatus } from '~/constants/enum'
 
-export type ChatSource = {
+export type JobChatSource = {
   type: 'job'
   job_id: string
   title: string
   company: string
 }
+
+export type ResumeChatSource = {
+  type: 'resume'
+  resume_id: string
+  title: string
+  chunk_index: number
+}
+
+export type ChatSource = JobChatSource | ResumeChatSource
 
 export type ChatIntentResult = {
   intent: ChatIntent
@@ -53,4 +63,17 @@ export type RetrievedChatJob = {
   description: string
   requirements: string
   benefits: string
+}
+
+export type RetrievedResumeChunk = {
+  resume_id: string
+  candidate_id: string
+  chunk_id: string
+  chunk_index: number
+  status: ResumeStatus
+  is_default: boolean
+  title: string
+  text: string
+  section?: string
+  score: number
 }

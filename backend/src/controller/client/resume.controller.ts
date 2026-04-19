@@ -12,7 +12,8 @@ export const createResumeController = async (req: Request<any, any, CreateResume
     message: UserMessages.RESUME_CREATED_SUCCESS,
     data: {
       ...result.resume,
-      _id: result.insertedId
+      _id: result.insertedId,
+      resume_indexing: result.resume_indexing
     }
   })
 }

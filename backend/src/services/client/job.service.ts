@@ -6,7 +6,7 @@ import ElasticsearchConfig from '~/configs/elasticsearch.config'
 import env from '~/configs/env.config'
 import { JobLevel, JobModerationStatus, JobStatus, JobType } from '~/constants/enum'
 import Job from '~/models/schema/client/jobs.schema'
-import { generateEmbedding } from '~/services/embedding.service'
+import { generateLocalEmbedding } from '~/services/embedding.service'
 import jobSearchService from '~/services/job-search.service'
 
 type SearchPublicJobsParams = {
@@ -292,7 +292,7 @@ class JobsService {
 
   private async searchPublicJobsSemantic(params: SearchPublicJobsParams): Promise<SemanticSearchResult> {
     const embeddingStartedAt = performance.now()
-    const queryVector = await generateEmbedding(params.q)
+    const queryVector = await generateLocalEmbedding(params.q)
     const embeddingElapsedMs = performance.now() - embeddingStartedAt
 
     const semanticSearchStartedAt = performance.now()

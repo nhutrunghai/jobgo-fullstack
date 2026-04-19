@@ -607,6 +607,136 @@
                   }
                 }
               ]
+            },
+            {
+              "name": "resumes",
+              "item": [
+                {
+                  "name": "create resume",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{AccessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"title\": \"CV Backend Node.js\",\n  \"cv_url\": \"https://example.com/resume.pdf\",\n  \"resume_file_key\": \"file_xxx\",\n  \"is_default\": true\n}"
+                    },
+                    "url": {
+                      "raw": "{{host}}/api/v1/user/resumes",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "user",
+                        "resumes"
+                      ]
+                    },
+                    "description": "Mongo sẽ lưu xong và trả response ngay. Phần parse PDF + embedding + index Elasticsearch chạy nền, nên response sẽ có resume_indexing.status = queued."
+                  }
+                },
+                {
+                  "name": "get my resumes",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{AccessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{host}}/api/v1/user/resumes",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "user",
+                        "resumes"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "get resume detail",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{AccessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{host}}/api/v1/user/resumes/{{cvId}}",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "user",
+                        "resumes",
+                        "{{cvId}}"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "delete resume",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{AccessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "DELETE",
+                    "url": {
+                      "raw": "{{host}}/api/v1/user/resumes/{{cvId}}",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "user",
+                        "resumes",
+                        "{{cvId}}"
+                      ]
+                    }
+                  }
+                }
+              ]
             }
           ]
         },
@@ -873,6 +1003,127 @@
                     "api",
                     "v1",
                     "company"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "chat",
+          "item": [
+            {
+              "name": "chat jobs - cv review default resume",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{AccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"đánh giá cv cho tôi\",\n  \"session_id\": \"\"\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/chat/jobs",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "chat",
+                    "jobs"
+                  ]
+                },
+                "description": "Nếu không có resume_id, backend sẽ lấy CV default của user; nếu không có default thì fallback sang CV active mới nhất."
+              }
+            },
+            {
+              "name": "chat jobs - cv review specific resume",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{AccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"đánh giá bố cục cv này giúp tôi\",\n  \"session_id\": \"\",\n  \"resume_id\": \"{{cvId}}\"\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/chat/jobs",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "chat",
+                    "jobs"
+                  ]
+                },
+                "description": "Backend sẽ dùng đúng resume_id nếu CV đó thuộc user hiện tại. Visual review dùng cv_url lấy từ DB, frontend không cần gửi cv_url."
+              }
+            },
+            {
+              "name": "chat jobs - job search",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{AccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"tìm cho tôi job backend nodejs ở HCM\",\n  \"session_id\": \"\"\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/chat/jobs",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "chat",
+                    "jobs"
                   ]
                 }
               }

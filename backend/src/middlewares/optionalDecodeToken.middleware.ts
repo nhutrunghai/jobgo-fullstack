@@ -3,8 +3,13 @@ import env from '~/configs/env.config'
 import RedisService from '~/configs/redis.config'
 import { verifyToken } from '~/utils/jwt.util'
 
+const getBearerToken = (authorization?: string) => {
+  const match = authorization?.match(/^Bearer\s+(.+)$/i)
+  return match?.[1]?.trim()
+}
+
 const optionalDecodeToken = async (req: Request, res: Response, next: NextFunction) => {
-  const accessToken = req.headers.authorization?.split('Bearer ')[1]
+  const accessToken = getBearerToken(req.headers.authorization)
 
   if (!accessToken) {
     return next()
