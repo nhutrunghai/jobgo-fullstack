@@ -3,7 +3,7 @@ import cookieParser from 'cookie-parser'
 import 'dotenv/config'
 import env from './configs/env.config.js'
 import databaseService from './configs/database.config.js'
-import { ensurePublicJobsSearchIndex } from './configs/search.config.js'
+import { ensurePublicJobsSearchIndex, ensureResumeChunksSearchIndex } from './configs/search.config.js'
 import BASE_PATH from './constants/path.js'
 import globalErrorHandle from './middlewares/errorHandle.middleware.js'
 import v1Router from './routes/v1/index.js'
@@ -14,6 +14,7 @@ import uploadThingProvider from '~/providers/uploadthing.provider.js'
 export const createApp = async () => {
   databaseService.connect()
   await ensurePublicJobsSearchIndex()
+  await ensureResumeChunksSearchIndex()
   const app = express()
   app.set('trust proxy', true)
   const isDev = env.BUILD_MODE === 'dev'

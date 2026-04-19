@@ -53,6 +53,8 @@ const envSchema = z.object({
   // ELASTICSEARCH
   ELASTICSEARCH_URL: z.string().min(1, { message: 'Không tồn tại ELASTICSEARCH_URL' }),
   PUBLIC_JOBS_SEARCH_INDEX: z.string().min(1, { message: 'PUBLIC_JOBS_SEARCH_INDEX không được rỗng' }),
+  RESUME_SEARCH_INDEX: z.string().min(1, { message: 'RESUME_SEARCH_INDEX không được rỗng' }).default('candidate_resumes_chunks'),
+  RESUME_EMBEDDING_DIMS: z.coerce.number().min(1).default(1536),
   // Embedding service
   EMBEDDING_API_URL: z.url({ message: 'EMBEDDING_API_URL phải là một đường dẫn hợp lệ' }).default('http://localhost:8000'),
   // Hugging Face
@@ -69,6 +71,11 @@ const envSchema = z.object({
   OPENAI_BASE_URL: z.url({ message: 'OPENAI_BASE_URL phải là một đường dẫn hợp lệ' }).default('https://api.openai.com/v1'),
   OPENAI_MODEL_INTENT: z.string().min(1, { message: 'OPENAI_MODEL_INTENT không được rỗng' }).default('gpt-4o-mini'),
   OPENAI_MODEL_CHAT: z.string().min(1, { message: 'OPENAI_MODEL_CHAT không được rỗng' }).default('gpt-4o-mini'),
+  OPENAI_MODEL_CV_VISUAL_REVIEW: z
+    .string()
+    .min(1, { message: 'OPENAI_MODEL_CV_VISUAL_REVIEW không được rỗng' })
+    .default('gpt-4o-mini'),
+  OPENAI_EMBEDDING_MODEL: z.string().min(1, { message: 'OPENAI_EMBEDDING_MODEL không được rỗng' }).default('text-embedding-3-small'),
   OPENAI_API_TIMEOUT_MS: z.coerce.number().min(1000).default(30000),
   DB_CHAT_SESSION_NAME: z.string().min(1, { message: 'DB_CHAT_SESSION_NAME không được rỗng' }).default('chat_sessions'),
   // Admin session

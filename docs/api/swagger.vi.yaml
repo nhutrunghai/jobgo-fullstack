@@ -8,6 +8,8 @@ servers:
 tags:
   - name: 'Auth'
   - name: 'User'
+  - name: 'Resumes'
+  - name: 'Chat'
   - name: 'Favorite Jobs'
   - name: 'Jobs'
   - name: 'Company'
@@ -670,6 +672,96 @@ paths:
               schema:
                 $ref: '#/components/schemas/GenericSuccess'
 
+  /user/resumes:
+    post:
+      tags: ['Resumes']
+      summary: 'Tạo CV mới'
+      description: 'Lưu resume vào Mongo trước, sau đó parse PDF + embedding + index Elasticsearch sẽ chạy nền. `resume_indexing.status` trả về ngay là `queued`.'
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateResumeRequest'
+      responses:
+        '201':
+          description: 'Tạo CV thành công'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateResumeResponse'
+    get:
+      tags: ['Resumes']
+      summary: 'Lấy danh sách CV của chính mình'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: 'Thành công'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeListResponse'
+
+  /user/resumes/{resumeId}:
+    get:
+      tags: ['Resumes']
+      summary: 'Lấy chi tiết một CV'
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ResumeIdParam'
+      responses:
+        '200':
+          description: 'Thành công'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeDetailResponse'
+    delete:
+      tags: ['Resumes']
+      summary: 'Xóa một CV'
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ResumeIdParam'
+      responses:
+        '200':
+          description: 'Thành công'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResumeResponse'
+
+  /chat/jobs:
+    post:
+      tags: ['Chat']
+      summary: 'Chat job assistant và CV review'
+      description: 'Route dùng `optionalDecodeToken`. Với intent `cv_review`, backend vẫn bắt buộc phải có Bearer token để xác định user và CV.'
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatJobsRequest'
+      responses:
+        '200':
+          description: 'Thành công'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatJobsResponse'
+        '401':
+          description: 'Thiếu hoặc sai token khi gọi CV review'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /admin/auth/login:
     post:
       tags: ['Admin Auth']
@@ -1039,6 +1131,13 @@ components:
       schema:
         type: 'string'
         pattern: '^[a-fA-F0-9]{24}$'
+    ResumeIdParam:
+      name: 'resumeId'
+      in: 'path'
+      required: true
+      schema:
+        type: 'string'
+        pattern: '^[a-fA-F0-9]{24}$'
     UserNameParam:
       name: 'id'
       in: 'path'
@@ -1171,6 +1270,170 @@ components:
           type: 'string'
         OtpCode:
           type: 'string'
+
+    CreateResumeRequest:
+      type: 'object'
+      required: ['title', 'cv_url', 'resume_file_key']
+      properties:
+        title:
+          type: 'string'
+          maxLength: 200
+        cv_url:
+          type: 'string'
+          format: 'uri'
+        resume_file_key:
+          type: 'string'
+        is_default:
+          type: 'boolean'
+          default: false
+
+    ResumeIndexingStatus:
+      type: 'object'
+      properties:
+        status:
+          type: 'string'
+          enum: ['queued', 'completed', 'skipped', 'failed']
+        chunks_indexed:
+          type: 'integer'
+        error:
+          type: 'string'
+          nullable: true
+
+    ResumeResource:
+      type: 'object'
+      properties:
+        _id:
+          type: 'string'
+        candidate_id:
+          type: 'string'
+        title:
+          type: 'string'
+        cv_url:
+          type: 'string'
+          format: 'uri'
+        resume_file_key:
+          type: 'string'
+          nullable: true
+        is_default:
+          type: 'boolean'
+        status:
+          type: 'string'
+          enum: ['active', 'deleted']
+        created_at:
+          type: 'string'
+          format: 'date-time'
+        updated_at:
+          type: 'string'
+          format: 'date-time'
+
+    CreateResumeResponse:
+      type: 'object'
+      properties:
+        status:
+          type: 'string'
+          example: 'success'
+        message:
+          type: 'string'
+        data:
+          allOf:
+            - $ref: '#/components/schemas/ResumeResource'
+            - type: 'object'
+              properties:
+                resume_indexing:
+                  $ref: '#/components/schemas/ResumeIndexingStatus'
+
+    ResumeListResponse:
+      type: 'object'
+      properties:
+        status:
+          type: 'string'
+          example: 'success'
+        data:
+          type: 'array'
+          items:
+            $ref: '#/components/schemas/ResumeResource'
+
+    ResumeDetailResponse:
+      type: 'object'
+      properties:
+        status:
+          type: 'string'
+          example: 'success'
+        data:
+          $ref: '#/components/schemas/ResumeResource'
+
+    DeleteResumeResponse:
+      type: 'object'
+      properties:
+        status:
+          type: 'string'
+          example: 'success'
+        message:
+          type: 'string'
+        data:
+          type: 'object'
+          properties:
+            _id:
+              type: 'string'
+
+    ChatJobsRequest:
+      type: 'object'
+      required: ['message']
+      properties:
+        message:
+          type: 'string'
+          minLength: 2
+          maxLength: 1000
+        session_id:
+          type: 'string'
+          nullable: true
+        resume_id:
+          type: 'string'
+          pattern: '^[a-fA-F0-9]{24}$'
+          nullable: true
+
+    ChatSource:
+      type: 'object'
+      properties:
+        type:
+          type: 'string'
+          enum: ['job', 'resume']
+        resume_id:
+          type: 'string'
+          nullable: true
+        job_id:
+          type: 'string'
+          nullable: true
+        title:
+          type: 'string'
+          nullable: true
+        company:
+          type: 'string'
+          nullable: true
+        chunk_index:
+          type: 'integer'
+          nullable: true
+
+    ChatJobsResponse:
+      type: 'object'
+      properties:
+        status:
+          type: 'string'
+          example: 'success'
+        data:
+          type: 'object'
+          properties:
+            session_id:
+              type: 'string'
+            intent:
+              type: 'string'
+              enum: ['job_search', 'job_explanation', 'cv_review', 'policy_qa', 'unsupported']
+            answer:
+              type: 'string'
+            sources:
+              type: 'array'
+              items:
+                $ref: '#/components/schemas/ChatSource'
 
     CreateCompanyRequest:
       type: 'object'

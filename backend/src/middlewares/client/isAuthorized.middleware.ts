@@ -6,8 +6,14 @@ import ErrorCode from '~/constants/error'
 import UserMessages from '~/constants/messages'
 import { AppError } from '~/models/appError'
 import { verifyToken } from '~/utils/jwt.util'
+
+const getBearerToken = (authorization?: string) => {
+  const match = authorization?.match(/^Bearer\s+(.+)$/i)
+  return match?.[1]?.trim()
+}
+
 const isAuthorized = async (req: Request, res: Response, next: NextFunction) => {
-  const accessToken = req.headers.authorization?.split('Bearer ')[1]
+  const accessToken = getBearerToken(req.headers.authorization)
   if (!accessToken) {
     return next(
       new AppError({

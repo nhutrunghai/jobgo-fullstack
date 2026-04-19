@@ -15,13 +15,7 @@ const buildSalaryText = (job: RetrievedChatJob) => {
   return `${min} - ${max} ${job.salary.currency}`
 }
 
-export const buildJobChatAnswerPrompt = ({
-  message,
-  jobs
-}: {
-  message: string
-  jobs: RetrievedChatJob[]
-}) => {
+export const buildJobChatAnswerPrompt = ({ message, jobs }: { message: string; jobs: RetrievedChatJob[] }) => {
   const jobsContext = jobs
     .map(
       (job, index) => `Job ${index + 1}

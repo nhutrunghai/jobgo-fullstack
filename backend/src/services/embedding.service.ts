@@ -5,8 +5,13 @@ const DEFAULT_EMBEDDING_MODEL = 'dangvantuan/vietnamese-document-embedding'
 const GEMINI_EMBEDDING_MODEL = 'gemini-embedding-001'
 const EMBEDDING_API_URL = env.EMBEDDING_API_URL.replace(/\/+$/, '')
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models'
+const OPENAI_API_URL = env.OPENAI_BASE_URL.replace(/\/+$/, '')
 
-export const generateEmbedding = async (text: string, model = DEFAULT_EMBEDDING_MODEL): Promise<number[]> => {
+export const LOCAL_EMBEDDING_MODEL = DEFAULT_EMBEDDING_MODEL
+export const GEMINI_EMBEDDING_MODEL_NAME = GEMINI_EMBEDDING_MODEL
+export const OPENAI_EMBEDDING_MODEL_NAME = env.OPENAI_EMBEDDING_MODEL
+
+export const generateLocalEmbedding = async (text: string, model = LOCAL_EMBEDDING_MODEL): Promise<number[]> => {
   const normalizedText = text.trim()
 
   if (!normalizedText) {
@@ -30,13 +35,10 @@ export const generateEmbedding = async (text: string, model = DEFAULT_EMBEDDING_
   return output as number[]
 }
 
-export const EMBEDDING_MODEL = DEFAULT_EMBEDDING_MODEL
-export const EMBEDDING_MODEL_2 = GEMINI_EMBEDDING_MODEL
-
-export const generateEmbedding2 = async (
+export const generateGeminiEmbedding = async (
   text: string,
   {
-    model = GEMINI_EMBEDDING_MODEL,
+    model = GEMINI_EMBEDDING_MODEL_NAME,
     outputDimensionality
   }: {
     model?: string
@@ -83,6 +85,44 @@ export const generateEmbedding2 = async (
 
   if (!Array.isArray(output)) {
     throw new Error(`Gemini Embedding API returned an invalid response for model ${model}`)
+  }
+
+  return output as number[]
+}
+
+export const generateOpenAiEmbedding = async (
+  text: string,
+  model = OPENAI_EMBEDDING_MODEL_NAME
+): Promise<number[]> => {
+  const normalizedText = text.trim()
+
+  if (!normalizedText) {
+    throw new Error('Text to embed must not be empty')
+  }
+
+  if (!env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY is required to call OpenAI Embedding API')
+  }
+
+  const response = await axios.post(
+    `${OPENAI_API_URL}/embeddings`,
+    {
+      model,
+      input: normalizedText
+    },
+    {
+      timeout: env.OPENAI_API_TIMEOUT_MS,
+      headers: {
+        Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    }
+  )
+
+  const output = response.data?.data?.[0]?.embedding
+
+  if (!Array.isArray(output)) {
+    throw new Error(`OpenAI Embedding API returned an invalid response for model ${model}`)
   }
 
   return output as number[]

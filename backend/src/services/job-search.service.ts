@@ -3,7 +3,7 @@ import databaseService from '~/configs/database.config'
 import ElasticsearchConfig from '~/configs/elasticsearch.config'
 import env from '~/configs/env.config'
 import Job from '~/models/schema/client/jobs.schema'
-import { generateEmbedding } from '~/services/embedding.service'
+import { generateLocalEmbedding } from '~/services/embedding.service'
 
 export interface PublicJobSearchDocument {
   job_id: string
@@ -62,7 +62,7 @@ class JobSearchService {
     }
 
     const document = this.buildSearchDocument(job)
-    const embedding = await generateEmbedding(document.search_text)
+    const embedding = await generateLocalEmbedding(document.search_text)
 
     await ElasticsearchConfig.getInstance().index({
       index: env.PUBLIC_JOBS_SEARCH_INDEX,
