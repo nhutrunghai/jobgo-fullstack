@@ -29,6 +29,10 @@
     {
       "key": "userId",
       "value": ""
+    },
+    {
+      "key": "chatSessionId",
+      "value": ""
     }
   ],
   "item": [
@@ -1126,6 +1130,95 @@
                     "jobs"
                   ]
                 }
+              }
+            },
+            {
+              "name": "get chat sessions",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{AccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/chat/sessions",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "chat",
+                    "sessions"
+                  ]
+                },
+                "description": "Lấy danh sách các đoạn chat của user hiện tại. Dùng session_id trả về để set vào biến chatSessionId khi gọi detail/delete."
+              }
+            },
+            {
+              "name": "get chat session detail",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{AccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/chat/sessions/{{chatSessionId}}",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "chat",
+                    "sessions",
+                    "{{chatSessionId}}"
+                  ]
+                },
+                "description": "Lấy chi tiết một đoạn chat thuộc user hiện tại, bao gồm turns."
+              }
+            },
+            {
+              "name": "delete chat session",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{AccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "url": {
+                  "raw": "{{host}}/api/v1/chat/sessions/{{chatSessionId}}",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "chat",
+                    "sessions",
+                    "{{chatSessionId}}"
+                  ]
+                },
+                "description": "Xóa một đoạn chat thuộc user hiện tại."
               }
             }
           ]

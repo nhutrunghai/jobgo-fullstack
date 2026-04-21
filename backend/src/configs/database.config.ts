@@ -167,6 +167,11 @@ class DatabaseService {
         collection: env.DB_JOB_APPLICATION_NAME,
         key: { candidate_id: 1, applied_at: -1 },
         option: { name: 'candidate_id_applied_at' }
+      },
+      {
+        collection: env.DB_CHAT_SESSION_NAME,
+        key: { user_id: 1, updated_at: -1 },
+        option: { name: 'user_id_updated_at' }
       }
     ]
 

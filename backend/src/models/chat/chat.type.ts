@@ -39,11 +39,25 @@ export type ChatSessionTurn = {
 export type ChatSessionDocument = {
   _id?: ObjectId
   user_id?: ObjectId
+  title?: string
   turns: ChatSessionTurn[]
   last_intent?: ChatIntent
   last_retrieved_job_ids: string[]
   created_at: Date
   updated_at: Date
+}
+
+export type ChatSessionSummary = {
+  session_id: string
+  title: string
+  last_message: string
+  last_intent?: ChatIntent
+  created_at: Date
+  updated_at: Date
+}
+
+export type ChatSessionDetail = ChatSessionSummary & {
+  turns: ChatSessionTurn[]
 }
 
 export type RetrievedChatJob = {
