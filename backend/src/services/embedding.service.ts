@@ -90,10 +90,7 @@ export const generateGeminiEmbedding = async (
   return output as number[]
 }
 
-export const generateOpenAiEmbedding = async (
-  text: string,
-  model = OPENAI_EMBEDDING_MODEL_NAME
-): Promise<number[]> => {
+export const generateOpenAiEmbedding = async (text: string, model = OPENAI_EMBEDDING_MODEL_NAME): Promise<number[]> => {
   const normalizedText = text.trim()
 
   if (!normalizedText) {

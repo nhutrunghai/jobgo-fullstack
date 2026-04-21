@@ -66,5 +66,12 @@ export const adminAuthMiddleware = async (req: Request, res: Response, next: Nex
     ...session,
     role: user.role!
   })
+  res.cookie(env.ADMIN_SESSION_COOKIE_NAME, req.adminAuth.sessionId, {
+    httpOnly: true,
+    secure: env.ADMIN_COOKIE_SECURE,
+    sameSite: env.ADMIN_COOKIE_SAME_SITE,
+    maxAge: env.ADMIN_SESSION_TTL * 1000,
+    path: '/api/v1/admin'
+  })
   next()
 }
