@@ -4,6 +4,7 @@ import Company from '~/models/schema/client/companies.schema.js'
 import FavoriteJob from '~/models/schema/client/favoriteJobs.schema.js'
 import JobApplication from '~/models/schema/client/jobApplications.schema.js'
 import Job from '~/models/schema/client/jobs.schema.js'
+import JobPromotion from '~/models/schema/client/jobPromotions.schema.js'
 import OtpCode from '~/models/schema/client/otpCodes.schema.js'
 import Resume from '~/models/schema/client/resumes.schema.js'
 import RefreshToken from '~/models/schema/client/refreshTokens.schema.js'
@@ -112,6 +113,21 @@ class DatabaseService {
         option: { name: 'status_updated_at' }
       },
       {
+        collection: env.DB_JOB_PROMOTION_NAME,
+        key: { type: 1, status: 1, starts_at: 1, ends_at: 1, priority: -1 },
+        option: { name: 'type_status_time_priority' }
+      },
+      {
+        collection: env.DB_JOB_PROMOTION_NAME,
+        key: { company_id: 1, created_at: -1 },
+        option: { name: 'company_id_created_at' }
+      },
+      {
+        collection: env.DB_JOB_PROMOTION_NAME,
+        key: { job_id: 1, type: 1, status: 1, ends_at: -1 },
+        option: { name: 'job_type_status_ends_at' }
+      },
+      {
         collection: env.DB_FAVORITE_JOB_NAME,
         key: { user_id: 1, job_id: 1 },
         option: { unique: true, name: 'user_id_job_id_unique' }
@@ -198,6 +214,10 @@ class DatabaseService {
 
   get jobs(): Collection<Job> {
     return this.db.collection(env.DB_JOB_NAME)
+  }
+
+  get jobPromotions(): Collection<JobPromotion> {
+    return this.db.collection(env.DB_JOB_PROMOTION_NAME)
   }
 
   get favoriteJobs(): Collection<FavoriteJob> {

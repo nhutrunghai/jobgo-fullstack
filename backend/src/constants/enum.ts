@@ -31,6 +31,16 @@ export enum JobModerationStatus {
   BLOCKED = 'blocked' // Bi admin chan
 }
 
+export enum JobPromotionType {
+  HOMEPAGE_FEATURED = 'homepage_featured'
+}
+
+export enum JobPromotionStatus {
+  ACTIVE = 'active',
+  EXPIRED = 'expired',
+  CANCELLED = 'cancelled'
+}
+
 export enum JobType {
   FULL_TIME = 'full-time', // Toan thoi gian
   PART_TIME = 'part-time', // Ban thoi gian
