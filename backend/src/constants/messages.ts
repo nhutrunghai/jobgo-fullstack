@@ -143,6 +143,8 @@ const UserMessages = {
   RESUME_FILE_KEY_REQUIRED: 'Resume file key không được để trống',
   RESUME_CREATED_SUCCESS: 'Tạo CV thành công',
   RESUME_DELETED_SUCCESS: 'Xóa CV thành công',
+  CHAT_SESSION_NOT_FOUND: 'Không tìm thấy đoạn chat',
+  CHAT_SESSION_DELETED_SUCCESS: 'Xóa đoạn chat thành công',
   INVALID_ROLE: 'Vai trò không hợp lệ',
   INVALID_STATUS: 'Trạng thái không hợp lệ'
 } as const

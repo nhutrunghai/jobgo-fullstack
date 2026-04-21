@@ -5,6 +5,7 @@ import { ChatSessionDocument, ChatSessionTurn } from '~/models/chat/chat.type'
 type ChatSessionSchemaType = {
   _id?: ObjectId
   user_id?: ObjectId
+  title?: string
   turns?: ChatSessionTurn[]
   last_intent?: ChatIntent
   last_retrieved_job_ids?: string[]
@@ -15,6 +16,7 @@ type ChatSessionSchemaType = {
 export default class ChatSession implements ChatSessionDocument {
   _id?: ObjectId
   user_id?: ObjectId
+  title?: string
   turns: ChatSessionTurn[]
   last_intent?: ChatIntent
   last_retrieved_job_ids: string[]
@@ -26,6 +28,7 @@ export default class ChatSession implements ChatSessionDocument {
 
     this._id = session._id
     this.user_id = session.user_id
+    this.title = session.title
     this.turns = session.turns || []
     this.last_intent = session.last_intent
     this.last_retrieved_job_ids = session.last_retrieved_job_ids || []

@@ -21,13 +21,13 @@ type ChatParams = {
   message: string
   session_id?: string
   resume_id?: string
-  user_id?: string
+  user_id: string
 }
 
 class RagChatService {
   async chat({ message, session_id, resume_id, user_id }: ChatParams) {
     const normalizedMessage = message.trim()
-    const session = await sessionService.loadOrCreateSession(session_id)
+    const session = await sessionService.loadOrCreateSession(session_id, user_id, normalizedMessage)
     const sessionObjectId = session._id as ObjectId
 
     await sessionService.appendMessage(sessionObjectId, 'user', normalizedMessage)
