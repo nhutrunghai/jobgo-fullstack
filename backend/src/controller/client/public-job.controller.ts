@@ -33,3 +33,14 @@ export const searchPublicJobsController = async (req: Request, res: Response) =>
   })
 }
 
+export const getLatestPublicJobsController = async (req: Request, res: Response) => {
+  const result = await jobsService.getLatestPublicJobs({
+    page: Number(req.query.page || 1),
+    limit: Number(req.query.limit || 8)
+  })
+
+  return res.status(StatusCodes.OK).json({
+    status: 'success',
+    data: result
+  })
+}

@@ -18,6 +18,11 @@ type SearchPublicJobsParams = {
   limit: number
 }
 
+type GetLatestPublicJobsParams = {
+  page: number
+  limit: number
+}
+
 type SearchHit = {
   job_id: string
   score: number
@@ -43,11 +48,13 @@ type PublicJobListItem = {
   job_type: JobType
   level: JobLevel
   salary: Job['salary']
+  skills: string[]
+  published_at: Date
   expired_at: Date
   company: {
     _id: ObjectId
     company_name: string
-    logo?: string 
+    logo?: string
   }
 }
 
@@ -230,6 +237,96 @@ class JobsService {
         limit: normalized.limit,
         total,
         total_pages: Math.ceil(total / normalized.limit)
+      }
+    }
+  }
+
+  async getLatestPublicJobs(params: GetLatestPublicJobsParams) {
+    const page = params.page
+    const limit = params.limit
+    const now = new Date()
+    const match = {
+      status: JobStatus.OPEN,
+      moderation_status: JobModerationStatus.ACTIVE,
+      published_at: { $ne: null },
+      expired_at: { $gt: now }
+    }
+
+    const [result] = await databaseService.jobs
+      .aggregate<{
+        items: PublicJobListItem[]
+        total: { count: number }[]
+      }>([
+        {
+          $match: match
+        },
+        {
+          $sort: {
+            published_at: -1,
+            created_at: -1,
+            _id: -1
+          }
+        },
+        {
+          $facet: {
+            items: [
+              {
+                $skip: (page - 1) * limit
+              },
+              {
+                $limit: limit
+              },
+              {
+                $lookup: {
+                  from: databaseService.companies.collectionName,
+                  localField: 'company_id',
+                  foreignField: '_id',
+                  as: 'company'
+                }
+              },
+              {
+                $unwind: '$company'
+              },
+              {
+                $project: {
+                  _id: 1,
+                  title: 1,
+                  location: 1,
+                  job_type: 1,
+                  level: 1,
+                  salary: 1,
+                  skills: 1,
+                  published_at: 1,
+                  expired_at: 1,
+                  company: {
+                    _id: '$company._id',
+                    company_name: '$company.company_name',
+                    logo: '$company.logo'
+                  }
+                }
+              }
+            ],
+            total: [
+              {
+                $count: 'count'
+              }
+            ]
+          }
+        }
+      ])
+      .toArray()
+
+    const total = result?.total[0]?.count || 0
+    const totalPages = Math.ceil(total / limit)
+
+    return {
+      items: result?.items || [],
+      pagination: {
+        page,
+        limit,
+        total,
+        total_pages: totalPages,
+        has_next: page < totalPages
       }
     }
   }
@@ -435,6 +532,8 @@ class JobsService {
             job_type: 1,
             level: 1,
             salary: 1,
+            skills: 1,
+            published_at: 1,
             expired_at: 1,
             company: {
               _id: '$company._id',

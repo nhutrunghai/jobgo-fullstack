@@ -780,6 +780,35 @@
               }
             },
             {
+              "name": "get latest public jobs",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/jobs/latest?page=1&limit=8",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "jobs",
+                    "latest"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "8"
+                    }
+                  ]
+                },
+                "description": "Public endpoint cho trang chủ: lấy danh sách job mới nhất, có pagination để hỗ trợ nút Xem thêm hoặc Xem tất cả."
+              }
+            },
+            {
               "name": "get public job detail",
               "request": {
                 "method": "GET",

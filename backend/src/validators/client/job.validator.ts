@@ -205,6 +205,13 @@ export const searchPublicJobsValidator = z.object({
   })
 })
 
+export const getLatestPublicJobsValidator = z.object({
+  query: z.object({
+    page: z.coerce.number().int().min(1).optional().default(1),
+    limit: z.coerce.number().int().min(1).max(50).optional().default(8)
+  })
+})
+
 export const getCompanyJobDetailValidator = z.object({
   params: z.object({
     jobId: z
