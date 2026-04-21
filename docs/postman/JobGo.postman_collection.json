@@ -809,6 +809,35 @@
               }
             },
             {
+              "name": "get featured public jobs",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/jobs/featured?page=1&limit=8",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "jobs",
+                    "featured"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "8"
+                    }
+                  ]
+                },
+                "description": "Public endpoint cho trang chủ: lấy danh sách job nổi bật từ job_promotions còn hạn và job còn public hợp lệ."
+              }
+            },
+            {
               "name": "get public job detail",
               "request": {
                 "method": "GET",
