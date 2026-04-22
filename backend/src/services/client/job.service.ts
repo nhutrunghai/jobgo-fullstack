@@ -4,7 +4,14 @@ import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config'
 import ElasticsearchConfig from '~/configs/elasticsearch.config'
 import env from '~/configs/env.config'
-import { JobLevel, JobModerationStatus, JobPromotionStatus, JobPromotionType, JobStatus, JobType } from '~/constants/enum'
+import {
+  JobLevel,
+  JobModerationStatus,
+  JobPromotionStatus,
+  JobPromotionType,
+  JobStatus,
+  JobType
+} from '~/constants/enum'
 import Job from '~/models/schema/client/jobs.schema'
 import { generateLocalEmbedding } from '~/services/embedding.service'
 import jobSearchService from '~/services/job-search.service'
@@ -171,6 +178,50 @@ class JobsService {
   async searchPublicJobs(params: SearchPublicJobsParams) {
     const normalized = this.normalizeSearchParams(params)
     const startedAt = performance.now()
+    const lexicalStartedAt = performance.now()
+    const hits = await this.searchPublicJobsLexical(normalized)
+    const lexicalElapsedMs = performance.now() - lexicalStartedAt
+
+    const total = hits.length
+    const start = (normalized.page - 1) * normalized.limit
+    const pagedHits = hits.slice(start, start + normalized.limit)
+
+    const hydrateStartedAt = performance.now()
+    const jobs = await this.hydratePublicJobsFromMongo(pagedHits.map((item) => item.job_id))
+    const hydrateElapsedMs = performance.now() - hydrateStartedAt
+    const totalElapsedMs = performance.now() - startedAt
+
+    console.log(
+      JSON.stringify({
+        tag: 'public_jobs_search_timing',
+        mode: 'lexical',
+        query: normalized.q,
+        page: normalized.page,
+        limit: normalized.limit,
+        lexical_ms: Number(lexicalElapsedMs.toFixed(2)),
+        hydrate_ms: Number(hydrateElapsedMs.toFixed(2)),
+        total_hits: total,
+        total_ms: Number(totalElapsedMs.toFixed(2))
+      })
+    )
+
+    return {
+      items: this.attachAndPreserveJobIdOrder(
+        pagedHits.map((item) => item.job_id),
+        jobs
+      ),
+      pagination: {
+        page: normalized.page,
+        limit: normalized.limit,
+        total,
+        total_pages: Math.ceil(total / normalized.limit)
+      }
+    }
+  }
+
+  async searchPublicJobsForChat(params: SearchPublicJobsParams) {
+    const normalized = this.normalizeSearchParams(params)
+    const startedAt = performance.now()
 
     const lexicalStartedAt = performance.now()
     const lexicalPromise = this.searchPublicJobsLexical(normalized).then((hits) => ({
@@ -227,6 +278,7 @@ class JobsService {
     console.log(
       JSON.stringify({
         tag: 'public_jobs_search_timing',
+        mode: 'hybrid',
         query: normalized.q,
         page: normalized.page,
         limit: normalized.limit,
@@ -702,6 +754,12 @@ class JobsService {
       .filter((job): job is PublicJobListItem => job !== null)
   }
 
+  private attachAndPreserveJobIdOrder(jobIds: string[], jobs: PublicJobListItem[]) {
+    const jobsMap = new Map(jobs.map((job) => [String(job._id), job]))
+
+    return jobIds.map((jobId) => jobsMap.get(jobId) || null).filter((job): job is PublicJobListItem => job !== null)
+  }
+
   private buildScorePreview(candidates: SearchCandidate[], jobs: PublicJobListItem[]): SearchScorePreview[] {
     const jobsMap = new Map(jobs.map((job) => [String(job._id), job]))
 
@@ -717,4 +775,3 @@ class JobsService {
 
 const jobsService = new JobsService()
 export default jobsService
-

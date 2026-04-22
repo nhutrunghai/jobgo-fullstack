@@ -58,15 +58,8 @@
                 },
                 "url": {
                   "raw": "{{host}}/api/v1/auth/register",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "auth",
-                    "register"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "auth", "register"]
                 }
               }
             },
@@ -86,15 +79,8 @@
                 },
                 "url": {
                   "raw": "{{host}}/api/v1/auth/login",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "auth",
-                    "login"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "auth", "login"]
                 }
               }
             },
@@ -124,15 +110,8 @@
                 },
                 "url": {
                   "raw": "{{host}}/api/v1/auth/logout",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "auth",
-                    "logout"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "auth", "logout"]
                 }
               }
             },
@@ -152,15 +131,8 @@
                 },
                 "url": {
                   "raw": "{{host}}/api/v1/auth/refresh-token",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "auth",
-                    "refresh-token"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "auth", "refresh-token"]
                 }
               }
             },
@@ -180,15 +152,8 @@
                 },
                 "url": {
                   "raw": "{{host}}/api/v1/auth/verify-email",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "auth",
-                    "verify-email"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "auth", "verify-email"]
                 }
               }
             },
@@ -208,15 +173,8 @@
                 },
                 "url": {
                   "raw": "{{host}}/api/v1/auth/forgot-password",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "auth",
-                    "forgot-password"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "auth", "forgot-password"]
                 }
               }
             },
@@ -236,15 +194,8 @@
                 },
                 "url": {
                   "raw": "{{host}}/api/v1/auth/reset-password",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "auth",
-                    "reset-password"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "auth", "reset-password"]
                 }
               }
             }
@@ -272,15 +223,8 @@
                     "method": "GET",
                     "url": {
                       "raw": "{{host}}/api/v1/user/me",
-                      "host": [
-                        "{{host}}"
-                      ],
-                      "path": [
-                        "api",
-                        "v1",
-                        "user",
-                        "me"
-                      ]
+                      "host": ["{{host}}"],
+                      "path": ["api", "v1", "user", "me"]
                     }
                   }
                 },
@@ -290,16 +234,8 @@
                     "method": "GET",
                     "url": {
                       "raw": "{{host}}/api/v1/user/profile/{{userId}}",
-                      "host": [
-                        "{{host}}"
-                      ],
-                      "path": [
-                        "api",
-                        "v1",
-                        "user",
-                        "profile",
-                        "{{userId}}"
-                      ]
+                      "host": ["{{host}}"],
+                      "path": ["api", "v1", "user", "profile", "{{userId}}"]
                     }
                   }
                 },
@@ -329,15 +265,8 @@
                     },
                     "url": {
                       "raw": "{{host}}/api/v1/user/profile",
-                      "host": [
-                        "{{host}}"
-                      ],
-                      "path": [
-                        "api",
-                        "v1",
-                        "user",
-                        "profile"
-                      ]
+                      "host": ["{{host}}"],
+                      "path": ["api", "v1", "user", "profile"]
                     }
                   }
                 }
@@ -362,15 +291,8 @@
                     "method": "GET",
                     "url": {
                       "raw": "{{host}}/api/v1/user/setting",
-                      "host": [
-                        "{{host}}"
-                      ],
-                      "path": [
-                        "api",
-                        "v1",
-                        "user",
-                        "setting"
-                      ]
+                      "host": ["{{host}}"],
+                      "path": ["api", "v1", "user", "setting"]
                     }
                   }
                 },
@@ -400,15 +322,8 @@
                     },
                     "url": {
                       "raw": "{{host}}/api/v1/user/setting",
-                      "host": [
-                        "{{host}}"
-                      ],
-                      "path": [
-                        "api",
-                        "v1",
-                        "user",
-                        "setting"
-                      ]
+                      "host": ["{{host}}"],
+                      "path": ["api", "v1", "user", "setting"]
                     }
                   }
                 },
@@ -428,16 +343,8 @@
                     "method": "POST",
                     "url": {
                       "raw": "{{host}}/api/v1/user/setting/resend-mail",
-                      "host": [
-                        "{{host}}"
-                      ],
-                      "path": [
-                        "api",
-                        "v1",
-                        "user",
-                        "setting",
-                        "resend-mail"
-                      ]
+                      "host": ["{{host}}"],
+                      "path": ["api", "v1", "user", "setting", "resend-mail"]
                     }
                   }
                 },
@@ -457,9 +364,7 @@
                     "method": "POST",
                     "url": {
                       "raw": "{{host}}/api/v1/user/setting/change-password",
-                      "host": [
-                        "{{host}}"
-                      ],
+                      "host": ["{{host}}"],
                       "path": [
                         "api",
                         "v1",
@@ -496,16 +401,8 @@
                     },
                     "url": {
                       "raw": "{{host}}/api/v1/user/setting/new-password",
-                      "host": [
-                        "{{host}}"
-                      ],
-                      "path": [
-                        "api",
-                        "v1",
-                        "user",
-                        "setting",
-                        "new-password"
-                      ]
+                      "host": ["{{host}}"],
+                      "path": ["api", "v1", "user", "setting", "new-password"]
                     }
                   }
                 }
@@ -530,15 +427,8 @@
                     "method": "GET",
                     "url": {
                       "raw": "{{host}}/api/v1/user/favorite-jobs?page=1&limit=10",
-                      "host": [
-                        "{{host}}"
-                      ],
-                      "path": [
-                        "api",
-                        "v1",
-                        "user",
-                        "favorite-jobs"
-                      ],
+                      "host": ["{{host}}"],
+                      "path": ["api", "v1", "user", "favorite-jobs"],
                       "query": [
                         {
                           "key": "page",
@@ -568,9 +458,7 @@
                     "method": "POST",
                     "url": {
                       "raw": "{{host}}/api/v1/user/favorite-jobs/{{jobId}}",
-                      "host": [
-                        "{{host}}"
-                      ],
+                      "host": ["{{host}}"],
                       "path": [
                         "api",
                         "v1",
@@ -597,9 +485,7 @@
                     "method": "DELETE",
                     "url": {
                       "raw": "{{host}}/api/v1/user/favorite-jobs/{{jobId}}",
-                      "host": [
-                        "{{host}}"
-                      ],
+                      "host": ["{{host}}"],
                       "path": [
                         "api",
                         "v1",
@@ -641,15 +527,8 @@
                     },
                     "url": {
                       "raw": "{{host}}/api/v1/user/resumes",
-                      "host": [
-                        "{{host}}"
-                      ],
-                      "path": [
-                        "api",
-                        "v1",
-                        "user",
-                        "resumes"
-                      ]
+                      "host": ["{{host}}"],
+                      "path": ["api", "v1", "user", "resumes"]
                     },
                     "description": "Mongo sẽ lưu xong và trả response ngay. Phần parse PDF + embedding + index Elasticsearch chạy nền, nên response sẽ có resume_indexing.status = queued."
                   }
@@ -670,15 +549,8 @@
                     "method": "GET",
                     "url": {
                       "raw": "{{host}}/api/v1/user/resumes",
-                      "host": [
-                        "{{host}}"
-                      ],
-                      "path": [
-                        "api",
-                        "v1",
-                        "user",
-                        "resumes"
-                      ]
+                      "host": ["{{host}}"],
+                      "path": ["api", "v1", "user", "resumes"]
                     }
                   }
                 },
@@ -698,16 +570,8 @@
                     "method": "GET",
                     "url": {
                       "raw": "{{host}}/api/v1/user/resumes/{{cvId}}",
-                      "host": [
-                        "{{host}}"
-                      ],
-                      "path": [
-                        "api",
-                        "v1",
-                        "user",
-                        "resumes",
-                        "{{cvId}}"
-                      ]
+                      "host": ["{{host}}"],
+                      "path": ["api", "v1", "user", "resumes", "{{cvId}}"]
                     }
                   }
                 },
@@ -727,16 +591,8 @@
                     "method": "DELETE",
                     "url": {
                       "raw": "{{host}}/api/v1/user/resumes/{{cvId}}",
-                      "host": [
-                        "{{host}}"
-                      ],
-                      "path": [
-                        "api",
-                        "v1",
-                        "user",
-                        "resumes",
-                        "{{cvId}}"
-                      ]
+                      "host": ["{{host}}"],
+                      "path": ["api", "v1", "user", "resumes", "{{cvId}}"]
                     }
                   }
                 }
@@ -753,15 +609,8 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{host}}/api/v1/jobs/search?q=backend&page=1&limit=10",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "jobs",
-                    "search"
-                  ],
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "jobs", "search"],
                   "query": [
                     {
                       "key": "q",
@@ -776,7 +625,8 @@
                       "value": "10"
                     }
                   ]
-                }
+                },
+                "description": "Public search endpoint dùng lexical search thông thường trên Elasticsearch (keyword + filter). Semantic/hybrid retrieval được giữ riêng cho chatbot."
               }
             },
             {
@@ -785,15 +635,8 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{host}}/api/v1/jobs/latest?page=1&limit=8",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "jobs",
-                    "latest"
-                  ],
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "jobs", "latest"],
                   "query": [
                     {
                       "key": "page",
@@ -814,15 +657,8 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{host}}/api/v1/jobs/featured?page=1&limit=8",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "jobs",
-                    "featured"
-                  ],
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "jobs", "featured"],
                   "query": [
                     {
                       "key": "page",
@@ -843,15 +679,8 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{host}}/api/v1/jobs/{{jobId}}",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "jobs",
-                    "{{jobId}}"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "jobs", "{{jobId}}"]
                 }
               }
             },
@@ -881,16 +710,8 @@
                 },
                 "url": {
                   "raw": "{{host}}/api/v1/jobs/{{jobId}}/apply",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "jobs",
-                    "{{jobId}}",
-                    "apply"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "jobs", "{{jobId}}", "apply"]
                 }
               }
             },
@@ -910,16 +731,8 @@
                 "method": "PATCH",
                 "url": {
                   "raw": "{{host}}/api/v1/jobs/{{jobId}}/withdraw",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "jobs",
-                    "{{jobId}}",
-                    "withdraw"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "jobs", "{{jobId}}", "withdraw"]
                 }
               }
             },
@@ -939,16 +752,8 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{host}}/api/v1/jobs/me/applied?page=1&limit=10",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "jobs",
-                    "me",
-                    "applied"
-                  ],
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "jobs", "me", "applied"],
                   "query": [
                     {
                       "key": "page",
@@ -993,14 +798,8 @@
                 },
                 "url": {
                   "raw": "{{host}}/api/v1/company",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "company"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "company"]
                 }
               }
             },
@@ -1020,15 +819,8 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{host}}/api/v1/company/me",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "company",
-                    "me"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "company", "me"]
                 }
               }
             },
@@ -1058,14 +850,8 @@
                 },
                 "url": {
                   "raw": "{{host}}/api/v1/company",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "company"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "company"]
                 }
               }
             }
@@ -1100,15 +886,8 @@
                 },
                 "url": {
                   "raw": "{{host}}/api/v1/chat/jobs",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "chat",
-                    "jobs"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "chat", "jobs"]
                 },
                 "description": "Nếu không có resume_id, backend sẽ lấy CV default của user; nếu không có default thì fallback sang CV active mới nhất."
               }
@@ -1139,15 +918,8 @@
                 },
                 "url": {
                   "raw": "{{host}}/api/v1/chat/jobs",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "chat",
-                    "jobs"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "chat", "jobs"]
                 },
                 "description": "Backend sẽ dùng đúng resume_id nếu CV đó thuộc user hiện tại. Visual review dùng cv_url lấy từ DB, frontend không cần gửi cv_url."
               }
@@ -1178,15 +950,8 @@
                 },
                 "url": {
                   "raw": "{{host}}/api/v1/chat/jobs",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "chat",
-                    "jobs"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "chat", "jobs"]
                 }
               }
             },
@@ -1206,15 +971,8 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{host}}/api/v1/chat/sessions",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "chat",
-                    "sessions"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "chat", "sessions"]
                 },
                 "description": "Lấy danh sách các đoạn chat của user hiện tại. Dùng session_id trả về để set vào biến chatSessionId khi gọi detail/delete."
               }
@@ -1235,16 +993,8 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{host}}/api/v1/chat/sessions/{{chatSessionId}}",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "chat",
-                    "sessions",
-                    "{{chatSessionId}}"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "chat", "sessions", "{{chatSessionId}}"]
                 },
                 "description": "Lấy chi tiết một đoạn chat thuộc user hiện tại, bao gồm turns."
               }
@@ -1265,16 +1015,8 @@
                 "method": "DELETE",
                 "url": {
                   "raw": "{{host}}/api/v1/chat/sessions/{{chatSessionId}}",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "chat",
-                    "sessions",
-                    "{{chatSessionId}}"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "chat", "sessions", "{{chatSessionId}}"]
                 },
                 "description": "Xóa một đoạn chat thuộc user hiện tại."
               }
@@ -1305,16 +1047,8 @@
                 },
                 "url": {
                   "raw": "{{host}}/api/v1/admin/auth/login",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "admin",
-                    "auth",
-                    "login"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "admin", "auth", "login"]
                 }
               }
             },
@@ -1324,16 +1058,8 @@
                 "method": "POST",
                 "url": {
                   "raw": "{{host}}/api/v1/admin/auth/logout",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "admin",
-                    "auth",
-                    "logout"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "admin", "auth", "logout"]
                 }
               }
             },
@@ -1343,16 +1069,8 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{host}}/api/v1/admin/auth/me",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "admin",
-                    "auth",
-                    "me"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "admin", "auth", "me"]
                 }
               }
             }
@@ -1367,15 +1085,8 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{host}}/api/v1/admin/users?page=1&limit=10",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "admin",
-                    "users"
-                  ],
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "admin", "users"],
                   "query": [
                     {
                       "key": "page",
@@ -1395,16 +1106,8 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{host}}/api/v1/admin/users/{{userId}}",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "admin",
-                    "users",
-                    "{{userId}}"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "admin", "users", "{{userId}}"]
                 }
               }
             },
@@ -1424,9 +1127,7 @@
                 },
                 "url": {
                   "raw": "{{host}}/api/v1/admin/users/{{userId}}/status",
-                  "host": [
-                    "{{host}}"
-                  ],
+                  "host": ["{{host}}"],
                   "path": [
                     "api",
                     "v1",
@@ -1449,15 +1150,8 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{host}}/api/v1/admin/companies?page=1&limit=10",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "admin",
-                    "companies"
-                  ],
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "admin", "companies"],
                   "query": [
                     {
                       "key": "page",
@@ -1477,16 +1171,8 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{host}}/api/v1/admin/companies/{{companyId}}",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "admin",
-                    "companies",
-                    "{{companyId}}"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "admin", "companies", "{{companyId}}"]
                 }
               }
             },
@@ -1506,9 +1192,7 @@
                 },
                 "url": {
                   "raw": "{{host}}/api/v1/admin/companies/{{companyId}}/status",
-                  "host": [
-                    "{{host}}"
-                  ],
+                  "host": ["{{host}}"],
                   "path": [
                     "api",
                     "v1",
@@ -1526,9 +1210,7 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{host}}/api/v1/admin/companies/{{companyId}}/jobs?page=1&limit=10",
-                  "host": [
-                    "{{host}}"
-                  ],
+                  "host": ["{{host}}"],
                   "path": [
                     "api",
                     "v1",
@@ -1556,9 +1238,7 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{host}}/api/v1/admin/companies/{{companyId}}/applications?page=1&limit=10",
-                  "host": [
-                    "{{host}}"
-                  ],
+                  "host": ["{{host}}"],
                   "path": [
                     "api",
                     "v1",
@@ -1591,15 +1271,8 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{host}}/api/v1/admin/jobs?page=1&limit=10",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "admin",
-                    "jobs"
-                  ],
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "admin", "jobs"],
                   "query": [
                     {
                       "key": "page",
@@ -1619,16 +1292,8 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{host}}/api/v1/admin/jobs/{{jobId}}",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "admin",
-                    "jobs",
-                    "{{jobId}}"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "admin", "jobs", "{{jobId}}"]
                 }
               }
             },
@@ -1648,9 +1313,7 @@
                 },
                 "url": {
                   "raw": "{{host}}/api/v1/admin/jobs/{{jobId}}/moderation-status",
-                  "host": [
-                    "{{host}}"
-                  ],
+                  "host": ["{{host}}"],
                   "path": [
                     "api",
                     "v1",
@@ -1673,16 +1336,8 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{host}}/api/v1/admin/dashboard/summary",
-                  "host": [
-                    "{{host}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "admin",
-                    "dashboard",
-                    "summary"
-                  ]
+                  "host": ["{{host}}"],
+                  "path": ["api", "v1", "admin", "dashboard", "summary"]
                 }
               }
             }

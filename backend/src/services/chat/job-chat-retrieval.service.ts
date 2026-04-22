@@ -6,7 +6,7 @@ import jobsService from '~/services/client/job.service'
 
 class JobChatRetrievalService {
   async retrieveForJobSearch(message: string): Promise<RetrievedChatJob[]> {
-    const result = await jobsService.searchPublicJobs({
+    const result = await jobsService.searchPublicJobsForChat({
       q: message,
       page: 1,
       limit: 5

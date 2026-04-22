@@ -1,198 +1,198 @@
 openapi: 3.0.3
 info:
-  title: 'JobGo API'
-  version: '0.3.0'
-  description: 'Tài liệu API backend hiện tại, cập nhật theo source code trong repo.'
+  title: "JobGo API"
+  version: "0.3.0"
+  description: "Tài liệu API backend hiện tại, cập nhật theo source code trong repo."
 servers:
-  - url: 'http://localhost:4000/api/v1'
+  - url: "http://localhost:4000/api/v1"
 tags:
-  - name: 'Auth'
-  - name: 'User'
-  - name: 'Resumes'
-  - name: 'Chat'
-  - name: 'Favorite Jobs'
-  - name: 'Jobs'
-  - name: 'Company'
-  - name: 'Applications'
-  - name: 'Admin Auth'
-  - name: 'Admin Users'
-  - name: 'Admin Companies'
-  - name: 'Admin Jobs'
-  - name: 'Admin Dashboard'
+  - name: "Auth"
+  - name: "User"
+  - name: "Resumes"
+  - name: "Chat"
+  - name: "Favorite Jobs"
+  - name: "Jobs"
+  - name: "Company"
+  - name: "Applications"
+  - name: "Admin Auth"
+  - name: "Admin Users"
+  - name: "Admin Companies"
+  - name: "Admin Jobs"
+  - name: "Admin Dashboard"
 
 paths:
   /auth/register:
     post:
-      tags: ['Auth']
-      summary: 'Đăng ký tài khoản candidate'
+      tags: ["Auth"]
+      summary: "Đăng ký tài khoản candidate"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RegisterRequest'
+              $ref: "#/components/schemas/RegisterRequest"
       responses:
-        '201':
-          description: 'Đăng ký thành công'
+        "201":
+          description: "Đăng ký thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthResponse'
+                $ref: "#/components/schemas/AuthResponse"
 
   /auth/login:
     post:
-      tags: ['Auth']
-      summary: 'Đăng nhập'
+      tags: ["Auth"]
+      summary: "Đăng nhập"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LoginRequest'
+              $ref: "#/components/schemas/LoginRequest"
       responses:
-        '201':
-          description: 'Đăng nhập thành công'
+        "201":
+          description: "Đăng nhập thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthResponse'
+                $ref: "#/components/schemas/AuthResponse"
 
   /auth/oauth/google:
     get:
-      tags: ['Auth']
-      summary: 'Đăng nhập bằng Google'
+      tags: ["Auth"]
+      summary: "Đăng nhập bằng Google"
       parameters:
-        - name: 'code'
-          in: 'query'
+        - name: "code"
+          in: "query"
           required: true
           schema:
-            type: 'string'
+            type: "string"
       responses:
-        '302':
-          description: 'Redirect về front-end'
+        "302":
+          description: "Redirect về front-end"
 
   /auth/logout:
     post:
-      tags: ['Auth']
-      summary: 'Đăng xuất'
+      tags: ["Auth"]
+      summary: "Đăng xuất"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LogoutRequest'
+              $ref: "#/components/schemas/LogoutRequest"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BasicResponse'
+                $ref: "#/components/schemas/BasicResponse"
 
   /auth/refresh-token:
     post:
-      tags: ['Auth']
-      summary: 'Làm mới token'
+      tags: ["Auth"]
+      summary: "Làm mới token"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RefreshRequest'
+              $ref: "#/components/schemas/RefreshRequest"
       responses:
-        '201':
-          description: 'Thành công'
+        "201":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthResponse'
+                $ref: "#/components/schemas/AuthResponse"
 
   /auth/verify-email:
     post:
-      tags: ['Auth']
-      summary: 'Xác minh email'
+      tags: ["Auth"]
+      summary: "Xác minh email"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/VerifyEmailRequest'
+              $ref: "#/components/schemas/VerifyEmailRequest"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthResponse'
+                $ref: "#/components/schemas/AuthResponse"
 
   /auth/forgot-password:
     post:
-      tags: ['Auth']
-      summary: 'Gửi email quên mật khẩu'
+      tags: ["Auth"]
+      summary: "Gửi email quên mật khẩu"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ForgotPasswordRequest'
+              $ref: "#/components/schemas/ForgotPasswordRequest"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BasicResponse'
+                $ref: "#/components/schemas/BasicResponse"
 
   /auth/reset-password:
     post:
-      tags: ['Auth']
-      summary: 'Đặt lại mật khẩu'
+      tags: ["Auth"]
+      summary: "Đặt lại mật khẩu"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ResetPasswordRequest'
+              $ref: "#/components/schemas/ResetPasswordRequest"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BasicResponse'
+                $ref: "#/components/schemas/BasicResponse"
 
   /user/me:
     get:
-      tags: ['User']
-      summary: 'Lấy profile của chính mình'
+      tags: ["User"]
+      summary: "Lấy profile của chính mình"
       security:
         - bearerAuth: []
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /user/profile/{id}:
     get:
-      tags: ['User']
-      summary: 'Lấy profile public theo username'
+      tags: ["User"]
+      summary: "Lấy profile public theo username"
       parameters:
-        - $ref: '#/components/parameters/UserNameParam'
+        - $ref: "#/components/parameters/UserNameParam"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /user/profile:
     patch:
-      tags: ['User']
-      summary: 'Cập nhật profile'
+      tags: ["User"]
+      summary: "Cập nhật profile"
       security:
         - bearerAuth: []
       requestBody:
@@ -200,31 +200,31 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateProfileRequest'
+              $ref: "#/components/schemas/UpdateProfileRequest"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BasicResponse'
+                $ref: "#/components/schemas/BasicResponse"
 
   /user/setting:
     get:
-      tags: ['User']
-      summary: 'Lấy setting của user'
+      tags: ["User"]
+      summary: "Lấy setting của user"
       security:
         - bearerAuth: []
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
     patch:
-      tags: ['User']
-      summary: 'Cập nhật setting của user'
+      tags: ["User"]
+      summary: "Cập nhật setting của user"
       security:
         - bearerAuth: []
       requestBody:
@@ -232,47 +232,47 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateUserSettingRequest'
+              $ref: "#/components/schemas/UpdateUserSettingRequest"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BasicResponse'
+                $ref: "#/components/schemas/BasicResponse"
 
   /user/setting/resend-mail:
     post:
-      tags: ['User']
-      summary: 'Gửi lại email xác minh'
+      tags: ["User"]
+      summary: "Gửi lại email xác minh"
       security:
         - bearerAuth: []
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BasicResponse'
+                $ref: "#/components/schemas/BasicResponse"
 
   /user/setting/change-password:
     post:
-      tags: ['User']
-      summary: 'Gửi OTP đổi mật khẩu'
+      tags: ["User"]
+      summary: "Gửi OTP đổi mật khẩu"
       security:
         - bearerAuth: []
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BasicResponse'
+                $ref: "#/components/schemas/BasicResponse"
 
   /user/setting/new-password:
     post:
-      tags: ['User']
-      summary: 'Đặt mật khẩu mới bằng OTP'
+      tags: ["User"]
+      summary: "Đặt mật khẩu mới bằng OTP"
       security:
         - bearerAuth: []
       requestBody:
@@ -280,188 +280,189 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewPasswordRequest'
+              $ref: "#/components/schemas/NewPasswordRequest"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BasicResponse'
+                $ref: "#/components/schemas/BasicResponse"
 
   /user/favorite-jobs:
     get:
-      tags: ['Favorite Jobs']
-      summary: 'Lấy danh sách công việc yêu thích của user'
+      tags: ["Favorite Jobs"]
+      summary: "Lấy danh sách công việc yêu thích của user"
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/PageQuery'
-        - $ref: '#/components/parameters/LimitQuery'
+        - $ref: "#/components/parameters/PageQuery"
+        - $ref: "#/components/parameters/LimitQuery"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /user/favorite-jobs/{jobId}:
     post:
-      tags: ['Favorite Jobs']
-      summary: 'Lưu một job vào danh sách yêu thích'
-      description: 'Chỉ cho lưu job public hợp lệ: open, active, đã publish và chưa hết hạn.'
+      tags: ["Favorite Jobs"]
+      summary: "Lưu một job vào danh sách yêu thích"
+      description: "Chỉ cho lưu job public hợp lệ: open, active, đã publish và chưa hết hạn."
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/JobIdParam'
+        - $ref: "#/components/parameters/JobIdParam"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FavoriteJobMutationResponse'
+                $ref: "#/components/schemas/FavoriteJobMutationResponse"
     delete:
-      tags: ['Favorite Jobs']
-      summary: 'Bỏ lưu một job khỏi danh sách yêu thích'
+      tags: ["Favorite Jobs"]
+      summary: "Bỏ lưu một job khỏi danh sách yêu thích"
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/JobIdParam'
+        - $ref: "#/components/parameters/JobIdParam"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FavoriteJobMutationResponse'
+                $ref: "#/components/schemas/FavoriteJobMutationResponse"
 
   /jobs/me/applied:
     get:
-      tags: ['Jobs']
-      summary: 'Lấy danh sách job đã ứng tuyển'
+      tags: ["Jobs"]
+      summary: "Lấy danh sách job đã ứng tuyển"
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/PageQuery'
-        - $ref: '#/components/parameters/LimitQuery'
-        - name: 'status'
-          in: 'query'
+        - $ref: "#/components/parameters/PageQuery"
+        - $ref: "#/components/parameters/LimitQuery"
+        - name: "status"
+          in: "query"
           schema:
-            $ref: '#/components/schemas/JobApplicationStatus'
+            $ref: "#/components/schemas/JobApplicationStatus"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /jobs/search:
     get:
-      tags: ['Jobs']
-      summary: 'Tìm kiếm job public'
+      tags: ["Jobs"]
+      summary: "Tìm kiếm job public"
+      description: "Endpoint này dùng lexical search thông thường trên Elasticsearch (keyword + filter). Semantic/hybrid retrieval được giữ riêng cho chatbot."
       parameters:
-        - name: 'q'
-          in: 'query'
+        - name: "q"
+          in: "query"
           required: true
           schema:
-            type: 'string'
+            type: "string"
             minLength: 2
             maxLength: 200
-        - name: 'location'
-          in: 'query'
+        - name: "location"
+          in: "query"
           schema:
-            type: 'string'
+            type: "string"
             minLength: 2
             maxLength: 100
-        - name: 'job_type'
-          in: 'query'
+        - name: "job_type"
+          in: "query"
           schema:
-            $ref: '#/components/schemas/JobType'
-        - name: 'level'
-          in: 'query'
+            $ref: "#/components/schemas/JobType"
+        - name: "level"
+          in: "query"
           schema:
-            $ref: '#/components/schemas/JobLevel'
-        - name: 'page'
-          in: 'query'
+            $ref: "#/components/schemas/JobLevel"
+        - name: "page"
+          in: "query"
           schema:
-            type: 'integer'
+            type: "integer"
             minimum: 1
             default: 1
-        - name: 'limit'
-          in: 'query'
+        - name: "limit"
+          in: "query"
           schema:
-            type: 'integer'
+            type: "integer"
             minimum: 1
             maximum: 20
             default: 10
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /jobs/{jobId}:
     get:
-      tags: ['Jobs']
-      summary: 'Lấy chi tiết job public'
-      description: 'Public endpoint. Nếu gửi access token hợp lệ thì response có thêm my_application.'
+      tags: ["Jobs"]
+      summary: "Lấy chi tiết job public"
+      description: "Public endpoint. Nếu gửi access token hợp lệ thì response có thêm my_application."
       parameters:
-        - $ref: '#/components/parameters/JobIdParam'
+        - $ref: "#/components/parameters/JobIdParam"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PublicJobDetailResponse'
+                $ref: "#/components/schemas/PublicJobDetailResponse"
 
   /jobs/{jobId}/apply:
     post:
-      tags: ['Jobs']
-      summary: 'Ứng tuyển vào job'
+      tags: ["Jobs"]
+      summary: "Ứng tuyển vào job"
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/JobIdParam'
+        - $ref: "#/components/parameters/JobIdParam"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ApplyJobRequest'
+              $ref: "#/components/schemas/ApplyJobRequest"
       responses:
-        '201':
-          description: 'Thành công'
+        "201":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /jobs/{jobId}/withdraw:
     patch:
-      tags: ['Jobs']
-      summary: 'Rút hồ sơ đã ứng tuyển'
+      tags: ["Jobs"]
+      summary: "Rút hồ sơ đã ứng tuyển"
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/JobIdParam'
+        - $ref: "#/components/parameters/JobIdParam"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /company:
     post:
-      tags: ['Company']
-      summary: 'Tạo company profile'
+      tags: ["Company"]
+      summary: "Tạo company profile"
       security:
         - bearerAuth: []
       requestBody:
@@ -469,17 +470,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateCompanyRequest'
+              $ref: "#/components/schemas/CreateCompanyRequest"
       responses:
-        '201':
-          description: 'Thành công'
+        "201":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
     patch:
-      tags: ['Company']
-      summary: 'Cập nhật company profile'
+      tags: ["Company"]
+      summary: "Cập nhật company profile"
       security:
         - bearerAuth: []
       requestBody:
@@ -487,33 +488,33 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateCompanyRequest'
+              $ref: "#/components/schemas/UpdateCompanyRequest"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BasicResponse'
+                $ref: "#/components/schemas/BasicResponse"
 
   /company/me:
     get:
-      tags: ['Company']
-      summary: 'Lấy company profile của chính mình'
+      tags: ["Company"]
+      summary: "Lấy company profile của chính mình"
       security:
         - bearerAuth: []
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /company/jobs:
     post:
-      tags: ['Company']
-      summary: 'Tạo job'
+      tags: ["Company"]
+      summary: "Tạo job"
       security:
         - bearerAuth: []
       requestBody:
@@ -521,162 +522,162 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateJobRequest'
+              $ref: "#/components/schemas/CreateJobRequest"
       responses:
-        '201':
-          description: 'Thành công'
+        "201":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
     get:
-      tags: ['Company']
-      summary: 'Lấy danh sách jobs của employer'
+      tags: ["Company"]
+      summary: "Lấy danh sách jobs của employer"
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/PageQuery'
-        - $ref: '#/components/parameters/LimitQuery'
-        - name: 'status'
-          in: 'query'
+        - $ref: "#/components/parameters/PageQuery"
+        - $ref: "#/components/parameters/LimitQuery"
+        - name: "status"
+          in: "query"
           schema:
-            $ref: '#/components/schemas/JobStatus'
-        - name: 'keyword'
-          in: 'query'
+            $ref: "#/components/schemas/JobStatus"
+        - name: "keyword"
+          in: "query"
           schema:
-            type: 'string'
+            type: "string"
             maxLength: 100
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /company/jobs/{jobId}:
     get:
-      tags: ['Company']
-      summary: 'Lấy chi tiết một job của employer'
+      tags: ["Company"]
+      summary: "Lấy chi tiết một job của employer"
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/JobIdParam'
+        - $ref: "#/components/parameters/JobIdParam"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
     patch:
-      tags: ['Company']
-      summary: 'Cập nhật job'
+      tags: ["Company"]
+      summary: "Cập nhật job"
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/JobIdParam'
+        - $ref: "#/components/parameters/JobIdParam"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateJobRequest'
+              $ref: "#/components/schemas/UpdateJobRequest"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /company/jobs/{jobId}/status:
     patch:
-      tags: ['Company']
-      summary: 'Cập nhật trạng thái job'
+      tags: ["Company"]
+      summary: "Cập nhật trạng thái job"
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/JobIdParam'
+        - $ref: "#/components/parameters/JobIdParam"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateJobStatusRequest'
+              $ref: "#/components/schemas/UpdateJobStatusRequest"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /company/jobs/{jobId}/applications:
     get:
-      tags: ['Applications']
-      summary: 'Lấy danh sách applications của một job'
+      tags: ["Applications"]
+      summary: "Lấy danh sách applications của một job"
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/JobIdParam'
-        - $ref: '#/components/parameters/PageQuery'
-        - $ref: '#/components/parameters/LimitQuery'
-        - name: 'status'
-          in: 'query'
+        - $ref: "#/components/parameters/JobIdParam"
+        - $ref: "#/components/parameters/PageQuery"
+        - $ref: "#/components/parameters/LimitQuery"
+        - name: "status"
+          in: "query"
           schema:
-            $ref: '#/components/schemas/JobApplicationStatus'
+            $ref: "#/components/schemas/JobApplicationStatus"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /company/applications/{applicationId}:
     get:
-      tags: ['Applications']
-      summary: 'Lấy chi tiết application'
+      tags: ["Applications"]
+      summary: "Lấy chi tiết application"
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/ApplicationIdParam'
+        - $ref: "#/components/parameters/ApplicationIdParam"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /company/applications/{applicationId}/status:
     patch:
-      tags: ['Applications']
-      summary: 'Cập nhật trạng thái application'
+      tags: ["Applications"]
+      summary: "Cập nhật trạng thái application"
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/ApplicationIdParam'
+        - $ref: "#/components/parameters/ApplicationIdParam"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateApplicationStatusRequest'
+              $ref: "#/components/schemas/UpdateApplicationStatusRequest"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /user/resumes:
     post:
-      tags: ['Resumes']
-      summary: 'Tạo CV mới'
-      description: 'Lưu resume vào Mongo trước, sau đó parse PDF + embedding + index Elasticsearch sẽ chạy nền. `resume_indexing.status` trả về ngay là `queued`.'
+      tags: ["Resumes"]
+      summary: "Tạo CV mới"
+      description: "Lưu resume vào Mongo trước, sau đó parse PDF + embedding + index Elasticsearch sẽ chạy nền. `resume_indexing.status` trả về ngay là `queued`."
       security:
         - bearerAuth: []
       requestBody:
@@ -684,62 +685,62 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateResumeRequest'
+              $ref: "#/components/schemas/CreateResumeRequest"
       responses:
-        '201':
-          description: 'Tạo CV thành công'
+        "201":
+          description: "Tạo CV thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateResumeResponse'
+                $ref: "#/components/schemas/CreateResumeResponse"
     get:
-      tags: ['Resumes']
-      summary: 'Lấy danh sách CV của chính mình'
+      tags: ["Resumes"]
+      summary: "Lấy danh sách CV của chính mình"
       security:
         - bearerAuth: []
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResumeListResponse'
+                $ref: "#/components/schemas/ResumeListResponse"
 
   /user/resumes/{resumeId}:
     get:
-      tags: ['Resumes']
-      summary: 'Lấy chi tiết một CV'
+      tags: ["Resumes"]
+      summary: "Lấy chi tiết một CV"
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/ResumeIdParam'
+        - $ref: "#/components/parameters/ResumeIdParam"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResumeDetailResponse'
+                $ref: "#/components/schemas/ResumeDetailResponse"
     delete:
-      tags: ['Resumes']
-      summary: 'Xóa một CV'
+      tags: ["Resumes"]
+      summary: "Xóa một CV"
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/ResumeIdParam'
+        - $ref: "#/components/parameters/ResumeIdParam"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DeleteResumeResponse'
+                $ref: "#/components/schemas/DeleteResumeResponse"
 
   /chat/jobs:
     post:
-      tags: ['Chat']
-      summary: 'Chat job assistant và CV review'
-      description: 'Route dùng `optionalDecodeToken`. Với intent `cv_review`, backend vẫn bắt buộc phải có Bearer token để xác định user và CV.'
+      tags: ["Chat"]
+      summary: "Chat job assistant và CV review"
+      description: "Route dùng `optionalDecodeToken`. Với intent `cv_review`, backend vẫn bắt buộc phải có Bearer token để xác định user và CV."
       security:
         - bearerAuth: []
       requestBody:
@@ -747,1048 +748,1066 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ChatJobsRequest'
+              $ref: "#/components/schemas/ChatJobsRequest"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ChatJobsResponse'
-        '401':
-          description: 'Thiếu hoặc sai token khi gọi CV review'
+                $ref: "#/components/schemas/ChatJobsResponse"
+        "401":
+          description: "Thiếu hoặc sai token khi gọi CV review"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
 
   /admin/auth/login:
     post:
-      tags: ['Admin Auth']
-      summary: 'Đăng nhập admin'
-      description: 'Tạo admin session và set cookie `admin_sid`.'
+      tags: ["Admin Auth"]
+      summary: "Đăng nhập admin"
+      description: "Tạo admin session và set cookie `admin_sid`."
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminLoginRequest'
+              $ref: "#/components/schemas/AdminLoginRequest"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /admin/auth/logout:
     post:
-      tags: ['Admin Auth']
-      summary: 'Đăng xuất admin'
+      tags: ["Admin Auth"]
+      summary: "Đăng xuất admin"
       security:
         - adminCookieAuth: []
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BasicResponse'
+                $ref: "#/components/schemas/BasicResponse"
 
   /admin/auth/me:
     get:
-      tags: ['Admin Auth']
-      summary: 'Lấy profile admin hiện tại'
+      tags: ["Admin Auth"]
+      summary: "Lấy profile admin hiện tại"
       security:
         - adminCookieAuth: []
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /admin/users:
     get:
-      tags: ['Admin Users']
-      summary: 'Lấy danh sách user cho admin'
+      tags: ["Admin Users"]
+      summary: "Lấy danh sách user cho admin"
       security:
         - adminCookieAuth: []
       parameters:
-        - name: 'role'
-          in: 'query'
+        - name: "role"
+          in: "query"
           schema:
-            $ref: '#/components/schemas/AdminUserRole'
-        - name: 'status'
-          in: 'query'
+            $ref: "#/components/schemas/AdminUserRole"
+        - name: "status"
+          in: "query"
           schema:
-            $ref: '#/components/schemas/AdminUserStatus'
-        - name: 'keyword'
-          in: 'query'
+            $ref: "#/components/schemas/AdminUserStatus"
+        - name: "keyword"
+          in: "query"
           schema:
-            type: 'string'
+            type: "string"
             minLength: 1
             maxLength: 100
-        - $ref: '#/components/parameters/PageQuery'
-        - $ref: '#/components/parameters/LimitQuery'
+        - $ref: "#/components/parameters/PageQuery"
+        - $ref: "#/components/parameters/LimitQuery"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /admin/users/{userId}:
     get:
-      tags: ['Admin Users']
-      summary: 'Lấy chi tiết user cho admin'
+      tags: ["Admin Users"]
+      summary: "Lấy chi tiết user cho admin"
       security:
         - adminCookieAuth: []
       parameters:
-        - $ref: '#/components/parameters/AdminUserIdParam'
+        - $ref: "#/components/parameters/AdminUserIdParam"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /admin/users/{userId}/status:
     patch:
-      tags: ['Admin Users']
-      summary: 'Ban hoặc unban user'
+      tags: ["Admin Users"]
+      summary: "Ban hoặc unban user"
       security:
         - adminCookieAuth: []
       parameters:
-        - $ref: '#/components/parameters/AdminUserIdParam'
+        - $ref: "#/components/parameters/AdminUserIdParam"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUpdateUserStatusRequest'
+              $ref: "#/components/schemas/AdminUpdateUserStatusRequest"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BasicResponse'
+                $ref: "#/components/schemas/BasicResponse"
 
   /admin/companies:
     get:
-      tags: ['Admin Companies']
-      summary: 'Lấy danh sách company cho admin'
+      tags: ["Admin Companies"]
+      summary: "Lấy danh sách company cho admin"
       security:
         - adminCookieAuth: []
       parameters:
-        - name: 'verified'
-          in: 'query'
+        - name: "verified"
+          in: "query"
           schema:
-            type: 'boolean'
-        - name: 'keyword'
-          in: 'query'
+            type: "boolean"
+        - name: "keyword"
+          in: "query"
           schema:
-            type: 'string'
+            type: "string"
             minLength: 1
             maxLength: 100
-        - $ref: '#/components/parameters/PageQuery'
-        - $ref: '#/components/parameters/LimitQuery'
+        - $ref: "#/components/parameters/PageQuery"
+        - $ref: "#/components/parameters/LimitQuery"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /admin/companies/{companyId}:
     get:
-      tags: ['Admin Companies']
-      summary: 'Lấy chi tiết company cho admin'
+      tags: ["Admin Companies"]
+      summary: "Lấy chi tiết company cho admin"
       security:
         - adminCookieAuth: []
       parameters:
-        - $ref: '#/components/parameters/CompanyIdParam'
+        - $ref: "#/components/parameters/CompanyIdParam"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /admin/companies/{companyId}/jobs:
     get:
-      tags: ['Admin Companies']
-      summary: 'Lấy danh sách job của một company cho admin'
+      tags: ["Admin Companies"]
+      summary: "Lấy danh sách job của một company cho admin"
       security:
         - adminCookieAuth: []
       parameters:
-        - $ref: '#/components/parameters/CompanyIdParam'
-        - $ref: '#/components/parameters/PageQuery'
-        - $ref: '#/components/parameters/LimitQuery'
-        - name: 'status'
-          in: 'query'
+        - $ref: "#/components/parameters/CompanyIdParam"
+        - $ref: "#/components/parameters/PageQuery"
+        - $ref: "#/components/parameters/LimitQuery"
+        - name: "status"
+          in: "query"
           schema:
-            $ref: '#/components/schemas/JobStatus'
-        - name: 'keyword'
-          in: 'query'
+            $ref: "#/components/schemas/JobStatus"
+        - name: "keyword"
+          in: "query"
           schema:
-            type: 'string'
+            type: "string"
             minLength: 1
             maxLength: 100
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /admin/companies/{companyId}/applications:
     get:
-      tags: ['Admin Companies']
-      summary: 'Lấy danh sách application theo company cho admin'
+      tags: ["Admin Companies"]
+      summary: "Lấy danh sách application theo company cho admin"
       security:
         - adminCookieAuth: []
       parameters:
-        - $ref: '#/components/parameters/CompanyIdParam'
-        - $ref: '#/components/parameters/PageQuery'
-        - $ref: '#/components/parameters/LimitQuery'
-        - name: 'status'
-          in: 'query'
+        - $ref: "#/components/parameters/CompanyIdParam"
+        - $ref: "#/components/parameters/PageQuery"
+        - $ref: "#/components/parameters/LimitQuery"
+        - name: "status"
+          in: "query"
           schema:
-            $ref: '#/components/schemas/JobApplicationStatus'
-        - name: 'jobId'
-          in: 'query'
+            $ref: "#/components/schemas/JobApplicationStatus"
+        - name: "jobId"
+          in: "query"
           schema:
-            type: 'string'
-            pattern: '^[a-fA-F0-9]{24}$'
-        - name: 'candidateId'
-          in: 'query'
+            type: "string"
+            pattern: "^[a-fA-F0-9]{24}$"
+        - name: "candidateId"
+          in: "query"
           schema:
-            type: 'string'
-            pattern: '^[a-fA-F0-9]{24}$'
+            type: "string"
+            pattern: "^[a-fA-F0-9]{24}$"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /admin/companies/{companyId}/status:
     patch:
-      tags: ['Admin Companies']
-      summary: 'Verify hoặc unverify company'
+      tags: ["Admin Companies"]
+      summary: "Verify hoặc unverify company"
       security:
         - adminCookieAuth: []
       parameters:
-        - $ref: '#/components/parameters/CompanyIdParam'
+        - $ref: "#/components/parameters/CompanyIdParam"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUpdateCompanyVerificationRequest'
+              $ref: "#/components/schemas/AdminUpdateCompanyVerificationRequest"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BasicResponse'
+                $ref: "#/components/schemas/BasicResponse"
 
   /admin/jobs:
     get:
-      tags: ['Admin Jobs']
-      summary: 'Lấy danh sách job moderation cho admin'
+      tags: ["Admin Jobs"]
+      summary: "Lấy danh sách job moderation cho admin"
       security:
         - adminCookieAuth: []
       parameters:
-        - name: 'companyId'
-          in: 'query'
+        - name: "companyId"
+          in: "query"
           schema:
-            type: 'string'
-            pattern: '^[a-fA-F0-9]{24}$'
-        - name: 'status'
-          in: 'query'
+            type: "string"
+            pattern: "^[a-fA-F0-9]{24}$"
+        - name: "status"
+          in: "query"
           schema:
-            $ref: '#/components/schemas/JobStatus'
-        - name: 'moderation_status'
-          in: 'query'
+            $ref: "#/components/schemas/JobStatus"
+        - name: "moderation_status"
+          in: "query"
           schema:
-            $ref: '#/components/schemas/JobModerationStatus'
-        - name: 'keyword'
-          in: 'query'
+            $ref: "#/components/schemas/JobModerationStatus"
+        - name: "keyword"
+          in: "query"
           schema:
-            type: 'string'
+            type: "string"
             minLength: 1
             maxLength: 100
-        - $ref: '#/components/parameters/PageQuery'
-        - $ref: '#/components/parameters/LimitQuery'
+        - $ref: "#/components/parameters/PageQuery"
+        - $ref: "#/components/parameters/LimitQuery"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /admin/jobs/{jobId}:
     get:
-      tags: ['Admin Jobs']
-      summary: 'Lấy chi tiết job cho admin'
+      tags: ["Admin Jobs"]
+      summary: "Lấy chi tiết job cho admin"
       security:
         - adminCookieAuth: []
       parameters:
-        - $ref: '#/components/parameters/JobIdParam'
+        - $ref: "#/components/parameters/JobIdParam"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericSuccess'
+                $ref: "#/components/schemas/GenericSuccess"
 
   /admin/jobs/{jobId}/moderation-status:
     patch:
-      tags: ['Admin Jobs']
-      summary: 'Block hoặc unblock job qua moderation_status'
+      tags: ["Admin Jobs"]
+      summary: "Block hoặc unblock job qua moderation_status"
       security:
         - adminCookieAuth: []
       parameters:
-        - $ref: '#/components/parameters/JobIdParam'
+        - $ref: "#/components/parameters/JobIdParam"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdminUpdateJobModerationStatusRequest'
+              $ref: "#/components/schemas/AdminUpdateJobModerationStatusRequest"
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BasicResponse'
+                $ref: "#/components/schemas/BasicResponse"
 
   /admin/dashboard/summary:
     get:
-      tags: ['Admin Dashboard']
-      summary: 'Lấy summary dashboard của admin'
+      tags: ["Admin Dashboard"]
+      summary: "Lấy summary dashboard của admin"
       security:
         - adminCookieAuth: []
       responses:
-        '200':
-          description: 'Thành công'
+        "200":
+          description: "Thành công"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AdminDashboardSummaryResponse'
+                $ref: "#/components/schemas/AdminDashboardSummaryResponse"
 
 components:
   securitySchemes:
     bearerAuth:
-      type: 'http'
-      scheme: 'bearer'
-      bearerFormat: 'JWT'
+      type: "http"
+      scheme: "bearer"
+      bearerFormat: "JWT"
     adminCookieAuth:
-      type: 'apiKey'
-      in: 'cookie'
-      name: 'admin_sid'
+      type: "apiKey"
+      in: "cookie"
+      name: "admin_sid"
 
   parameters:
     JobIdParam:
-      name: 'jobId'
-      in: 'path'
+      name: "jobId"
+      in: "path"
       required: true
       schema:
-        type: 'string'
-        pattern: '^[a-fA-F0-9]{24}$'
+        type: "string"
+        pattern: "^[a-fA-F0-9]{24}$"
     ApplicationIdParam:
-      name: 'applicationId'
-      in: 'path'
+      name: "applicationId"
+      in: "path"
       required: true
       schema:
-        type: 'string'
-        pattern: '^[a-fA-F0-9]{24}$'
+        type: "string"
+        pattern: "^[a-fA-F0-9]{24}$"
     CompanyIdParam:
-      name: 'companyId'
-      in: 'path'
+      name: "companyId"
+      in: "path"
       required: true
       schema:
-        type: 'string'
-        pattern: '^[a-fA-F0-9]{24}$'
+        type: "string"
+        pattern: "^[a-fA-F0-9]{24}$"
     AdminUserIdParam:
-      name: 'userId'
-      in: 'path'
+      name: "userId"
+      in: "path"
       required: true
       schema:
-        type: 'string'
-        pattern: '^[a-fA-F0-9]{24}$'
+        type: "string"
+        pattern: "^[a-fA-F0-9]{24}$"
     ResumeIdParam:
-      name: 'resumeId'
-      in: 'path'
+      name: "resumeId"
+      in: "path"
       required: true
       schema:
-        type: 'string'
-        pattern: '^[a-fA-F0-9]{24}$'
+        type: "string"
+        pattern: "^[a-fA-F0-9]{24}$"
     UserNameParam:
-      name: 'id'
-      in: 'path'
+      name: "id"
+      in: "path"
       required: true
       schema:
-        type: 'string'
+        type: "string"
     PageQuery:
-      name: 'page'
-      in: 'query'
+      name: "page"
+      in: "query"
       schema:
-        type: 'integer'
+        type: "integer"
         minimum: 1
         default: 1
     LimitQuery:
-      name: 'limit'
-      in: 'query'
+      name: "limit"
+      in: "query"
       schema:
-        type: 'integer'
+        type: "integer"
         minimum: 1
         maximum: 100
         default: 10
 
   schemas:
     JobStatus:
-      type: 'string'
-      enum: ['draft', 'open', 'paused', 'closed', 'expired']
+      type: "string"
+      enum: ["draft", "open", "paused", "closed", "expired"]
     JobModerationStatus:
-      type: 'string'
-      enum: ['active', 'blocked']
+      type: "string"
+      enum: ["active", "blocked"]
     JobType:
-      type: 'string'
-      enum: ['full-time', 'part-time', 'internship', 'contract', 'remote']
+      type: "string"
+      enum: ["full-time", "part-time", "internship", "contract", "remote"]
     JobLevel:
-      type: 'string'
-      enum: ['intern', 'fresher', 'junior', 'middle', 'senior', 'lead', 'manager']
+      type: "string"
+      enum:
+        ["intern", "fresher", "junior", "middle", "senior", "lead", "manager"]
     JobApplicationStatus:
-      type: 'string'
-      enum: ['submitted', 'reviewing', 'shortlisted', 'interviewing', 'rejected', 'hired', 'withdrawn']
+      type: "string"
+      enum:
+        [
+          "submitted",
+          "reviewing",
+          "shortlisted",
+          "interviewing",
+          "rejected",
+          "hired",
+          "withdrawn",
+        ]
     AdminUserRole:
-      type: 'integer'
+      type: "integer"
       enum: [0, 1, 2]
-      description: '0 = candidate, 1 = employer, 2 = admin'
+      description: "0 = candidate, 1 = employer, 2 = admin"
     AdminUserStatus:
-      type: 'integer'
+      type: "integer"
       enum: [0, 1, 2]
-      description: '0 = active, 1 = banned, 2 = deleted'
+      description: "0 = active, 1 = banned, 2 = deleted"
     AdminEditableUserStatus:
-      type: 'integer'
+      type: "integer"
       enum: [0, 1]
-      description: '0 = active, 1 = banned'
+      description: "0 = active, 1 = banned"
 
     RegisterRequest:
-      type: 'object'
-      required: ['fullName', 'email', 'password', 'confirmPassword']
+      type: "object"
+      required: ["fullName", "email", "password", "confirmPassword"]
       properties:
         fullName:
-          type: 'string'
+          type: "string"
         email:
-          type: 'string'
+          type: "string"
         password:
-          type: 'string'
+          type: "string"
         confirmPassword:
-          type: 'string'
+          type: "string"
 
     LoginRequest:
-      type: 'object'
-      required: ['email', 'password']
+      type: "object"
+      required: ["email", "password"]
       properties:
         email:
-          type: 'string'
+          type: "string"
         password:
-          type: 'string'
+          type: "string"
 
     AdminLoginRequest:
-      type: 'object'
-      required: ['email', 'password']
+      type: "object"
+      required: ["email", "password"]
       properties:
         email:
-          type: 'string'
-          format: 'email'
+          type: "string"
+          format: "email"
         password:
-          type: 'string'
+          type: "string"
 
     RefreshRequest:
-      type: 'object'
-      required: ['refresh_token']
+      type: "object"
+      required: ["refresh_token"]
       properties:
         refresh_token:
-          type: 'string'
+          type: "string"
 
     VerifyEmailRequest:
-      type: 'object'
-      required: ['email_verify_token']
+      type: "object"
+      required: ["email_verify_token"]
       properties:
         email_verify_token:
-          type: 'string'
+          type: "string"
 
     ForgotPasswordRequest:
-      type: 'object'
-      required: ['email']
+      type: "object"
+      required: ["email"]
       properties:
         email:
-          type: 'string'
+          type: "string"
 
     ResetPasswordRequest:
-      type: 'object'
-      required: ['password', 'confirmPassword', 'forgot_password_token']
+      type: "object"
+      required: ["password", "confirmPassword", "forgot_password_token"]
       properties:
         password:
-          type: 'string'
+          type: "string"
         confirmPassword:
-          type: 'string'
+          type: "string"
         forgot_password_token:
-          type: 'string'
+          type: "string"
 
     LogoutRequest:
-      type: 'object'
-      required: ['refresh_token']
+      type: "object"
+      required: ["refresh_token"]
       properties:
         refresh_token:
-          type: 'string'
+          type: "string"
 
     NewPasswordRequest:
-      type: 'object'
-      required: ['newPassword', 'confirmNewPassword', 'OtpCode']
+      type: "object"
+      required: ["newPassword", "confirmNewPassword", "OtpCode"]
       properties:
         newPassword:
-          type: 'string'
+          type: "string"
         confirmNewPassword:
-          type: 'string'
+          type: "string"
         OtpCode:
-          type: 'string'
+          type: "string"
 
     CreateResumeRequest:
-      type: 'object'
-      required: ['title', 'cv_url', 'resume_file_key']
+      type: "object"
+      required: ["title", "cv_url", "resume_file_key"]
       properties:
         title:
-          type: 'string'
+          type: "string"
           maxLength: 200
         cv_url:
-          type: 'string'
-          format: 'uri'
+          type: "string"
+          format: "uri"
         resume_file_key:
-          type: 'string'
+          type: "string"
         is_default:
-          type: 'boolean'
+          type: "boolean"
           default: false
 
     ResumeIndexingStatus:
-      type: 'object'
+      type: "object"
       properties:
         status:
-          type: 'string'
-          enum: ['queued', 'completed', 'skipped', 'failed']
+          type: "string"
+          enum: ["queued", "completed", "skipped", "failed"]
         chunks_indexed:
-          type: 'integer'
+          type: "integer"
         error:
-          type: 'string'
+          type: "string"
           nullable: true
 
     ResumeResource:
-      type: 'object'
+      type: "object"
       properties:
         _id:
-          type: 'string'
+          type: "string"
         candidate_id:
-          type: 'string'
+          type: "string"
         title:
-          type: 'string'
+          type: "string"
         cv_url:
-          type: 'string'
-          format: 'uri'
+          type: "string"
+          format: "uri"
         resume_file_key:
-          type: 'string'
+          type: "string"
           nullable: true
         is_default:
-          type: 'boolean'
+          type: "boolean"
         status:
-          type: 'string'
-          enum: ['active', 'deleted']
+          type: "string"
+          enum: ["active", "deleted"]
         created_at:
-          type: 'string'
-          format: 'date-time'
+          type: "string"
+          format: "date-time"
         updated_at:
-          type: 'string'
-          format: 'date-time'
+          type: "string"
+          format: "date-time"
 
     CreateResumeResponse:
-      type: 'object'
+      type: "object"
       properties:
         status:
-          type: 'string'
-          example: 'success'
+          type: "string"
+          example: "success"
         message:
-          type: 'string'
+          type: "string"
         data:
           allOf:
-            - $ref: '#/components/schemas/ResumeResource'
-            - type: 'object'
+            - $ref: "#/components/schemas/ResumeResource"
+            - type: "object"
               properties:
                 resume_indexing:
-                  $ref: '#/components/schemas/ResumeIndexingStatus'
+                  $ref: "#/components/schemas/ResumeIndexingStatus"
 
     ResumeListResponse:
-      type: 'object'
+      type: "object"
       properties:
         status:
-          type: 'string'
-          example: 'success'
+          type: "string"
+          example: "success"
         data:
-          type: 'array'
+          type: "array"
           items:
-            $ref: '#/components/schemas/ResumeResource'
+            $ref: "#/components/schemas/ResumeResource"
 
     ResumeDetailResponse:
-      type: 'object'
+      type: "object"
       properties:
         status:
-          type: 'string'
-          example: 'success'
+          type: "string"
+          example: "success"
         data:
-          $ref: '#/components/schemas/ResumeResource'
+          $ref: "#/components/schemas/ResumeResource"
 
     DeleteResumeResponse:
-      type: 'object'
+      type: "object"
       properties:
         status:
-          type: 'string'
-          example: 'success'
+          type: "string"
+          example: "success"
         message:
-          type: 'string'
+          type: "string"
         data:
-          type: 'object'
+          type: "object"
           properties:
             _id:
-              type: 'string'
+              type: "string"
 
     ChatJobsRequest:
-      type: 'object'
-      required: ['message']
+      type: "object"
+      required: ["message"]
       properties:
         message:
-          type: 'string'
+          type: "string"
           minLength: 2
           maxLength: 1000
         session_id:
-          type: 'string'
+          type: "string"
           nullable: true
         resume_id:
-          type: 'string'
-          pattern: '^[a-fA-F0-9]{24}$'
+          type: "string"
+          pattern: "^[a-fA-F0-9]{24}$"
           nullable: true
 
     ChatSource:
-      type: 'object'
+      type: "object"
       properties:
         type:
-          type: 'string'
-          enum: ['job', 'resume']
+          type: "string"
+          enum: ["job", "resume"]
         resume_id:
-          type: 'string'
+          type: "string"
           nullable: true
         job_id:
-          type: 'string'
+          type: "string"
           nullable: true
         title:
-          type: 'string'
+          type: "string"
           nullable: true
         company:
-          type: 'string'
+          type: "string"
           nullable: true
         chunk_index:
-          type: 'integer'
+          type: "integer"
           nullable: true
 
     ChatJobsResponse:
-      type: 'object'
+      type: "object"
       properties:
         status:
-          type: 'string'
-          example: 'success'
+          type: "string"
+          example: "success"
         data:
-          type: 'object'
+          type: "object"
           properties:
             session_id:
-              type: 'string'
+              type: "string"
             intent:
-              type: 'string'
-              enum: ['job_search', 'job_explanation', 'cv_review', 'policy_qa', 'unsupported']
+              type: "string"
+              enum:
+                [
+                  "job_search",
+                  "job_explanation",
+                  "cv_review",
+                  "policy_qa",
+                  "unsupported",
+                ]
             answer:
-              type: 'string'
+              type: "string"
             sources:
-              type: 'array'
+              type: "array"
               items:
-                $ref: '#/components/schemas/ChatSource'
+                $ref: "#/components/schemas/ChatSource"
 
     CreateCompanyRequest:
-      type: 'object'
-      required: ['company_name', 'address']
+      type: "object"
+      required: ["company_name", "address"]
       properties:
         company_name:
-          type: 'string'
+          type: "string"
         logo:
-          type: 'string'
+          type: "string"
         website:
-          type: 'string'
+          type: "string"
         address:
-          type: 'string'
+          type: "string"
         description:
-          type: 'string'
+          type: "string"
 
     UpdateCompanyRequest:
-      type: 'object'
+      type: "object"
       properties:
         company_name:
-          type: 'string'
+          type: "string"
         logo:
-          type: 'string'
+          type: "string"
         website:
-          type: 'string'
+          type: "string"
         address:
-          type: 'string'
+          type: "string"
         description:
-          type: 'string'
+          type: "string"
 
     Salary:
-      type: 'object'
+      type: "object"
       properties:
         min:
-          type: 'number'
+          type: "number"
           nullable: true
         max:
-          type: 'number'
+          type: "number"
           nullable: true
         currency:
-          type: 'string'
-          enum: ['VND', 'USD']
+          type: "string"
+          enum: ["VND", "USD"]
         is_negotiable:
-          type: 'boolean'
+          type: "boolean"
 
     CreateJobRequest:
-      type: 'object'
+      type: "object"
       required:
         [
-          'title',
-          'description',
-          'requirements',
-          'benefits',
-          'salary',
-          'location',
-          'job_type',
-          'level',
-          'category',
-          'skills',
-          'quantity',
-          'expired_at'
+          "title",
+          "description",
+          "requirements",
+          "benefits",
+          "salary",
+          "location",
+          "job_type",
+          "level",
+          "category",
+          "skills",
+          "quantity",
+          "expired_at",
         ]
       properties:
         title:
-          type: 'string'
+          type: "string"
         description:
-          type: 'string'
+          type: "string"
         requirements:
-          type: 'string'
+          type: "string"
         benefits:
-          type: 'string'
+          type: "string"
         salary:
-          $ref: '#/components/schemas/Salary'
+          $ref: "#/components/schemas/Salary"
         location:
-          type: 'string'
+          type: "string"
         job_type:
-          $ref: '#/components/schemas/JobType'
+          $ref: "#/components/schemas/JobType"
         level:
-          $ref: '#/components/schemas/JobLevel'
+          $ref: "#/components/schemas/JobLevel"
         status:
-          type: 'string'
-          enum: ['draft', 'open']
+          type: "string"
+          enum: ["draft", "open"]
         category:
-          type: 'array'
+          type: "array"
           items:
-            type: 'string'
+            type: "string"
         skills:
-          type: 'array'
+          type: "array"
           items:
-            type: 'string'
+            type: "string"
         quantity:
-          type: 'integer'
+          type: "integer"
         expired_at:
-          type: 'string'
-          format: 'date-time'
+          type: "string"
+          format: "date-time"
 
     UpdateJobRequest:
-      type: 'object'
+      type: "object"
       properties:
         title:
-          type: 'string'
+          type: "string"
         description:
-          type: 'string'
+          type: "string"
         requirements:
-          type: 'string'
+          type: "string"
         benefits:
-          type: 'string'
+          type: "string"
         salary:
-          $ref: '#/components/schemas/Salary'
+          $ref: "#/components/schemas/Salary"
         location:
-          type: 'string'
+          type: "string"
         job_type:
-          $ref: '#/components/schemas/JobType'
+          $ref: "#/components/schemas/JobType"
         level:
-          $ref: '#/components/schemas/JobLevel'
+          $ref: "#/components/schemas/JobLevel"
         category:
-          type: 'array'
+          type: "array"
           items:
-            type: 'string'
+            type: "string"
         skills:
-          type: 'array'
+          type: "array"
           items:
-            type: 'string'
+            type: "string"
         quantity:
-          type: 'integer'
+          type: "integer"
         expired_at:
-          type: 'string'
-          format: 'date-time'
+          type: "string"
+          format: "date-time"
 
     UpdateJobStatusRequest:
-      type: 'object'
-      required: ['status']
+      type: "object"
+      required: ["status"]
       properties:
         status:
-          type: 'string'
-          enum: ['draft', 'open', 'paused', 'closed']
+          type: "string"
+          enum: ["draft", "open", "paused", "closed"]
 
     UpdateProfileRequest:
-      type: 'object'
+      type: "object"
       properties:
         fullName:
-          type: 'string'
+          type: "string"
         bio:
-          type: 'string'
+          type: "string"
         address:
-          type: 'string'
+          type: "string"
         skills:
-          type: 'array'
+          type: "array"
           items:
-            type: 'string'
+            type: "string"
 
     UpdateUserSettingRequest:
-      type: 'object'
+      type: "object"
       properties:
         phone:
-          type: 'string'
+          type: "string"
 
     ApplyJobRequest:
-      type: 'object'
-      required: ['cv_id']
+      type: "object"
+      required: ["cv_id"]
       properties:
         cv_id:
-          type: 'string'
+          type: "string"
         cover_letter:
-          type: 'string'
+          type: "string"
 
     UpdateApplicationStatusRequest:
-      type: 'object'
-      required: ['status']
+      type: "object"
+      required: ["status"]
       properties:
         status:
-          type: 'string'
-          enum: ['reviewing', 'shortlisted', 'interviewing', 'rejected', 'hired']
+          type: "string"
+          enum:
+            ["reviewing", "shortlisted", "interviewing", "rejected", "hired"]
 
     AdminUpdateUserStatusRequest:
-      type: 'object'
-      required: ['status']
+      type: "object"
+      required: ["status"]
       properties:
         status:
-          $ref: '#/components/schemas/AdminEditableUserStatus'
+          $ref: "#/components/schemas/AdminEditableUserStatus"
 
     AdminUpdateCompanyVerificationRequest:
-      type: 'object'
-      required: ['verified']
+      type: "object"
+      required: ["verified"]
       properties:
         verified:
-          type: 'boolean'
+          type: "boolean"
 
     AdminUpdateJobModerationStatusRequest:
-      type: 'object'
-      required: ['moderation_status']
+      type: "object"
+      required: ["moderation_status"]
       properties:
         moderation_status:
-          $ref: '#/components/schemas/JobModerationStatus'
+          $ref: "#/components/schemas/JobModerationStatus"
         blocked_reason:
-          type: 'string'
+          type: "string"
           minLength: 1
           maxLength: 500
-      description: 'Nếu moderation_status = blocked thì blocked_reason là bắt buộc.'
+      description: "Nếu moderation_status = blocked thì blocked_reason là bắt buộc."
 
     GenericSuccess:
-      type: 'object'
+      type: "object"
       properties:
         status:
-          type: 'string'
-          example: 'success'
+          type: "string"
+          example: "success"
         message:
-          type: 'string'
+          type: "string"
           nullable: true
         data:
-          type: 'object'
+          type: "object"
           additionalProperties: true
 
     BasicResponse:
-      type: 'object'
+      type: "object"
       properties:
         status:
-          type: 'string'
-          example: 'success'
+          type: "string"
+          example: "success"
         message:
-          type: 'string'
+          type: "string"
 
     AuthResponse:
-      type: 'object'
+      type: "object"
       properties:
         status:
-          type: 'string'
+          type: "string"
         message:
-          type: 'string'
+          type: "string"
         data:
-          type: 'object'
+          type: "object"
           properties:
             id:
-              type: 'string'
+              type: "string"
             AccessToken:
-              type: 'string'
+              type: "string"
             RefreshToken:
-              type: 'string'
+              type: "string"
 
     FavoriteJobMutationResponse:
-      type: 'object'
+      type: "object"
       properties:
         status:
-          type: 'string'
-          example: 'success'
+          type: "string"
+          example: "success"
         message:
-          type: 'string'
+          type: "string"
         data:
-          type: 'object'
+          type: "object"
           properties:
             job_id:
-              type: 'string'
+              type: "string"
             favorited:
-              type: 'boolean'
+              type: "boolean"
             created_at:
-              type: 'string'
-              format: 'date-time'
+              type: "string"
+              format: "date-time"
               nullable: true
 
     PublicJobDetailResponse:
-      type: 'object'
+      type: "object"
       properties:
         status:
-          type: 'string'
+          type: "string"
         data:
-          type: 'object'
+          type: "object"
           properties:
             job:
-              type: 'object'
+              type: "object"
               additionalProperties: true
             company:
-              type: 'object'
+              type: "object"
               additionalProperties: true
             my_application:
               nullable: true
-              type: 'object'
+              type: "object"
               properties:
                 _id:
-                  type: 'string'
+                  type: "string"
                 status:
-                  $ref: '#/components/schemas/JobApplicationStatus'
+                  $ref: "#/components/schemas/JobApplicationStatus"
                 applied_at:
-                  type: 'string'
-                  format: 'date-time'
+                  type: "string"
+                  format: "date-time"
                 updated_at:
-                  type: 'string'
-                  format: 'date-time'
+                  type: "string"
+                  format: "date-time"
 
     AdminDashboardSummaryResponse:
-      type: 'object'
+      type: "object"
       properties:
         status:
-          type: 'string'
-          example: 'success'
+          type: "string"
+          example: "success"
         data:
-          type: 'object'
+          type: "object"
           properties:
             total_users:
-              type: 'integer'
+              type: "integer"
             unverified_users:
-              type: 'integer'
+              type: "integer"
             total_companies:
-              type: 'integer'
+              type: "integer"
             unverified_companies:
-              type: 'integer'
+              type: "integer"
             total_jobs:
-              type: 'integer'
+              type: "integer"
             open_jobs:
-              type: 'integer'
+              type: "integer"
             total_applications:
-              type: 'integer'
+              type: "integer"
 
     ErrorResponse:
-      type: 'object'
+      type: "object"
       properties:
         status:
-          type: 'string'
+          type: "string"
         message:
-          type: 'string'
+          type: "string"
 
     ServerErrorResponse:
-      type: 'object'
+      type: "object"
       properties:
         status:
-          type: 'string'
+          type: "string"
         message:
-          type: 'string'
+          type: "string"
         stack:
-          type: 'string'
+          type: "string"
 
     ValidationError:
-      type: 'object'
+      type: "object"
       properties:
         status:
-          type: 'string'
+          type: "string"
         message:
-          type: 'string'
+          type: "string"
         error:
-          type: 'array'
+          type: "array"
           items:
-            type: 'object'
+            type: "object"
             properties:
               path:
-                type: 'string'
+                type: "string"
               location:
-                type: 'string'
+                type: "string"
               message:
-                type: 'string'
+                type: "string"
 
     RateLimitResponse:
-      type: 'object'
+      type: "object"
       properties:
         status:
-          type: 'integer'
+          type: "integer"
         message:
-          type: 'string'
+          type: "string"
         retryAfter:
-          type: 'integer'
+          type: "integer"
