@@ -30,22 +30,46 @@ export const applyJobController = async (
   const userId = new ObjectId(req.decodeToken?.userId as string)
   const job = res.locals.applyJob as NonNullable<ApplyJobLocals['applyJob']>
   const resume = res.locals.applyResume as NonNullable<ApplyJobLocals['applyResume']>
+  const existingApplication = res.locals.existingApplication
   const candidate = await databaseService.users.findOne(
     { _id: userId },
     { projection: { fullName: 1, email: 1, phone: 1, skills: 1 } }
   )
+  const resumeSnapshot = {
+    full_name: candidate?.fullName,
+    email: candidate?.email,
+    phone: candidate?.phone,
+    cv_url: resume.cv_url,
+    skills: candidate?.skills
+  }
+
+  if (existingApplication?._id && existingApplication.status === JobApplicationStatus.WITHDRAWN) {
+    const result = await jobApplicationService.reapplyWithdrawnJobApplication({
+      applicationId: existingApplication._id,
+      resumeSnapshot,
+      coverLetter: req.body.cover_letter
+    })
+
+    return res.status(StatusCodes.OK).json({
+      status: 'success',
+      message: UserMessages.JOB_APPLIED_SUCCESS,
+      data: {
+        _id: result?._id,
+        job_id: result?.job_id,
+        company_id: result?.company_id,
+        candidate_id: result?.candidate_id,
+        status: result?.status,
+        applied_at: result?.applied_at,
+        updated_at: result?.updated_at
+      }
+    })
+  }
 
   const newApplication = new JobApplication({
     job_id: job._id,
     company_id: job.company_id,
     candidate_id: userId,
-    resume_snapshot: {
-      full_name: candidate?.fullName,
-      email: candidate?.email,
-      phone: candidate?.phone,
-      cv_url: resume.cv_url,
-      skills: candidate?.skills
-    },
+    resume_snapshot: resumeSnapshot,
     cover_letter: req.body.cover_letter
   })
 

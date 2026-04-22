@@ -30,6 +30,34 @@ class JobApplicationService {
     return databaseService.jobApplications.insertOne(data)
   }
 
+  async reapplyWithdrawnJobApplication({
+    applicationId,
+    resumeSnapshot,
+    coverLetter
+  }: {
+    applicationId: ObjectId
+    resumeSnapshot: JobApplication['resume_snapshot']
+    coverLetter?: string
+  }) {
+    const now = new Date()
+
+    return databaseService.jobApplications.findOneAndUpdate(
+      { _id: applicationId, status: JobApplicationStatus.WITHDRAWN },
+      {
+        $set: {
+          resume_snapshot: resumeSnapshot,
+          cover_letter: coverLetter,
+          status: JobApplicationStatus.SUBMITTED,
+          applied_at: now,
+          updated_at: now
+        }
+      },
+      {
+        returnDocument: 'after'
+      }
+    )
+  }
+
   async getCompanyJobApplications({
     jobId,
     status,

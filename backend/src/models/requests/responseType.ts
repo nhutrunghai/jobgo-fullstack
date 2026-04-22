@@ -91,6 +91,7 @@ export type PublicApplyJob = {
 export type ApplyJobLocals = {
   applyJob: PublicApplyJob | null
   applyResume: Resume | null
+  existingApplication: JobApplication | null
 }
 export type CompanyApplicationDetail = {
   _id: ObjectId

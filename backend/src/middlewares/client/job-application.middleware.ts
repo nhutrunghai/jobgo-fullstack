@@ -150,7 +150,9 @@ export const ensureNotAppliedYet = async (req: Request, res: Response<unknown, A
     candidate_id: userId
   })
 
-  if (existed) {
+  res.locals.existingApplication = existed || null
+
+  if (existed && existed.status !== JobApplicationStatus.WITHDRAWN) {
     return next(
       new AppError({
         statusCode: StatusCodes.CONFLICT,
