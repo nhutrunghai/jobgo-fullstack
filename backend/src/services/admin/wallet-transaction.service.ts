@@ -257,6 +257,7 @@ class AdminWalletTransactionService {
       balance_before: balanceBefore,
       balance_after: balanceAfter,
       status: WalletTransactionStatus.SUCCEEDED,
+      reference_id: new ObjectId(),
       description
     })
 
@@ -340,6 +341,7 @@ class AdminWalletTransactionService {
       balance_before: balanceBefore,
       balance_after: balanceAfter,
       status: WalletTransactionStatus.SUCCEEDED,
+      reference_id: new ObjectId(),
       description
     })
 
