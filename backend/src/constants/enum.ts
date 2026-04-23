@@ -104,7 +104,12 @@ export enum AdminAuditAction {
   RAG_CHAT_CONFIG_VIEW = 'rag_chat.config.view',
   RAG_CHAT_CONFIG_UPDATE = 'rag_chat.config.update',
   RAG_CHAT_SECRET_ROTATE = 'rag_chat.secret.rotate',
-  RAG_CHAT_HEALTH_VIEW = 'rag_chat.health.view'
+  RAG_CHAT_HEALTH_VIEW = 'rag_chat.health.view',
+  JOB_PROMOTION_VIEW = 'job_promotion.view',
+  JOB_PROMOTION_CREATE = 'job_promotion.create',
+  JOB_PROMOTION_UPDATE = 'job_promotion.update',
+  JOB_PROMOTION_DELETE = 'job_promotion.delete',
+  JOB_PROMOTION_REORDER = 'job_promotion.reorder'
 }
 
 export enum AdminAuditTargetType {
@@ -117,7 +122,8 @@ export enum AdminAuditTargetType {
   WALLET_TOPUP_ORDER = 'wallet_topup_order',
   SEPAY = 'sepay',
   RAG_CHAT = 'rag_chat',
-  SYSTEM_SETTING = 'system_setting'
+  SYSTEM_SETTING = 'system_setting',
+  JOB_PROMOTION = 'job_promotion'
 }
 
 export enum SystemSettingKey {

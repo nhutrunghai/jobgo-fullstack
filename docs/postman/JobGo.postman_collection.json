@@ -45,6 +45,10 @@
     {
       "key": "walletTransactionId",
       "value": ""
+    },
+    {
+      "key": "jobPromotionId",
+      "value": ""
     }
   ],
   "item": [
@@ -1853,6 +1857,236 @@
                     "{{jobId}}",
                     "moderation-status"
                   ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "job-promotions",
+          "item": [
+            {
+              "name": "get job promotions",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{AdminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/job-promotions?page=1&limit=10&type=homepage_featured&status=active",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "job-promotions"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "type",
+                      "value": "homepage_featured"
+                    },
+                    {
+                      "key": "status",
+                      "value": "active"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "create job promotion",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{AdminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"jobId\": \"{{jobId}}\",\n  \"type\": \"homepage_featured\",\n  \"status\": \"active\",\n  \"starts_at\": \"2026-04-23T00:00:00.000Z\",\n  \"ends_at\": \"2026-05-23T00:00:00.000Z\",\n  \"priority\": 100,\n  \"amount_paid\": 0,\n  \"currency\": \"VND\"\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/job-promotions",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "job-promotions"
+                  ],
+                  "query": []
+                }
+              }
+            },
+            {
+              "name": "get job promotion detail",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{AdminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/job-promotions/{{jobPromotionId}}",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "job-promotions",
+                    "%7B%7BjobPromotionId%7D%7D"
+                  ],
+                  "query": []
+                }
+              }
+            },
+            {
+              "name": "update job promotion",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{AdminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"active\",\n  \"priority\": 120,\n  \"ends_at\": \"2026-06-23T00:00:00.000Z\"\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/job-promotions/{{jobPromotionId}}",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "job-promotions",
+                    "%7B%7BjobPromotionId%7D%7D"
+                  ],
+                  "query": []
+                }
+              }
+            },
+            {
+              "name": "reorder job promotions",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{AdminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"items\": [\n    {\n      \"promotionId\": \"{{jobPromotionId}}\",\n      \"priority\": 200\n    }\n  ]\n}"
+                },
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/job-promotions/reorder",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "job-promotions",
+                    "reorder"
+                  ],
+                  "query": []
+                }
+              }
+            },
+            {
+              "name": "delete job promotion",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{AdminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "url": {
+                  "raw": "{{host}}/api/v1/admin/job-promotions/{{jobPromotionId}}",
+                  "host": [
+                    "{{host}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "job-promotions",
+                    "%7B%7BjobPromotionId%7D%7D"
+                  ],
+                  "query": []
                 }
               }
             }
