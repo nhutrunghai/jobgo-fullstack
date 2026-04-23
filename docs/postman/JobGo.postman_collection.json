@@ -1216,6 +1216,186 @@
                   ]
                 }
               }
+            },
+            {
+              "name": "job promotions",
+              "item": [
+                {
+                  "name": "get promotion plans",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{AccessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{host}}/api/v1/company/job-promotions/plans",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "company",
+                        "job-promotions",
+                        "plans"
+                      ],
+                      "query": []
+                    }
+                  }
+                },
+                {
+                  "name": "purchase job promotion",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{AccessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"type\": \"homepage_featured\",\n  \"duration_days\": 7,\n  \"priority\": 100\n}"
+                    },
+                    "url": {
+                      "raw": "{{host}}/api/v1/company/jobs/{{jobId}}/promotions/purchase",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "company",
+                        "jobs",
+                        "%7B%7BjobId%7D%7D",
+                        "promotions",
+                        "purchase"
+                      ],
+                      "query": []
+                    }
+                  }
+                },
+                {
+                  "name": "get company promotions",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{AccessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{host}}/api/v1/company/job-promotions?page=1&limit=10&status=active",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "company",
+                        "job-promotions"
+                      ],
+                      "query": [
+                        {
+                          "key": "page",
+                          "value": "1"
+                        },
+                        {
+                          "key": "limit",
+                          "value": "10"
+                        },
+                        {
+                          "key": "status",
+                          "value": "active"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "get company promotion detail",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{AccessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{host}}/api/v1/company/job-promotions/{{jobPromotionId}}",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "company",
+                        "job-promotions",
+                        "%7B%7BjobPromotionId%7D%7D"
+                      ],
+                      "query": []
+                    }
+                  }
+                },
+                {
+                  "name": "cancel company promotion",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{AccessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "PATCH",
+                    "url": {
+                      "raw": "{{host}}/api/v1/company/job-promotions/{{jobPromotionId}}/cancel",
+                      "host": [
+                        "{{host}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "company",
+                        "job-promotions",
+                        "%7B%7BjobPromotionId%7D%7D",
+                        "cancel"
+                      ],
+                      "query": []
+                    }
+                  }
+                }
+              ]
             }
           ]
         },

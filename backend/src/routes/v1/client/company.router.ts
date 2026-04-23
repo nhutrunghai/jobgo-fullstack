@@ -17,6 +17,13 @@ import {
   updateCompanyJobController,
   updateCompanyJobStatusController
 } from '~/controller/client/job.controller'
+import {
+  cancelCompanyJobPromotionController,
+  getCompanyJobPromotionDetailController,
+  getCompanyJobPromotionsController,
+  getCompanyPromotionPlansController,
+  purchaseCompanyJobPromotionController
+} from '~/controller/client/job-promotion.controller'
 import { loadCompany, requireCompany, checkCompany } from '~/middlewares/client/company.middleware'
 import {
   ensureValidApplicationStatusTransition,
@@ -41,6 +48,12 @@ import {
   updateJobValidator,
   updateJobStatusValidator
 } from '~/validators/client/job.validator'
+import {
+  cancelCompanyJobPromotionValidator,
+  getCompanyJobPromotionDetailValidator,
+  getCompanyJobPromotionsValidator,
+  purchaseCompanyJobPromotionValidator
+} from '~/validators/client/job-promotion.validator'
 
 const companyRouter = Router()
 
@@ -51,6 +64,37 @@ companyRouter.get('/me', loadCompany, requireCompany, getCompanyMeController)
 companyRouter.post('/', validate(createCompanyValidator), checkCompany, createCompanyController)
 companyRouter.patch('/', loadCompany, requireCompany, validate(updateCompanyValidator), updateCompanyController)
 companyRouter.patch('/logo', loadCompany, requireCompany, validate(updateCompanyLogoValidator), updateCompanyLogoController)
+companyRouter.get(
+  '/job-promotions/plans',
+  loadCompany,
+  requireCompany,
+  isVerifiedCompany,
+  getCompanyPromotionPlansController
+)
+companyRouter.get(
+  '/job-promotions',
+  loadCompany,
+  requireCompany,
+  isVerifiedCompany,
+  validate(getCompanyJobPromotionsValidator),
+  getCompanyJobPromotionsController
+)
+companyRouter.get(
+  '/job-promotions/:promotionId',
+  loadCompany,
+  requireCompany,
+  isVerifiedCompany,
+  validate(getCompanyJobPromotionDetailValidator),
+  getCompanyJobPromotionDetailController
+)
+companyRouter.patch(
+  '/job-promotions/:promotionId/cancel',
+  loadCompany,
+  requireCompany,
+  isVerifiedCompany,
+  validate(cancelCompanyJobPromotionValidator),
+  cancelCompanyJobPromotionController
+)
 companyRouter.post(
   '/jobs',
   loadCompany,
@@ -117,6 +161,16 @@ companyRouter.patch(
   requireCompanyJob,
   validate(updateJobStatusValidator),
   updateCompanyJobStatusController
+)
+companyRouter.post(
+  '/jobs/:jobId/promotions/purchase',
+  loadCompany,
+  requireCompany,
+  isVerifiedCompany,
+  validate(purchaseCompanyJobPromotionValidator),
+  loadCompanyJob,
+  requireCompanyJob,
+  purchaseCompanyJobPromotionController
 )
 export default companyRouter
 

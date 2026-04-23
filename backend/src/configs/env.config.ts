@@ -33,6 +33,8 @@ const envSchema = z.object({
   DB_NOTIFICATION_NAME: z.string().min(1).default('notifications'),
   DB_ADMIN_AUDIT_LOG_NAME: z.string().min(1).default('admin_audit_logs'),
   DB_SYSTEM_SETTING_NAME: z.string().min(1).default('system_settings'),
+  PROMOTION_DAILY_PRICE: z.coerce.number().int().min(0).default(50000),
+  PROMOTION_DEFAULT_PRIORITY: z.coerce.number().int().min(0).default(100),
   DB_FAVORITE_JOB_NAME: z.string().default('favorite_jobs'),
   DB_RESUME_NAME: z.string().min(1, { message: 'DB_RESUME_NAME không được rỗng' }),
   DB_JOB_APPLICATION_NAME: z.string().min(1, { message: 'DB_JOB_APPLICATION_NAME không được rỗng' }),
