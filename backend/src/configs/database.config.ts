@@ -1,4 +1,4 @@
-import { Collection, CreateIndexesOptions, Db, IndexSpecification, MongoClient } from 'mongodb'
+import { ClientSession, Collection, CreateIndexesOptions, Db, IndexSpecification, MongoClient } from 'mongodb'
 import env from './env.config.js'
 import Company from '~/models/schema/client/companies.schema.js'
 import FavoriteJob from '~/models/schema/client/favoriteJobs.schema.js'
@@ -10,6 +10,8 @@ import Resume from '~/models/schema/client/resumes.schema.js'
 import RefreshToken from '~/models/schema/client/refreshTokens.schema.js'
 import User from '~/models/schema/client/user.schema.js'
 import ChatSession from '~/models/schema/client/chatSessions.schema.js'
+import AdminAuditLog from '~/models/schema/adminAuditLogs.schema.js'
+import SystemSetting from '~/models/schema/systemSettings.schema.js'
 
 class DatabaseService {
   private client: MongoClient
@@ -128,6 +130,31 @@ class DatabaseService {
         option: { name: 'job_type_status_ends_at' }
       },
       {
+        collection: env.DB_ADMIN_AUDIT_LOG_NAME,
+        key: { admin_id: 1, created_at: -1 },
+        option: { name: 'admin_id_created_at_audit_log' }
+      },
+      {
+        collection: env.DB_ADMIN_AUDIT_LOG_NAME,
+        key: { action: 1, created_at: -1 },
+        option: { name: 'action_created_at_audit_log' }
+      },
+      {
+        collection: env.DB_ADMIN_AUDIT_LOG_NAME,
+        key: { target_type: 1, target_id: 1, created_at: -1 },
+        option: { name: 'target_created_at_audit_log' }
+      },
+      {
+        collection: env.DB_ADMIN_AUDIT_LOG_NAME,
+        key: { created_at: -1 },
+        option: { name: 'created_at_audit_log' }
+      },
+      {
+        collection: env.DB_SYSTEM_SETTING_NAME,
+        key: { key: 1 },
+        option: { unique: true, name: 'key_unique_system_setting' }
+      },
+      {
         collection: env.DB_FAVORITE_JOB_NAME,
         key: { user_id: 1, job_id: 1 },
         option: { unique: true, name: 'user_id_job_id_unique' }
@@ -220,6 +247,14 @@ class DatabaseService {
     return this.db.collection(env.DB_JOB_PROMOTION_NAME)
   }
 
+  get adminAuditLogs(): Collection<AdminAuditLog> {
+    return this.db.collection(env.DB_ADMIN_AUDIT_LOG_NAME)
+  }
+
+  get systemSettings(): Collection<SystemSetting> {
+    return this.db.collection(env.DB_SYSTEM_SETTING_NAME)
+  }
+
   get favoriteJobs(): Collection<FavoriteJob> {
     return this.db.collection(env.DB_FAVORITE_JOB_NAME)
   }
@@ -242,6 +277,16 @@ class DatabaseService {
 
   get chatSessions(): Collection<ChatSession> {
     return this.db.collection(env.DB_CHAT_SESSION_NAME)
+  }
+
+  async withTransaction<T>(callback: (session: ClientSession) => Promise<T>): Promise<T> {
+    const session = this.client.startSession()
+
+    try {
+      return await session.withTransaction(() => callback(session))
+    } finally {
+      await session.endSession()
+    }
   }
 }
 

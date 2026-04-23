@@ -41,6 +41,90 @@ export enum JobPromotionStatus {
   CANCELLED = 'cancelled'
 }
 
+export enum WalletStatus {
+  ACTIVE = 'active',
+  LOCKED = 'locked'
+}
+
+export enum WalletTransactionType {
+  TOP_UP = 'top_up',
+  PROMOTION_PURCHASE = 'promotion_purchase',
+  REFUND = 'refund',
+  ADJUSTMENT = 'adjustment'
+}
+
+export enum WalletTransactionDirection {
+  CREDIT = 'credit',
+  DEBIT = 'debit'
+}
+
+export enum WalletTransactionStatus {
+  PENDING = 'pending',
+  SUCCEEDED = 'succeeded',
+  FAILED = 'failed',
+  CANCELLED = 'cancelled'
+}
+
+export enum WalletTransactionReferenceType {
+  PAYMENT = 'payment',
+  JOB_PROMOTION = 'job_promotion'
+}
+
+export enum WalletTopUpOrderStatus {
+  PENDING = 'pending',
+  PAID = 'paid',
+  FAILED = 'failed',
+  CANCELLED = 'cancelled',
+  EXPIRED = 'expired'
+}
+
+export enum NotificationType {
+  JOB_APPLICATION_SUBMITTED = 'job_application_submitted',
+  JOB_APPLICATION_STATUS_UPDATED = 'job_application_status_updated',
+  COMPANY_VERIFICATION_UPDATED = 'company_verification_updated',
+  WALLET_TOPUP_SUCCEEDED = 'wallet_topup_succeeded',
+  WALLET_ADJUSTED = 'wallet_adjusted'
+}
+
+export enum AdminAuditAction {
+  ADMIN_LOGIN = 'admin.login',
+  ADMIN_LOGOUT = 'admin.logout',
+  USER_STATUS_UPDATE = 'user.status.update',
+  COMPANY_VERIFICATION_UPDATE = 'company.verification.update',
+  JOB_MODERATION_UPDATE = 'job.moderation.update',
+  WALLET_ADJUST = 'wallet.adjust',
+  WALLET_TRANSACTIONS_VIEW = 'wallet.transactions.view',
+  USER_WALLET_VIEW = 'user.wallet.view',
+  USER_TOPUP_ORDERS_VIEW = 'user.topup_orders.view',
+  SEPAY_CONFIG_VIEW = 'sepay.config.view',
+  SEPAY_CONFIG_UPDATE = 'sepay.config.update',
+  SEPAY_SECRET_ROTATE = 'sepay.secret.rotate',
+  SEPAY_CONNECTION_TEST = 'sepay.test_connection',
+  SEPAY_DIAGNOSTICS_VIEW = 'sepay.diagnostics.view',
+  RAG_CHAT_CONFIG_VIEW = 'rag_chat.config.view',
+  RAG_CHAT_CONFIG_UPDATE = 'rag_chat.config.update',
+  RAG_CHAT_SECRET_ROTATE = 'rag_chat.secret.rotate',
+  RAG_CHAT_HEALTH_VIEW = 'rag_chat.health.view'
+}
+
+export enum AdminAuditTargetType {
+  ADMIN = 'admin',
+  USER = 'user',
+  COMPANY = 'company',
+  JOB = 'job',
+  WALLET = 'wallet',
+  WALLET_TRANSACTION = 'wallet_transaction',
+  WALLET_TOPUP_ORDER = 'wallet_topup_order',
+  SEPAY = 'sepay',
+  RAG_CHAT = 'rag_chat',
+  SYSTEM_SETTING = 'system_setting'
+}
+
+export enum SystemSettingKey {
+  RAG_CHAT = 'rag_chat',
+  SEPAY = 'sepay'
+}
+
 export enum JobType {
   FULL_TIME = 'full-time', // Toan thoi gian
   PART_TIME = 'part-time', // Ban thoi gian
