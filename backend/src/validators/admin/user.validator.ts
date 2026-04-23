@@ -1,10 +1,17 @@
 import { z } from 'zod'
-import { UserRole, UserStatus } from '~/constants/enum.js'
+import { UserRole, UserStatus, WalletTopUpOrderStatus } from '~/constants/enum.js'
 import UserMessages from '~/constants/messages.js'
 
 const adminUserRoleValues = [UserRole.CANDIDATE, UserRole.EMPLOYER, UserRole.ADMIN] as const
 const adminUserStatusValues = [UserStatus.ACTIVE, UserStatus.BANNED, UserStatus.DELETED] as const
 const adminEditableUserStatusValues = [UserStatus.ACTIVE, UserStatus.BANNED] as const
+const adminWalletTopUpOrderStatusValues = [
+  WalletTopUpOrderStatus.PENDING,
+  WalletTopUpOrderStatus.PAID,
+  WalletTopUpOrderStatus.FAILED,
+  WalletTopUpOrderStatus.CANCELLED,
+  WalletTopUpOrderStatus.EXPIRED
+] as const
 
 const isValidAdminUserRole = (value: number) =>
   adminUserRoleValues.includes(value as (typeof adminUserRoleValues)[number])
@@ -37,6 +44,37 @@ export const getAdminUserDetailValidator = z.object({
       .regex(/^[a-fA-F0-9]{24}$/, {
         message: UserMessages.INVALID_DATA
       })
+  })
+})
+
+export const getAdminUserWalletValidator = z.object({
+  params: z.object({
+    userId: z
+      .string()
+      .trim()
+      .regex(/^[a-fA-F0-9]{24}$/, {
+        message: UserMessages.INVALID_DATA
+      })
+  })
+})
+
+export const getAdminUserTopUpOrdersValidator = z.object({
+  params: z.object({
+    userId: z
+      .string()
+      .trim()
+      .regex(/^[a-fA-F0-9]{24}$/, {
+        message: UserMessages.INVALID_DATA
+      })
+  }),
+  query: z.object({
+    status: z
+      .enum(adminWalletTopUpOrderStatusValues, {
+        message: UserMessages.INVALID_STATUS
+      })
+      .optional(),
+    page: z.coerce.number().int().min(1).optional().default(1),
+    limit: z.coerce.number().int().min(1).max(100).optional().default(10)
   })
 })
 

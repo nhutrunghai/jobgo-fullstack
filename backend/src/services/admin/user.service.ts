@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config.js'
-import { UserRole, UserStatus } from '~/constants/enum.js'
+import { UserRole, UserStatus, WalletStatus, WalletTopUpOrderStatus } from '~/constants/enum.js'
 
 class AdminUserService {
   async getUsers({
@@ -86,6 +86,73 @@ class AdminUserService {
         }
       }
     )
+  }
+
+  async getUserWallet(userId: ObjectId) {
+    const now = new Date()
+
+    return databaseService.wallets.findOneAndUpdate(
+      {
+        user_id: userId
+      },
+      {
+        $setOnInsert: {
+          user_id: userId,
+          balance: 0,
+          currency: 'VND',
+          status: WalletStatus.ACTIVE,
+          created_at: now,
+          updated_at: now
+        }
+      },
+      {
+        upsert: true,
+        returnDocument: 'after'
+      }
+    )
+  }
+
+  async getUserTopUpOrdersForAdmin({
+    userId,
+    status,
+    page,
+    limit
+  }: {
+    userId: ObjectId
+    status?: WalletTopUpOrderStatus
+    page: number
+    limit: number
+  }) {
+    const query: {
+      user_id: ObjectId
+      status?: WalletTopUpOrderStatus
+    } = {
+      user_id: userId
+    }
+
+    if (status) {
+      query.status = status
+    }
+
+    const [orders, total] = await Promise.all([
+      databaseService.walletTopUpOrders
+        .find(query)
+        .sort({ created_at: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .toArray(),
+      databaseService.walletTopUpOrders.countDocuments(query)
+    ])
+
+    return {
+      orders,
+      pagination: {
+        page,
+        limit,
+        total,
+        total_pages: Math.ceil(total / limit)
+      }
+    }
   }
 }
 

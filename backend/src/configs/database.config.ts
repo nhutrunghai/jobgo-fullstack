@@ -10,6 +10,9 @@ import Resume from '~/models/schema/client/resumes.schema.js'
 import RefreshToken from '~/models/schema/client/refreshTokens.schema.js'
 import User from '~/models/schema/client/user.schema.js'
 import ChatSession from '~/models/schema/client/chatSessions.schema.js'
+import Wallet from '~/models/schema/client/wallets.schema.js'
+import WalletTopUpOrder from '~/models/schema/client/walletTopUpOrders.schema.js'
+import WalletTransaction from '~/models/schema/client/walletTransactions.schema.js'
 import AdminAuditLog from '~/models/schema/adminAuditLogs.schema.js'
 import SystemSetting from '~/models/schema/systemSettings.schema.js'
 
@@ -130,6 +133,52 @@ class DatabaseService {
         option: { name: 'job_type_status_ends_at' }
       },
       {
+        collection: env.DB_WALLET_NAME,
+        key: { user_id: 1 },
+        option: { unique: true, name: 'user_id_unique' }
+      },
+      {
+        collection: env.DB_WALLET_TRANSACTION_NAME,
+        key: { user_id: 1, created_at: -1 },
+        option: { name: 'user_id_created_at' }
+      },
+      {
+        collection: env.DB_WALLET_TRANSACTION_NAME,
+        key: { wallet_id: 1, created_at: -1 },
+        option: { name: 'wallet_id_created_at' }
+      },
+      {
+        collection: env.DB_WALLET_TRANSACTION_NAME,
+        key: { reference_type: 1, reference_id: 1 },
+        option: { unique: true, name: 'reference_type_reference_id' }
+      },
+      {
+        collection: env.DB_WALLET_TOPUP_ORDER_NAME,
+        key: { order_code: 1 },
+        option: { unique: true, name: 'order_code_unique' }
+      },
+      {
+        collection: env.DB_WALLET_TOPUP_ORDER_NAME,
+        key: { user_id: 1, created_at: -1 },
+        option: { name: 'user_id_created_at_topup_order' }
+      },
+      {
+        collection: env.DB_WALLET_TOPUP_ORDER_NAME,
+        key: { status: 1, created_at: -1 },
+        option: { name: 'status_created_at_topup_order' }
+      },
+      {
+        collection: env.DB_WALLET_TOPUP_ORDER_NAME,
+        key: { provider_transaction_id: 1 },
+        option: {
+          unique: true,
+          name: 'provider_transaction_id_unique',
+          partialFilterExpression: {
+            provider_transaction_id: { $exists: true }
+          }
+        }
+      },
+      {
         collection: env.DB_ADMIN_AUDIT_LOG_NAME,
         key: { admin_id: 1, created_at: -1 },
         option: { name: 'admin_id_created_at_audit_log' }
@@ -245,6 +294,18 @@ class DatabaseService {
 
   get jobPromotions(): Collection<JobPromotion> {
     return this.db.collection(env.DB_JOB_PROMOTION_NAME)
+  }
+
+  get wallets(): Collection<Wallet> {
+    return this.db.collection(env.DB_WALLET_NAME)
+  }
+
+  get walletTransactions(): Collection<WalletTransaction> {
+    return this.db.collection(env.DB_WALLET_TRANSACTION_NAME)
+  }
+
+  get walletTopUpOrders(): Collection<WalletTopUpOrder> {
+    return this.db.collection(env.DB_WALLET_TOPUP_ORDER_NAME)
   }
 
   get adminAuditLogs(): Collection<AdminAuditLog> {
