@@ -80,7 +80,7 @@ export const resendMailController = async (req: Request, res: Response<any, User
     to: res.locals.user.email,
     variables: {
       fullName: res.locals.user.fullName,
-      verify_url: `${env.MAIL_FROM_ADDRESS}/verify-email?email_verify_token=${rawToken}`
+      verify_url: `${env.FRONTEND_URL}/verify-email?email_verify_token=${rawToken}`
     }
   }
   if (env.BUILD_MODE === 'production') {

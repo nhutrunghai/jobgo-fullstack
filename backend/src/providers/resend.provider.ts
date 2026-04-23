@@ -23,6 +23,11 @@ class ResendProvider {
       }))
       const { data, error } = await this.resend.batch.send(batchRequest)
       if (error) {
+        console.error('[RESEND_ERROR]', {
+          templateId,
+          recipients: batchRequest.map((item) => item.to),
+          error
+        })
         throw error
       }
       results.push(data)

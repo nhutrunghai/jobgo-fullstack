@@ -9,13 +9,6 @@ import adminSystemSettingService, { SePayRuntimeConfig } from '~/services/admin/
 export const getAdminSePayConfigController = async (req: Request, res: Response) => {
   const config = await adminSePayService.getConfigStatus()
 
-  await adminAuditLogService.create({
-    req,
-    action: AdminAuditAction.SEPAY_CONFIG_VIEW,
-    targetType: AdminAuditTargetType.SEPAY,
-    statusCode: StatusCodes.OK
-  })
-
   return res.status(StatusCodes.OK).json({
     status: 'success',
     data: config
@@ -73,18 +66,6 @@ export const rotateAdminSePaySecretsController = async (
 export const testAdminSePayConnectionController = async (req: Request, res: Response) => {
   const result = await adminSePayService.testConnection()
 
-  await adminAuditLogService.create({
-    req,
-    action: AdminAuditAction.SEPAY_CONNECTION_TEST,
-    targetType: AdminAuditTargetType.SEPAY,
-    statusCode: StatusCodes.OK,
-    metadata: {
-      connected: result.connected,
-      reason: 'reason' in result ? result.reason : undefined,
-      provider_status: 'provider_status' in result ? result.provider_status : undefined
-    }
-  })
-
   return res.status(StatusCodes.OK).json({
     status: 'success',
     message: UserMessages.ADMIN_SEPAY_CONNECTION_TEST_SUCCESS,
@@ -95,18 +76,6 @@ export const testAdminSePayConnectionController = async (req: Request, res: Resp
 export const getAdminSePayDiagnosticsController = async (req: Request, res: Response) => {
   const recentLimit = Number(req.query.recentLimit || 10)
   const diagnostics = await adminSePayService.getDiagnostics({ recentLimit })
-
-  await adminAuditLogService.create({
-    req,
-    action: AdminAuditAction.SEPAY_DIAGNOSTICS_VIEW,
-    targetType: AdminAuditTargetType.SEPAY,
-    statusCode: StatusCodes.OK,
-    metadata: {
-      recentLimit,
-      pending_older_than_1h: diagnostics.order_summary.pending_older_than_1h,
-      paid_last_24h: diagnostics.order_summary.paid_last_24h
-    }
-  })
 
   return res.status(StatusCodes.OK).json({
     status: 'success',

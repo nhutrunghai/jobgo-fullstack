@@ -31,22 +31,6 @@ export const getAdminWalletTransactionsController = async (req: Request, res: Re
     limit
   })
 
-  await adminAuditLogService.create({
-    req,
-    action: AdminAuditAction.WALLET_TRANSACTIONS_VIEW,
-    targetType: userId ? AdminAuditTargetType.USER : AdminAuditTargetType.WALLET_TRANSACTION,
-    targetId: userId,
-    statusCode: StatusCodes.OK,
-    metadata: {
-      type,
-      status,
-      direction,
-      page,
-      limit,
-      total: result.pagination.total
-    }
-  })
-
   return res.status(StatusCodes.OK).json({
     status: 'success',
     data: {
@@ -70,11 +54,12 @@ export const adjustAdminWalletTransactionController = async (
   res: Response
 ) => {
   const targetUserId = new ObjectId(req.body.userId)
+  const normalizedDescription = req.body.description.trim()
   const result = await adminWalletTransactionService.adjustWalletBalance({
     userId: targetUserId,
     amount: req.body.amount,
     direction: req.body.direction,
-    description: req.body.description.trim()
+    description: normalizedDescription
   })
 
   await adminAuditLogService.create({
@@ -90,26 +75,37 @@ export const adjustAdminWalletTransactionController = async (
       direction: req.body.direction,
       balance_before: result.transaction.balance_before,
       balance_after: result.transaction.balance_after,
-      description: req.body.description.trim()
+      description: normalizedDescription
     }
   })
 
-  await notificationService.create({
-    userId: targetUserId,
-    type: NotificationType.WALLET_ADJUSTED,
-    title: 'So du vi da duoc dieu chinh',
-    content:
-      req.body.direction === WalletTransactionDirection.CREDIT
-        ? `Vi cua ban duoc cong ${req.body.amount} VND.`
-        : `Vi cua ban bi tru ${req.body.amount} VND.`,
-    data: {
-      wallet_id: String(result.wallet._id),
-      transaction_id: String(result.transaction._id),
-      amount: req.body.amount,
-      direction: req.body.direction,
-      description: req.body.description.trim()
-    }
-  })
+  try {
+    await notificationService.create({
+      userId: targetUserId,
+      type: NotificationType.WALLET_ADJUSTED,
+      title: 'So du vi da duoc dieu chinh',
+      content:
+        req.body.direction === WalletTransactionDirection.CREDIT
+          ? `Vi cua ban duoc cong ${req.body.amount} VND.`
+          : `Vi cua ban bi tru ${req.body.amount} VND.`,
+      data: {
+        wallet_id: String(result.wallet._id),
+        transaction_id: String(result.transaction._id),
+        amount: req.body.amount,
+        direction: req.body.direction,
+        description: normalizedDescription
+      }
+    })
+  } catch (error) {
+    console.error(
+      JSON.stringify({
+        tag: 'admin_wallet_adjust_notification_failed',
+        userId: req.body.userId,
+        transactionId: String(result.transaction._id),
+        message: error instanceof Error ? error.message : 'Unknown error'
+      })
+    )
+  }
 
   return res.status(StatusCodes.OK).json({
     status: 'success',

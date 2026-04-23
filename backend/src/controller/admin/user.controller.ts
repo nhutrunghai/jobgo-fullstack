@@ -82,17 +82,6 @@ export const getAdminUserWalletController = async (
   const user = res.locals.adminUser
   const wallet = await adminUserService.getUserWallet(user._id!)
 
-  await adminAuditLogService.create({
-    req,
-    action: AdminAuditAction.USER_WALLET_VIEW,
-    targetType: AdminAuditTargetType.USER,
-    targetId: user._id,
-    statusCode: StatusCodes.OK,
-    metadata: {
-      wallet_id: wallet?._id
-    }
-  })
-
   return res.status(StatusCodes.OK).json({
     status: 'success',
     data: {
@@ -125,20 +114,6 @@ export const getAdminUserTopUpOrdersController = async (
     status,
     page,
     limit
-  })
-
-  await adminAuditLogService.create({
-    req,
-    action: AdminAuditAction.USER_TOPUP_ORDERS_VIEW,
-    targetType: AdminAuditTargetType.USER,
-    targetId: user._id,
-    statusCode: StatusCodes.OK,
-    metadata: {
-      status,
-      page,
-      limit,
-      total: result.pagination.total
-    }
   })
 
   return res.status(StatusCodes.OK).json({

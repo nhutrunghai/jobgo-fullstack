@@ -30,23 +30,6 @@ export const getAdminJobPromotionsController = async (req: Request, res: Respons
     limit
   })
 
-  await adminAuditLogService.create({
-    req,
-    action: AdminAuditAction.JOB_PROMOTION_VIEW,
-    targetType: AdminAuditTargetType.JOB_PROMOTION,
-    statusCode: StatusCodes.OK,
-    metadata: {
-      type,
-      status,
-      company_id: companyId,
-      job_id: jobId,
-      keyword,
-      page,
-      limit,
-      total: result.pagination.total
-    }
-  })
-
   return res.status(StatusCodes.OK).json({
     status: 'success',
     data: result
@@ -56,14 +39,6 @@ export const getAdminJobPromotionsController = async (req: Request, res: Respons
 export const getAdminJobPromotionDetailController = async (req: Request, res: Response) => {
   const promotionId = new ObjectId(req.params.promotionId as string)
   const promotion = await adminJobPromotionService.getPromotionByIdOrThrow(promotionId)
-
-  await adminAuditLogService.create({
-    req,
-    action: AdminAuditAction.JOB_PROMOTION_VIEW,
-    targetType: AdminAuditTargetType.JOB_PROMOTION,
-    targetId: promotionId,
-    statusCode: StatusCodes.OK
-  })
 
   return res.status(StatusCodes.OK).json({
     status: 'success',

@@ -103,56 +103,188 @@ class CompanyJobPromotionService {
       endsAt
     })
 
-    return databaseService.withTransaction(async (session) => {
-      const wallet = await databaseService.wallets.findOne(
-        {
-          user_id: userId
-        },
-        { session }
-      )
-
-      if (!wallet || wallet.status === WalletStatus.LOCKED) {
-        throw new AppError({
-          statusCode: StatusCodes.FORBIDDEN,
-          message: UserMessages.WALLET_LOCKED
-        })
-      }
-
-      if (wallet.balance < amount) {
-        throw new AppError({
-          statusCode: StatusCodes.BAD_REQUEST,
-          message: UserMessages.WALLET_INSUFFICIENT_BALANCE
-        })
-      }
-
-      const now = new Date()
-      const updatedWallet = await databaseService.wallets.findOneAndUpdate(
-        {
-          _id: wallet._id,
-          status: WalletStatus.ACTIVE,
-          balance: { $gte: amount }
-        },
-        {
-          $inc: {
-            balance: -amount
+    try {
+      return await databaseService.withTransaction(async (session) => {
+        const wallet = await databaseService.wallets.findOne(
+          {
+            user_id: userId
           },
-          $set: {
-            updated_at: now
-          }
-        },
-        {
-          returnDocument: 'after',
-          session
-        }
-      )
+          { session }
+        )
 
-      if (!updatedWallet) {
-        throw new AppError({
-          statusCode: StatusCodes.BAD_REQUEST,
-          message: UserMessages.WALLET_INSUFFICIENT_BALANCE
+        if (!wallet || wallet.status === WalletStatus.LOCKED) {
+          throw new AppError({
+            statusCode: StatusCodes.FORBIDDEN,
+            message: UserMessages.WALLET_LOCKED
+          })
+        }
+
+        if (wallet.balance < amount) {
+          throw new AppError({
+            statusCode: StatusCodes.BAD_REQUEST,
+            message: UserMessages.WALLET_INSUFFICIENT_BALANCE
+          })
+        }
+
+        const now = new Date()
+        const updatedWallet = await databaseService.wallets.findOneAndUpdate(
+          {
+            _id: wallet._id,
+            status: WalletStatus.ACTIVE,
+            balance: { $gte: amount }
+          },
+          {
+            $inc: {
+              balance: -amount
+            },
+            $set: {
+              updated_at: now
+            }
+          },
+          {
+            returnDocument: 'after',
+            session
+          }
+        )
+
+        if (!updatedWallet) {
+          throw new AppError({
+            statusCode: StatusCodes.BAD_REQUEST,
+            message: UserMessages.WALLET_INSUFFICIENT_BALANCE
+          })
+        }
+
+        const promotion = new JobPromotion({
+          job_id: jobId,
+          company_id: companyId,
+          type,
+          status: JobPromotionStatus.ACTIVE,
+          starts_at: startsAt,
+          ends_at: endsAt,
+          priority: priority ?? env.PROMOTION_DEFAULT_PRIORITY,
+          amount_paid: amount,
+          currency: 'VND',
+          created_at: now,
+          updated_at: now
         })
+        const promotionResult = await databaseService.jobPromotions.insertOne(promotion, { session })
+
+        const transaction = new WalletTransaction({
+          wallet_id: updatedWallet._id!,
+          user_id: userId,
+          type: WalletTransactionType.PROMOTION_PURCHASE,
+          direction: WalletTransactionDirection.DEBIT,
+          amount,
+          currency: updatedWallet.currency,
+          balance_before: updatedWallet.balance + amount,
+          balance_after: updatedWallet.balance,
+          status: WalletTransactionStatus.SUCCEEDED,
+          reference_type: WalletTransactionReferenceType.JOB_PROMOTION,
+          reference_id: promotionResult.insertedId,
+          description: `Mua promotion cho job ${job.title}`,
+          created_at: now,
+          updated_at: now
+        })
+        const transactionResult = await databaseService.walletTransactions.insertOne(transaction, { session })
+
+        return {
+          wallet: updatedWallet,
+          promotion: {
+            _id: promotionResult.insertedId,
+            ...promotion
+          },
+          transaction: {
+            _id: transactionResult.insertedId,
+            ...transaction
+          }
+        }
+      })
+    } catch (error) {
+      if (!this.isTransactionUnsupportedError(error)) {
+        throw error
       }
 
+      return this.purchasePromotionWithoutTransaction({
+        userId,
+        companyId,
+        jobId,
+        jobTitle: job.title,
+        type,
+        startsAt,
+        endsAt,
+        amount,
+        priority
+      })
+    }
+  }
+
+  private async purchasePromotionWithoutTransaction({
+    userId,
+    companyId,
+    jobId,
+    jobTitle,
+    type,
+    startsAt,
+    endsAt,
+    amount,
+    priority
+  }: {
+    userId: ObjectId
+    companyId: ObjectId
+    jobId: ObjectId
+    jobTitle: string
+    type: JobPromotionType
+    startsAt: Date
+    endsAt: Date
+    amount: number
+    priority?: number
+  }) {
+    const wallet = await databaseService.wallets.findOne({
+      user_id: userId
+    })
+
+    if (!wallet || wallet.status === WalletStatus.LOCKED) {
+      throw new AppError({
+        statusCode: StatusCodes.FORBIDDEN,
+        message: UserMessages.WALLET_LOCKED
+      })
+    }
+
+    if (wallet.balance < amount) {
+      throw new AppError({
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: UserMessages.WALLET_INSUFFICIENT_BALANCE
+      })
+    }
+
+    const now = new Date()
+    const updatedWallet = await databaseService.wallets.findOneAndUpdate(
+      {
+        _id: wallet._id,
+        status: WalletStatus.ACTIVE,
+        balance: { $gte: amount }
+      },
+      {
+        $inc: {
+          balance: -amount
+        },
+        $set: {
+          updated_at: now
+        }
+      },
+      {
+        returnDocument: 'after'
+      }
+    )
+
+    if (!updatedWallet) {
+      throw new AppError({
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: UserMessages.WALLET_INSUFFICIENT_BALANCE
+      })
+    }
+
+    try {
       const promotion = new JobPromotion({
         job_id: jobId,
         company_id: companyId,
@@ -166,7 +298,7 @@ class CompanyJobPromotionService {
         created_at: now,
         updated_at: now
       })
-      const promotionResult = await databaseService.jobPromotions.insertOne(promotion, { session })
+      const promotionResult = await databaseService.jobPromotions.insertOne(promotion)
 
       const transaction = new WalletTransaction({
         wallet_id: updatedWallet._id!,
@@ -180,11 +312,11 @@ class CompanyJobPromotionService {
         status: WalletTransactionStatus.SUCCEEDED,
         reference_type: WalletTransactionReferenceType.JOB_PROMOTION,
         reference_id: promotionResult.insertedId,
-        description: `Mua promotion cho job ${job.title}`,
+        description: `Mua promotion cho job ${jobTitle}`,
         created_at: now,
         updated_at: now
       })
-      const transactionResult = await databaseService.walletTransactions.insertOne(transaction, { session })
+      const transactionResult = await databaseService.walletTransactions.insertOne(transaction)
 
       return {
         wallet: updatedWallet,
@@ -197,7 +329,23 @@ class CompanyJobPromotionService {
           ...transaction
         }
       }
-    })
+    } catch (error) {
+      await databaseService.wallets.updateOne(
+        {
+          _id: updatedWallet._id
+        },
+        {
+          $inc: {
+            balance: amount
+          },
+          $set: {
+            updated_at: new Date()
+          }
+        }
+      )
+
+      throw error
+    }
   }
 
   async getCompanyPromotions({
@@ -390,6 +538,19 @@ class CompanyJobPromotionService {
         }
       }
     }
+  }
+
+  private isTransactionUnsupportedError(error: unknown) {
+    if (!(error instanceof Error)) {
+      return false
+    }
+
+    const message = error.message.toLowerCase()
+
+    return (
+      message.includes('transaction numbers are only allowed on a replica set member or mongos') ||
+      message.includes('transactions are not supported')
+    )
   }
 }
 

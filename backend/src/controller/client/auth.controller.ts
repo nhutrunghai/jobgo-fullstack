@@ -39,7 +39,7 @@ export const RegisterController = async (req: Request<ParamsDictionary, any, Reg
     to: req.body.email,
     variables: {
       fullName: req.body.fullName,
-      verify_url: `${env.MAIL_FROM_ADDRESS}/verify-email?email_verify_token=${rawToken}`
+      verify_url: `${env.FRONTEND_URL}/verify-email?email_verify_token=${rawToken}`
     }
   }
   if (env.BUILD_MODE === 'production') {
@@ -114,7 +114,7 @@ export const forgotPasswordController = async (
       to: req.body.email,
       variables: {
         fullName: result.fullName,
-        verify_url: `${env.MAIL_FROM_ADDRESS}/reset-password?forgot_password_token=${rawToken}`
+        verify_url: `${env.FRONTEND_URL}/reset-password?forgot_password_token=${rawToken}`
       }
     }
     // Thay template vẫn đang dùng template xác thực email

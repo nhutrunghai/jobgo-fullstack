@@ -8,13 +8,6 @@ import adminSystemSettingService, { RagChatRuntimeConfig } from '~/services/admi
 export const getAdminRagChatConfigController = async (req: Request, res: Response) => {
   const config = await adminSystemSettingService.getRagChatConfig()
 
-  await adminAuditLogService.create({
-    req,
-    action: AdminAuditAction.RAG_CHAT_CONFIG_VIEW,
-    targetType: AdminAuditTargetType.RAG_CHAT,
-    statusCode: StatusCodes.OK
-  })
-
   return res.status(StatusCodes.OK).json({
     status: 'success',
     data: {
@@ -81,17 +74,6 @@ export const getAdminRagChatHealthController = async (req: Request, res: Respons
   const secretStatus = await adminSystemSettingService.getRagChatSecretStatus()
   const providerConfigured =
     config.provider === 'openai' ? secretStatus.openai_api_key_configured : secretStatus.gemini_api_key_configured
-
-  await adminAuditLogService.create({
-    req,
-    action: AdminAuditAction.RAG_CHAT_HEALTH_VIEW,
-    targetType: AdminAuditTargetType.RAG_CHAT,
-    statusCode: StatusCodes.OK,
-    metadata: {
-      provider: config.provider,
-      provider_configured: providerConfigured
-    }
-  })
 
   return res.status(StatusCodes.OK).json({
     status: 'success',
