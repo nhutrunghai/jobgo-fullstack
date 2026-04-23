@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config'
-import { JobApplicationStatus } from '~/constants/enum'
+import { JobApplicationStatus, NotificationType } from '~/constants/enum'
 import UserMessages from '~/constants/messages'
 import {
   ApplyJobLocals,
@@ -13,6 +13,7 @@ import {
 } from '~/models/requests/responseType'
 import JobApplication from '~/models/schema/client/jobApplications.schema'
 import jobApplicationService from '~/services/client/job-application.service'
+import notificationService from '~/services/client/notification.service'
 
 type ApplyJobBody = {
   cv_id: string
@@ -50,6 +51,26 @@ export const applyJobController = async (
       coverLetter: req.body.cover_letter
     })
 
+    const company = await databaseService.companies.findOne(
+      { _id: job.company_id },
+      { projection: { user_id: 1 } }
+    )
+
+    if (company?.user_id && result?._id) {
+      await notificationService.create({
+        userId: company.user_id,
+        type: NotificationType.JOB_APPLICATION_SUBMITTED,
+        title: 'Có ứng viên ứng tuyển lại',
+        content: `${candidate?.fullName || 'Một ứng viên'} đã ứng tuyển lại vào job của bạn.`,
+        data: {
+          job_id: String(job._id),
+          company_id: String(job.company_id),
+          application_id: String(result._id),
+          candidate_id: String(userId)
+        }
+      })
+    }
+
     return res.status(StatusCodes.OK).json({
       status: 'success',
       message: UserMessages.JOB_APPLIED_SUCCESS,
@@ -74,6 +95,25 @@ export const applyJobController = async (
   })
 
   const result = await jobApplicationService.createJobApplication(newApplication)
+  const company = await databaseService.companies.findOne(
+    { _id: job.company_id },
+    { projection: { user_id: 1 } }
+  )
+
+  if (company?.user_id) {
+    await notificationService.create({
+      userId: company.user_id,
+      type: NotificationType.JOB_APPLICATION_SUBMITTED,
+      title: 'Có ứng viên mới',
+      content: `${candidate?.fullName || 'Một ứng viên'} vừa ứng tuyển vào job của bạn.`,
+      data: {
+        job_id: String(job._id),
+        company_id: String(job.company_id),
+        application_id: String(result.insertedId),
+        candidate_id: String(userId)
+      }
+    })
+  }
 
   return res.status(StatusCodes.CREATED).json({
     status: 'success',
@@ -145,6 +185,23 @@ export const updateCompanyApplicationStatusController = async (
   const result = await jobApplicationService.updateCompanyApplicationStatus({
     applicationId: application._id!,
     status: req.body.status
+  })
+  const job = await databaseService.jobs.findOne(
+    { _id: application.job_id },
+    { projection: { title: 1 } }
+  )
+
+  await notificationService.create({
+    userId: application.candidate_id,
+    type: NotificationType.JOB_APPLICATION_STATUS_UPDATED,
+    title: 'Hồ sơ đã được cập nhật',
+    content: `Trạng thái hồ sơ cho job "${job?.title || 'đã ứng tuyển'}" đã chuyển sang "${req.body.status}".`,
+    data: {
+      application_id: String(application._id),
+      job_id: String(application.job_id),
+      company_id: String(application.company_id),
+      status: req.body.status
+    }
   })
 
   return res.status(StatusCodes.OK).json({

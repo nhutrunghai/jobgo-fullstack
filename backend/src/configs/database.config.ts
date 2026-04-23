@@ -13,6 +13,7 @@ import ChatSession from '~/models/schema/client/chatSessions.schema.js'
 import Wallet from '~/models/schema/client/wallets.schema.js'
 import WalletTopUpOrder from '~/models/schema/client/walletTopUpOrders.schema.js'
 import WalletTransaction from '~/models/schema/client/walletTransactions.schema.js'
+import Notification from '~/models/schema/client/notifications.schema.js'
 import AdminAuditLog from '~/models/schema/adminAuditLogs.schema.js'
 import SystemSetting from '~/models/schema/systemSettings.schema.js'
 
@@ -179,6 +180,16 @@ class DatabaseService {
         }
       },
       {
+        collection: env.DB_NOTIFICATION_NAME,
+        key: { user_id: 1, is_read: 1, created_at: -1 },
+        option: { name: 'user_id_is_read_created_at_notification' }
+      },
+      {
+        collection: env.DB_NOTIFICATION_NAME,
+        key: { user_id: 1, created_at: -1 },
+        option: { name: 'user_id_created_at_notification' }
+      },
+      {
         collection: env.DB_ADMIN_AUDIT_LOG_NAME,
         key: { admin_id: 1, created_at: -1 },
         option: { name: 'admin_id_created_at_audit_log' }
@@ -306,6 +317,10 @@ class DatabaseService {
 
   get walletTopUpOrders(): Collection<WalletTopUpOrder> {
     return this.db.collection(env.DB_WALLET_TOPUP_ORDER_NAME)
+  }
+
+  get notifications(): Collection<Notification> {
+    return this.db.collection(env.DB_NOTIFICATION_NAME)
   }
 
   get adminAuditLogs(): Collection<AdminAuditLog> {
