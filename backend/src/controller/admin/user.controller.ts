@@ -1,9 +1,16 @@
 import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { UserRole, UserStatus } from '~/constants/enum.js'
+import {
+  AdminAuditAction,
+  AdminAuditTargetType,
+  UserRole,
+  UserStatus,
+  WalletTopUpOrderStatus
+} from '~/constants/enum.js'
 import UserMessages from '~/constants/messages.js'
 import { AppError } from '~/models/appError.js'
 import { AdminUserLocals } from '~/models/requests/responseType.js'
+import adminAuditLogService from '~/services/admin/audit-log.service.js'
 import adminUserService from '~/services/admin/user.service.js'
 
 export const getAdminUsersController = async (req: Request, res: Response) => {
@@ -68,6 +75,91 @@ export const getAdminUserDetailController = async (
   })
 }
 
+export const getAdminUserWalletController = async (
+  req: Request,
+  res: Response<unknown, AdminUserLocals>
+) => {
+  const user = res.locals.adminUser
+  const wallet = await adminUserService.getUserWallet(user._id!)
+
+  await adminAuditLogService.create({
+    req,
+    action: AdminAuditAction.USER_WALLET_VIEW,
+    targetType: AdminAuditTargetType.USER,
+    targetId: user._id,
+    statusCode: StatusCodes.OK,
+    metadata: {
+      wallet_id: wallet?._id
+    }
+  })
+
+  return res.status(StatusCodes.OK).json({
+    status: 'success',
+    data: {
+      user: {
+        _id: user._id,
+        fullName: user.fullName,
+        username: user.username,
+        email: user.email,
+        avatar: user.avatar,
+        role: user.role,
+        status: user.status,
+        is_verified: user.is_verified
+      },
+      wallet
+    }
+  })
+}
+
+export const getAdminUserTopUpOrdersController = async (
+  req: Request,
+  res: Response<unknown, AdminUserLocals>
+) => {
+  const user = res.locals.adminUser
+  const page = Number(req.query.page || 1)
+  const limit = Number(req.query.limit || 10)
+  const status = req.query.status as WalletTopUpOrderStatus | undefined
+
+  const result = await adminUserService.getUserTopUpOrdersForAdmin({
+    userId: user._id!,
+    status,
+    page,
+    limit
+  })
+
+  await adminAuditLogService.create({
+    req,
+    action: AdminAuditAction.USER_TOPUP_ORDERS_VIEW,
+    targetType: AdminAuditTargetType.USER,
+    targetId: user._id,
+    statusCode: StatusCodes.OK,
+    metadata: {
+      status,
+      page,
+      limit,
+      total: result.pagination.total
+    }
+  })
+
+  return res.status(StatusCodes.OK).json({
+    status: 'success',
+    data: {
+      user: {
+        _id: user._id,
+        fullName: user.fullName,
+        username: user.username,
+        email: user.email,
+        avatar: user.avatar,
+        role: user.role,
+        status: user.status,
+        is_verified: user.is_verified
+      },
+      orders: result.orders,
+      pagination: result.pagination
+    }
+  })
+}
+
 export const updateAdminUserStatusController = async (
   req: Request<any, any, { status: UserStatus }>,
   res: Response<unknown, AdminUserLocals>
@@ -91,6 +183,18 @@ export const updateAdminUserStatusController = async (
     targetUser.status === nextStatus
       ? targetUser
       : await adminUserService.updateUserStatus(targetUser._id!, nextStatus)
+
+  await adminAuditLogService.create({
+    req,
+    action: AdminAuditAction.USER_STATUS_UPDATE,
+    targetType: AdminAuditTargetType.USER,
+    targetId: targetUser._id,
+    statusCode: StatusCodes.OK,
+    metadata: {
+      previous_status: targetUser.status,
+      next_status: nextStatus
+    }
+  })
 
   return res.status(StatusCodes.OK).json({
     status: 'success',

@@ -1,0 +1,100 @@
+import { Request, Response } from 'express'
+import { StatusCodes } from 'http-status-codes'
+import { ObjectId } from 'mongodb'
+import {
+  AdminAuditAction,
+  AdminAuditTargetType,
+  WalletTransactionDirection,
+  WalletTransactionStatus,
+  WalletTransactionType
+} from '~/constants/enum.js'
+import UserMessages from '~/constants/messages.js'
+import adminAuditLogService from '~/services/admin/audit-log.service.js'
+import adminWalletTransactionService from '~/services/admin/wallet-transaction.service.js'
+
+export const getAdminWalletTransactionsController = async (req: Request, res: Response) => {
+  const page = Number(req.query.page || 1)
+  const limit = Number(req.query.limit || 10)
+  const userId = typeof req.query.userId === 'string' ? new ObjectId(req.query.userId) : undefined
+  const type = req.query.type as WalletTransactionType | undefined
+  const status = req.query.status as WalletTransactionStatus | undefined
+  const direction = req.query.direction as WalletTransactionDirection | undefined
+
+  const result = await adminWalletTransactionService.getWalletTransactions({
+    userId,
+    type,
+    status,
+    direction,
+    page,
+    limit
+  })
+
+  await adminAuditLogService.create({
+    req,
+    action: AdminAuditAction.WALLET_TRANSACTIONS_VIEW,
+    targetType: userId ? AdminAuditTargetType.USER : AdminAuditTargetType.WALLET_TRANSACTION,
+    targetId: userId,
+    statusCode: StatusCodes.OK,
+    metadata: {
+      type,
+      status,
+      direction,
+      page,
+      limit,
+      total: result.pagination.total
+    }
+  })
+
+  return res.status(StatusCodes.OK).json({
+    status: 'success',
+    data: {
+      transactions: result.transactions,
+      pagination: result.pagination
+    }
+  })
+}
+
+export const adjustAdminWalletTransactionController = async (
+  req: Request<
+    any,
+    any,
+    {
+      userId: string
+      amount: number
+      direction: WalletTransactionDirection
+      description: string
+    }
+  >,
+  res: Response
+) => {
+  const targetUserId = new ObjectId(req.body.userId)
+  const result = await adminWalletTransactionService.adjustWalletBalance({
+    userId: targetUserId,
+    amount: req.body.amount,
+    direction: req.body.direction,
+    description: req.body.description.trim()
+  })
+
+  await adminAuditLogService.create({
+    req,
+    action: AdminAuditAction.WALLET_ADJUST,
+    targetType: AdminAuditTargetType.USER,
+    targetId: req.body.userId,
+    statusCode: StatusCodes.OK,
+    metadata: {
+      wallet_id: result.wallet._id,
+      transaction_id: result.transaction._id,
+      amount: req.body.amount,
+      direction: req.body.direction,
+      balance_before: result.transaction.balance_before,
+      balance_after: result.transaction.balance_after,
+      description: req.body.description.trim()
+    }
+  })
+
+  return res.status(StatusCodes.OK).json({
+    status: 'success',
+    message: UserMessages.ADMIN_WALLET_ADJUST_SUCCESS,
+    data: result
+  })
+}
