@@ -20,14 +20,14 @@ type ResumeChunkDocument = {
 class ResumeChatRetrievalService {
   private static readonly RESUME_CHUNK_LIMIT = 6
 
-  async retrieveForCvReview(message: string, resume: Resume): Promise<RetrievedResumeChunk[]> {
+  async retrieveForCvReview(message: string, resume: Resume, limit = ResumeChatRetrievalService.RESUME_CHUNK_LIMIT): Promise<RetrievedResumeChunk[]> {
     const resumeId = String(resume._id)
     const candidateId = String(resume.candidate_id)
     const queryVector = await generateOpenAiEmbedding(message)
 
     const response = await ElasticsearchConfig.getInstance().search<ResumeChunkDocument>({
       index: env.RESUME_SEARCH_INDEX,
-      size: ResumeChatRetrievalService.RESUME_CHUNK_LIMIT,
+      size: limit,
       query: {
         script_score: {
           query: {

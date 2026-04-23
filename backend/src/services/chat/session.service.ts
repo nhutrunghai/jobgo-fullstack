@@ -3,7 +3,7 @@ import databaseService from '~/configs/database.config'
 import { ChatIntent } from '~/constants/chat-intent'
 import UserMessages from '~/constants/messages'
 import { AppError } from '~/models/appError'
-import { ChatSessionDetail, ChatSessionDocument, ChatSessionSummary, ChatSessionTurnRole } from '~/models/chat/chat.type'
+import { ChatSessionDetail, ChatSessionDocument, ChatSessionSummary, ChatSessionTurnRole, ChatSource } from '~/models/chat/chat.type'
 import ChatSession from '~/models/schema/client/chatSessions.schema'
 import { StatusCodes } from 'http-status-codes'
 
@@ -39,11 +39,12 @@ class SessionService {
     }
   }
 
-  async appendMessage(sessionId: ObjectId, role: ChatSessionTurnRole, content: string) {
+  async appendMessage(sessionId: ObjectId, role: ChatSessionTurnRole, content: string, sources: ChatSource[] = []) {
     const turn = {
       role,
       content,
-      created_at: new Date()
+      created_at: new Date(),
+      ...(role === 'assistant' && sources.length ? { sources } : {})
     }
 
     await databaseService.chatSessions.updateOne(

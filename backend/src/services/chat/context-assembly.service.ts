@@ -1,8 +1,8 @@
 import { ChatSource, RetrievedChatJob } from '~/models/chat/chat.type'
 
 class ContextAssemblyService {
-  buildSources(jobs: RetrievedChatJob[]): ChatSource[] {
-    return jobs.slice(0, 3).map((job) => ({
+  buildSources(jobs: RetrievedChatJob[], limit = 3): ChatSource[] {
+    return jobs.slice(0, limit).map((job) => ({
       type: 'job',
       job_id: job.job_id,
       title: job.title,

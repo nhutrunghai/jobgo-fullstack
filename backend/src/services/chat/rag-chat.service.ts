@@ -16,6 +16,7 @@ import { buildCvReviewAnswerPrompt } from './prompts/cv-review-answer.prompt'
 import jobChatRetrievalService from './job-chat-retrieval.service'
 import { buildJobChatAnswerPrompt } from './prompts/job-chat-answer.prompt'
 import sessionService from './session.service'
+import adminSystemSettingService, { RagChatRuntimeConfig } from '~/services/admin/system-setting.service'
 
 type ChatParams = {
   message: string
@@ -27,20 +28,45 @@ type ChatParams = {
 class RagChatService {
   async chat({ message, session_id, resume_id, user_id }: ChatParams) {
     const normalizedMessage = message.trim()
+    const config = await adminSystemSettingService.getRagChatConfig()
+
+    if (!config.enabled) {
+      return {
+        session_id,
+        intent: 'unsupported' as ChatIntent,
+        answer: config.maintenance_message || 'Chatbot đang tạm bảo trì. Vui lòng thử lại sau.',
+        sources: []
+      }
+    }
+
     const session = await sessionService.loadOrCreateSession(session_id, user_id, normalizedMessage)
     const sessionObjectId = session._id as ObjectId
 
     await sessionService.appendMessage(sessionObjectId, 'user', normalizedMessage)
 
-    const intentResult = await intentRouterService.detectIntent(normalizedMessage)
+    const intentResult = await intentRouterService.detectIntent(normalizedMessage, config)
     if (intentResult.intent === 'cv_review') {
+      if (!config.allow_cv_review) {
+        const answer = this.buildFallbackAnswer('cv_review')
+
+        await sessionService.appendMessage(sessionObjectId, 'assistant', answer)
+
+        return {
+          session_id: sessionService.getSessionId(session),
+          intent: intentResult.intent,
+          answer,
+          sources: []
+        }
+      }
+
       const response = await this.buildCvReviewAnswer({
         message: normalizedMessage,
         resumeId: resume_id,
-        userId: user_id
+        userId: user_id,
+        config
       })
 
-      await sessionService.appendMessage(sessionObjectId, 'assistant', response.answer)
+      await sessionService.appendMessage(sessionObjectId, 'assistant', response.answer, response.sources)
       await sessionService.saveState(sessionObjectId, {
         lastIntent: intentResult.intent,
         jobIds: []
@@ -54,10 +80,15 @@ class RagChatService {
       }
     }
 
-    const jobs = await this.retrieveJobsByIntent(intentResult.intent, normalizedMessage, session.last_retrieved_job_ids || [])
-    const response = await this.buildAnswer(intentResult.intent, normalizedMessage, jobs)
+    const jobs = await this.retrieveJobsByIntent(
+      intentResult.intent,
+      normalizedMessage,
+      session.last_retrieved_job_ids || [],
+      config
+    )
+    const response = await this.buildAnswer(intentResult.intent, normalizedMessage, jobs, config)
 
-    await sessionService.appendMessage(sessionObjectId, 'assistant', response.answer)
+    await sessionService.appendMessage(sessionObjectId, 'assistant', response.answer, response.sources)
     await sessionService.saveState(sessionObjectId, {
       lastIntent: intentResult.intent,
       jobIds: jobs.map((job) => job.job_id)
@@ -74,11 +105,13 @@ class RagChatService {
   private async buildCvReviewAnswer({
     message,
     resumeId,
-    userId
+    userId,
+    config
   }: {
     message: string
     resumeId?: string
     userId?: string
+    config: RagChatRuntimeConfig
   }): Promise<ChatAnswerResult> {
     if (!userId) {
       throw new AppError({
@@ -92,7 +125,7 @@ class RagChatService {
     let chunks: RetrievedResumeChunk[] = []
 
     try {
-      chunks = await resumeChatRetrievalService.retrieveForCvReview(message, resume)
+      chunks = await resumeChatRetrievalService.retrieveForCvReview(message, resume, config.cv_review_top_k)
     } catch (error) {
       console.error(
         JSON.stringify({
@@ -126,7 +159,8 @@ class RagChatService {
     }
 
     const answer = await llmService.generateText({
-      model: env.LLM_MODEL_CHAT,
+      provider: config.provider,
+      model: config.chat_model,
       prompt: buildCvReviewAnswerPrompt({
         message,
         chunks,
@@ -167,18 +201,28 @@ class RagChatService {
     }
   }
 
-  private async retrieveJobsByIntent(intent: ChatIntent, message: string, lastJobIds: string[]) {
+  private async retrieveJobsByIntent(
+    intent: ChatIntent,
+    message: string,
+    lastJobIds: string[],
+    config: RagChatRuntimeConfig
+  ) {
     switch (intent) {
       case 'job_search':
-        return jobChatRetrievalService.retrieveForJobSearch(message)
+        return jobChatRetrievalService.retrieveForJobSearch(message, config.job_search_top_k)
       case 'job_explanation':
-        return jobChatRetrievalService.retrieveForExplanation(message, lastJobIds)
+        return jobChatRetrievalService.retrieveForExplanation(message, lastJobIds, config.job_explanation_top_k)
       default:
         return []
     }
   }
 
-  private async buildAnswer(intent: ChatIntent, message: string, jobs: RetrievedChatJob[]): Promise<ChatAnswerResult> {
+  private async buildAnswer(
+    intent: ChatIntent,
+    message: string,
+    jobs: RetrievedChatJob[],
+    config: RagChatRuntimeConfig
+  ): Promise<ChatAnswerResult> {
     if (intent === 'policy_qa' || intent === 'unsupported') {
       return {
         answer: this.buildFallbackAnswer(intent),
@@ -195,16 +239,17 @@ class RagChatService {
     }
 
     const answer = await llmService.generateText({
-      model: env.LLM_MODEL_CHAT,
+      provider: config.provider,
+      model: config.chat_model,
       prompt: buildJobChatAnswerPrompt({
         message,
-        jobs: jobs.slice(0, 3)
+        jobs: jobs.slice(0, config.answer_context_limit)
       })
     })
 
     return {
       answer,
-      sources: contextAssemblyService.buildSources(jobs)
+      sources: contextAssemblyService.buildSources(jobs, config.answer_context_limit)
     }
   }
 

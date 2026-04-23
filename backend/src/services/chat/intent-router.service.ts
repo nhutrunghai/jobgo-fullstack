@@ -1,17 +1,21 @@
 import env from '~/configs/env.config'
 import { ChatIntent } from '~/constants/chat-intent'
 import { ChatIntentResult } from '~/models/chat/chat.type'
+import { RagChatRuntimeConfig } from '~/services/admin/system-setting.service'
 import llmService from '~/services/llm/llm.service'
 import { buildIntentRouterPrompt } from './prompts/intent-router.prompt'
 import { intentRouterJsonSchema, intentRouterSchema } from './schemas/intent-router.schema'
 
 class IntentRouterService {
-  async detectIntent(message: string): Promise<ChatIntentResult> {
+  async detectIntent(message: string, config?: RagChatRuntimeConfig): Promise<ChatIntentResult> {
     const normalizedMessage = message.trim()
+    const provider = config?.provider || env.LLM_PROVIDER
+    const model = config?.intent_model || env.LLM_MODEL_INTENT
 
     try {
       const raw = await llmService.generateJson<ChatIntentResult>({
-        model: env.LLM_MODEL_INTENT,
+        provider,
+        model,
         prompt: buildIntentRouterPrompt(normalizedMessage),
         schema: intentRouterJsonSchema
       })

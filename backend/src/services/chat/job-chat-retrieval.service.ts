@@ -5,23 +5,23 @@ import { RetrievedChatJob } from '~/models/chat/chat.type'
 import jobsService from '~/services/client/job.service'
 
 class JobChatRetrievalService {
-  async retrieveForJobSearch(message: string): Promise<RetrievedChatJob[]> {
+  async retrieveForJobSearch(message: string, limit = 5): Promise<RetrievedChatJob[]> {
     const result = await jobsService.searchPublicJobsForChat({
       q: message,
       page: 1,
-      limit: 5
+      limit
     })
 
     const jobIds = result.items.map((item) => String(item._id))
     return this.loadJobsByIds(jobIds)
   }
 
-  async retrieveForExplanation(message: string, lastJobIds: string[]): Promise<RetrievedChatJob[]> {
+  async retrieveForExplanation(message: string, lastJobIds: string[], limit = 5): Promise<RetrievedChatJob[]> {
     if (lastJobIds.length > 0) {
-      return this.loadJobsByIds(lastJobIds.slice(0, 5))
+      return this.loadJobsByIds(lastJobIds.slice(0, limit))
     }
 
-    return this.retrieveForJobSearch(message)
+    return this.retrieveForJobSearch(message, limit)
   }
 
   async loadJobsByIds(jobIds: string[]): Promise<RetrievedChatJob[]> {

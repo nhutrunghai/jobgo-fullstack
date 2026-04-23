@@ -34,6 +34,7 @@ export type ChatSessionTurn = {
   role: ChatSessionTurnRole
   content: string
   created_at: Date
+  sources?: ChatSource[]
 }
 
 export type ChatSessionDocument = {

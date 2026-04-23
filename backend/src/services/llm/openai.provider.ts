@@ -1,5 +1,6 @@
 import axios from 'axios'
 import env from '~/configs/env.config'
+import adminSystemSettingService from '~/services/admin/system-setting.service'
 
 type GenerateTextParams = {
   model: string
@@ -9,14 +10,18 @@ type GenerateTextParams = {
 }
 
 class OpenAiProvider {
-  private assertConfigured() {
-    if (!env.OPENAI_API_KEY) {
+  private async getApiKey() {
+    const apiKey = await adminSystemSettingService.getOpenAiApiKey()
+
+    if (!apiKey) {
       throw new Error('OPENAI_API_KEY is required to call OpenAI API')
     }
+
+    return apiKey
   }
 
   async generateText({ model, prompt, responseMimeType = 'text/plain', responseJsonSchema }: GenerateTextParams) {
-    this.assertConfigured()
+    const apiKey = await this.getApiKey()
 
     const startedAt = Date.now()
 
@@ -47,7 +52,7 @@ class OpenAiProvider {
         {
           timeout: env.OPENAI_API_TIMEOUT_MS,
           headers: {
-            Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+            Authorization: `Bearer ${apiKey}`,
             'Content-Type': 'application/json'
           }
         }
@@ -70,12 +75,18 @@ class OpenAiProvider {
 
       return text.trim()
     } catch (error) {
+      const responseStatus = axios.isAxiosError(error) ? error.response?.status : undefined
+      const responseError = axios.isAxiosError(error) ? error.response?.data?.error : undefined
       console.error(
         JSON.stringify({
           tag: 'openai_provider_failed',
           model,
           response_mime_type: responseMimeType,
           elapsed_ms: Date.now() - startedAt,
+          status: responseStatus,
+          api_error_type: responseError?.type,
+          api_error_code: responseError?.code,
+          api_error_message: responseError?.message,
           error: error instanceof Error ? error.message : String(error)
         })
       )
