@@ -1,5 +1,6 @@
 import axios from 'axios'
 import env from '~/configs/env.config'
+import adminSystemSettingService from '~/services/admin/system-setting.service'
 
 type GenerateTextParams = {
   model: string
@@ -11,14 +12,18 @@ type GenerateTextParams = {
 class GeminiProvider {
   private readonly baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models'
 
-  private assertConfigured() {
-    if (!env.GEMINI_API_KEY) {
+  private async getApiKey() {
+    const apiKey = await adminSystemSettingService.getGeminiApiKey()
+
+    if (!apiKey) {
       throw new Error('GEMINI_API_KEY is required to call Gemini API')
     }
+
+    return apiKey
   }
 
   async generateText({ model, prompt, responseMimeType = 'text/plain', responseJsonSchema }: GenerateTextParams) {
-    this.assertConfigured()
+    const apiKey = await this.getApiKey()
 
     const startedAt = Date.now()
 
@@ -40,7 +45,7 @@ class GeminiProvider {
         {
           timeout: env.GEMINI_API_TIMEOUT_MS,
           headers: {
-            'x-goog-api-key': env.GEMINI_API_KEY
+            'x-goog-api-key': apiKey
           }
         }
       )

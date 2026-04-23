@@ -1,6 +1,7 @@
 import axios from 'axios'
 import env from '~/configs/env.config'
 import Resume from '~/models/schema/client/resumes.schema'
+import adminSystemSettingService from '~/services/admin/system-setting.service'
 
 type CvVisualReviewResult = {
   summary: string | null
@@ -78,8 +79,9 @@ class CvVisualReviewService {
     resume: Resume
   }): Promise<CvVisualReviewResult> {
     const model = env.OPENAI_MODEL_CV_VISUAL_REVIEW
+    const apiKey = await adminSystemSettingService.getOpenAiApiKey()
 
-    if (!env.OPENAI_API_KEY) {
+    if (!apiKey) {
       return {
         summary: null,
         error: 'OPENAI_API_KEY chưa được cấu hình nên không thể phân tích bố cục CV.',
@@ -152,7 +154,7 @@ Nếu PDF không đủ rõ để kết luận một điểm nào đó, hãy nói
         {
           timeout: env.OPENAI_API_TIMEOUT_MS,
           headers: {
-            Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+            Authorization: `Bearer ${apiKey}`,
             'Content-Type': 'application/json'
           }
         }

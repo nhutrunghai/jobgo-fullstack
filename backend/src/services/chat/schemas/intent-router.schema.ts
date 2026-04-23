@@ -8,6 +8,7 @@ export const intentRouterSchema = z.object({
 
 export const intentRouterJsonSchema = {
   type: 'object',
+  additionalProperties: false,
   properties: {
     intent: {
       type: 'string',
