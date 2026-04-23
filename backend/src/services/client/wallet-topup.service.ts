@@ -5,6 +5,7 @@ import crypto from 'node:crypto'
 import databaseService from '~/configs/database.config.js'
 import env from '~/configs/env.config.js'
 import {
+  NotificationType,
   WalletTopUpOrderStatus,
   WalletTransactionDirection,
   WalletTransactionReferenceType,
@@ -13,6 +14,7 @@ import {
 } from '~/constants/enum.js'
 import UserMessages from '~/constants/messages.js'
 import { AppError } from '~/models/appError.js'
+import Notification from '~/models/schema/client/notifications.schema.js'
 import WalletTopUpOrder from '~/models/schema/client/walletTopUpOrders.schema.js'
 import WalletTransaction from '~/models/schema/client/walletTransactions.schema.js'
 import adminSystemSettingService from '~/services/admin/system-setting.service.js'
@@ -335,6 +337,24 @@ class WalletTopUpService {
     await databaseService.walletTransactions.insertOne(transaction, {
       session
     })
+
+    const notification = new Notification({
+      user_id: order.user_id,
+      type: NotificationType.WALLET_TOPUP_SUCCEEDED,
+      title: 'Nạp tiền thành công',
+      content: `Bạn đã nạp thành công ${order.amount} ${order.currency} vào ví.`,
+      data: {
+        order_id: String(order._id),
+        order_code: order.order_code,
+        wallet_id: String(order.wallet_id)
+      },
+      created_at: paidAt,
+      updated_at: paidAt
+    })
+
+    await databaseService.notifications.insertOne(notification, {
+      session
+    })
   }
 
   private async completeOrderPaymentWithoutTransaction(order: WalletTopUpOrder, payload: NormalizedWebhookPayload) {
@@ -405,6 +425,22 @@ class WalletTopUpService {
     })
 
     await databaseService.walletTransactions.insertOne(transaction)
+
+    const notification = new Notification({
+      user_id: order.user_id,
+      type: NotificationType.WALLET_TOPUP_SUCCEEDED,
+      title: 'Nạp tiền thành công',
+      content: `Bạn đã nạp thành công ${order.amount} ${order.currency} vào ví.`,
+      data: {
+        order_id: String(order._id),
+        order_code: order.order_code,
+        wallet_id: String(order.wallet_id)
+      },
+      created_at: paidAt,
+      updated_at: paidAt
+    })
+
+    await databaseService.notifications.insertOne(notification)
   }
 
   private normalizeWebhookPayload(payload: SePayWebhookPayload): NormalizedWebhookPayload {

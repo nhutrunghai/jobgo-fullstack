@@ -21,6 +21,12 @@ import {
   removeFavoriteJobController,
   saveFavoriteJobController
 } from '~/controller/client/favoriteJob.controller'
+import {
+  getNotificationsController,
+  getUnreadNotificationCountController,
+  markAllNotificationsAsReadController,
+  markNotificationAsReadController
+} from '~/controller/client/notification.controller'
 import { newPasswordMiddleware, resendMailMiddleware } from '~/middlewares/client/user.middleware'
 import isAuthorized from '~/middlewares/client/isAuthorized.middleware'
 import { loadPublicJobDetail, requirePublicJobDetail } from '~/middlewares/client/public-job.middleware'
@@ -31,6 +37,10 @@ import {
   removeFavoriteJobValidator,
   saveFavoriteJobValidator
 } from '~/validators/client/favoriteJob.validator'
+import {
+  getNotificationsValidator,
+  markNotificationAsReadValidator
+} from '~/validators/client/notification.validator'
 import { createResumeValidator, getResumeDetailValidator } from '~/validators/client/resume.validator'
 import {
   newPasswordValidator,
@@ -50,6 +60,15 @@ userRouter.delete('/resumes/:resumeId', isAuthorized, validate(getResumeDetailVa
 userRouter.get('/setting', isAuthorized, getSettingUserController)
 userRouter.patch('/setting', isAuthorized, validate(updateSettingUserValidator), updateSettingUserController)
 userRouter.get('/favorite-jobs', isAuthorized, validate(getFavoriteJobsValidator), getFavoriteJobsController)
+userRouter.get('/notifications', isAuthorized, validate(getNotificationsValidator), getNotificationsController)
+userRouter.get('/notifications/unread-count', isAuthorized, getUnreadNotificationCountController)
+userRouter.patch(
+  '/notifications/:notificationId/read',
+  isAuthorized,
+  validate(markNotificationAsReadValidator),
+  markNotificationAsReadController
+)
+userRouter.patch('/notifications/read-all', isAuthorized, markAllNotificationsAsReadController)
 userRouter.post(
   '/favorite-jobs/:jobId',
   isAuthorized,

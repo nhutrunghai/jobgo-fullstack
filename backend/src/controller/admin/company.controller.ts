@@ -1,10 +1,18 @@
 import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
-import { JobApplicationStatus, JobStatus } from '~/constants/enum.js'
+import {
+  AdminAuditAction,
+  AdminAuditTargetType,
+  JobApplicationStatus,
+  JobStatus,
+  NotificationType
+} from '~/constants/enum.js'
 import UserMessages from '~/constants/messages.js'
 import { AdminCompanyLocals } from '~/models/requests/responseType.js'
+import adminAuditLogService from '~/services/admin/audit-log.service.js'
 import adminCompanyService from '~/services/admin/company.service.js'
+import notificationService from '~/services/client/notification.service.js'
 
 export const getAdminCompaniesController = async (req: Request, res: Response) => {
   const verified = typeof req.query.verified === 'boolean' ? req.query.verified : undefined
@@ -136,6 +144,31 @@ export const updateAdminCompanyStatusController = async (
     company.verified === verified
       ? company
       : await adminCompanyService.updateCompanyVerificationStatus(company._id as ObjectId, verified)
+
+  await adminAuditLogService.create({
+    req,
+    action: AdminAuditAction.COMPANY_VERIFICATION_UPDATE,
+    targetType: AdminAuditTargetType.COMPANY,
+    targetId: company._id,
+    statusCode: StatusCodes.OK,
+    metadata: {
+      previous_verified: company.verified,
+      next_verified: verified
+    }
+  })
+
+  await notificationService.create({
+    userId: company.user_id,
+    type: NotificationType.COMPANY_VERIFICATION_UPDATED,
+    title: 'Trạng thái công ty đã thay đổi',
+    content: verified
+      ? `Công ty "${company.company_name}" đã được xác minh.`
+      : `Công ty "${company.company_name}" đã bị bỏ xác minh.`,
+    data: {
+      company_id: String(company._id),
+      verified
+    }
+  })
 
   return res.status(StatusCodes.OK).json({
     status: 'success',

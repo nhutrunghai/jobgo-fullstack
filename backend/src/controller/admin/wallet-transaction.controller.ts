@@ -4,6 +4,7 @@ import { ObjectId } from 'mongodb'
 import {
   AdminAuditAction,
   AdminAuditTargetType,
+  NotificationType,
   WalletTransactionDirection,
   WalletTransactionStatus,
   WalletTransactionType
@@ -11,6 +12,7 @@ import {
 import UserMessages from '~/constants/messages.js'
 import adminAuditLogService from '~/services/admin/audit-log.service.js'
 import adminWalletTransactionService from '~/services/admin/wallet-transaction.service.js'
+import notificationService from '~/services/client/notification.service.js'
 
 export const getAdminWalletTransactionsController = async (req: Request, res: Response) => {
   const page = Number(req.query.page || 1)
@@ -88,6 +90,23 @@ export const adjustAdminWalletTransactionController = async (
       direction: req.body.direction,
       balance_before: result.transaction.balance_before,
       balance_after: result.transaction.balance_after,
+      description: req.body.description.trim()
+    }
+  })
+
+  await notificationService.create({
+    userId: targetUserId,
+    type: NotificationType.WALLET_ADJUSTED,
+    title: 'So du vi da duoc dieu chinh',
+    content:
+      req.body.direction === WalletTransactionDirection.CREDIT
+        ? `Vi cua ban duoc cong ${req.body.amount} VND.`
+        : `Vi cua ban bi tru ${req.body.amount} VND.`,
+    data: {
+      wallet_id: String(result.wallet._id),
+      transaction_id: String(result.transaction._id),
+      amount: req.body.amount,
+      direction: req.body.direction,
       description: req.body.description.trim()
     }
   })
