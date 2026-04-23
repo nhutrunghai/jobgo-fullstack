@@ -27,6 +27,12 @@ const envSchema = z.object({
   DB_COMPANY_NAME: z.string().min(1, { message: 'DB_COMPANY_NAME không được rỗng' }),
   DB_JOB_NAME: z.string().min(1, { message: 'DB_JOB_NAME không được rỗng' }),
   DB_JOB_PROMOTION_NAME: z.string().min(1).default('job_promotions'),
+  DB_WALLET_NAME: z.string().min(1).default('wallets'),
+  DB_WALLET_TRANSACTION_NAME: z.string().min(1).default('wallet_transactions'),
+  DB_WALLET_TOPUP_ORDER_NAME: z.string().min(1).default('wallet_topup_orders'),
+  DB_NOTIFICATION_NAME: z.string().min(1).default('notifications'),
+  DB_ADMIN_AUDIT_LOG_NAME: z.string().min(1).default('admin_audit_logs'),
+  DB_SYSTEM_SETTING_NAME: z.string().min(1).default('system_settings'),
   DB_FAVORITE_JOB_NAME: z.string().default('favorite_jobs'),
   DB_RESUME_NAME: z.string().min(1, { message: 'DB_RESUME_NAME không được rỗng' }),
   DB_JOB_APPLICATION_NAME: z.string().min(1, { message: 'DB_JOB_APPLICATION_NAME không được rỗng' }),
@@ -87,7 +93,15 @@ const envSchema = z.object({
     .min(60)
     .default(60 * 30),
   ADMIN_COOKIE_SECURE: z.preprocess((value) => value === 'true' || value === true, z.boolean()).default(false),
-  ADMIN_COOKIE_SAME_SITE: z.enum(['lax', 'strict', 'none']).default('lax')
+  ADMIN_COOKIE_SAME_SITE: z.enum(['lax', 'strict', 'none']).default('lax'),
+  SYSTEM_SETTINGS_ENCRYPTION_KEY: z.string().min(32).optional(),
+  // SePay
+  SEPAY_API_TOKEN: z.string().min(1).optional(),
+  SEPAY_BANK_ACCOUNT_ID: z.string().min(1).optional(),
+  SEPAY_BANK_SHORT_NAME: z.string().min(1).default('BIDV'),
+  SEPAY_BANK_ACCOUNT_NUMBER: z.string().min(1).optional(),
+  SEPAY_BANK_ACCOUNT_HOLDER_NAME: z.string().min(1).optional(),
+  SEPAY_WEBHOOK_SECRET: z.string().min(1).optional()
 })
 
 const envServer = envSchema.safeParse(process.env)
