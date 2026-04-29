@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config.js'
 import env from '~/configs/env.config.js'
-import { SystemSettingKey } from '~/constants/enum.js'
+import { SystemSettingKey } from '~/constants/enums.js'
 import {
   decryptSystemSecret,
   EncryptedSystemSecret,

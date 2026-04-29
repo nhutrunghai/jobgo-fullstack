@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import databaseService from '~/configs/database.config.js'
-import { WalletTopUpOrderStatus } from '~/constants/enum.js'
+import { WalletTopUpOrderStatus } from '~/constants/enums.js'
 import adminSystemSettingService from '~/services/admin/system-setting.service.js'
 import { maskSecret } from '~/utils/systemSettingsSecret.util.js'
 

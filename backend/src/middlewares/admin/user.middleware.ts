@@ -2,9 +2,9 @@ import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config.js'
-import UserMessages from '~/constants/messages.js'
-import { AppError } from '~/models/appError.js'
-import { AdminUserLocals } from '~/models/requests/responseType.js'
+import UserMessages from '~/constants/messages/index.js'
+import { AppError } from '~/errors/app-error.js'
+import { AdminUserLocals } from '~/types/http/response.type.js'
 
 export const findAdminUserByIdOrThrow = async (
   req: Request,

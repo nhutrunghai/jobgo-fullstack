@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { z } from 'zod'
-import { JobLevel, JobStatus, JobType } from '~/constants/enum'
-import UserMessages from '~/constants/messages'
+import { JobLevel, JobStatus, JobType } from '~/constants/enums'
+import UserMessages from '~/constants/messages/index'
 
 const jobTypeValues = Object.values(JobType) as [JobType, ...JobType[]]
 const jobLevelValues = Object.values(JobLevel) as [JobLevel, ...JobLevel[]]

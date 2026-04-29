@@ -6,9 +6,9 @@ import {
   WalletTransactionDirection,
   WalletTransactionStatus,
   WalletTransactionType
-} from '~/constants/enum.js'
-import UserMessages from '~/constants/messages.js'
-import { AppError } from '~/models/appError.js'
+} from '~/constants/enums.js'
+import UserMessages from '~/constants/messages/index.js'
+import { AppError } from '~/errors/app-error.js'
 import WalletTransaction from '~/models/schema/client/walletTransactions.schema.js'
 
 class AdminWalletTransactionService {

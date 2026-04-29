@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { WalletTopUpOrderStatus } from '~/constants/enum.js'
+import { WalletTopUpOrderStatus } from '~/constants/enums.js'
 
 type WalletTopUpOrderConstructor = {
   _id?: ObjectId

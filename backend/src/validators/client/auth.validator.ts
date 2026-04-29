@@ -1,6 +1,6 @@
 import bodyParser from 'body-parser'
 import { z } from 'zod'
-import UserMessages from '~/constants/messages.js'
+import UserMessages from '~/constants/messages/index.js'
 const emailSchema = z
   .string({ message: UserMessages.EMAIL_NOT_STRING })
   .email({ message: UserMessages.EMAIL_INVALID })

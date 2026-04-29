@@ -1,16 +1,16 @@
 import { Router } from 'express'
-import { UserRole } from '~/constants/enum.js'
+import { UserRole } from '~/constants/enums.js'
 import {
   getAdminUserTopUpOrdersController,
   getAdminUserDetailController,
   getAdminUserWalletController,
   getAdminUsersController,
   updateAdminUserStatusController
-} from '~/controller/admin/user.controller.js'
+} from '~/controllers/admin/user.controller.js'
 import { adminAuthMiddleware } from '~/middlewares/admin/auth.middleware.js'
 import { authorizeAdmin } from '~/middlewares/admin/authorization.middleware.js'
 import { findAdminUserByIdOrThrow } from '~/middlewares/admin/user.middleware.js'
-import validate from '~/middlewares/validator.middleware.js'
+import validate from '~/middlewares/common/validator.middleware.js'
 import {
   getAdminUserDetailValidator,
   getAdminUserTopUpOrdersValidator,

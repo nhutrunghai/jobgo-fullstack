@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { ResumeStatus } from '~/constants/enum'
+import { ResumeStatus } from '~/constants/enums'
 
 export interface ResumeType {
   _id?: ObjectId

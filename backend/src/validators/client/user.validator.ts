@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import _ from 'lodash'
-import UserMessages from '~/constants/messages'
+import UserMessages from '~/constants/messages/index'
 import { CONFIRM_PASSWORD_NOT_STRING, passwordSchema } from './auth.validator'
 export const updateProfileUserValidator = z.object({
   body: z

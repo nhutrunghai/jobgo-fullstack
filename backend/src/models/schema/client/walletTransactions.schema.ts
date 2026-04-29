@@ -4,7 +4,7 @@ import {
   WalletTransactionReferenceType,
   WalletTransactionStatus,
   WalletTransactionType
-} from '~/constants/enum.js'
+} from '~/constants/enums.js'
 
 type WalletTransactionConstructor = {
   _id?: ObjectId

@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config.js'
-import { JobModerationStatus, JobStatus } from '~/constants/enum.js'
+import { JobModerationStatus, JobStatus } from '~/constants/enums.js'
 import FavoriteJob from '~/models/schema/client/favoriteJobs.schema.js'
 
 class FavoriteJobService {

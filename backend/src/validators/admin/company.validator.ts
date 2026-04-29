@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { JobApplicationStatus, JobStatus } from '~/constants/enum.js'
-import UserMessages from '~/constants/messages.js'
+import { JobApplicationStatus, JobStatus } from '~/constants/enums.js'
+import UserMessages from '~/constants/messages/index.js'
 
 const verifiedQuerySchema = z.enum(['true', 'false']).transform((value) => value === 'true')
 const adminJobStatusValues = [

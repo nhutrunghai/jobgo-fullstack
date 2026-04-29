@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { UserRole, UserStatus } from '~/constants/enum.js'
+import { UserRole, UserStatus } from '~/constants/enums.js'
 import { generateUsername } from '~/utils/generatorId.util'
 interface UserType {
   _id?: ObjectId

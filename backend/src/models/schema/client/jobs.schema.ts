@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { JobLevel, JobModerationStatus, JobStatus, JobType } from '~/constants/enum.js'
+import { JobLevel, JobModerationStatus, JobStatus, JobType } from '~/constants/enums.js'
 
 export interface SalaryType {
   min?: number

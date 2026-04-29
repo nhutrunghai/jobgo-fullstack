@@ -3,8 +3,8 @@ import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config.js'
 import env from '~/configs/env.config.js'
 import RedisService from '~/configs/redis.config.js'
-import { UserRole } from '~/constants/enum.js'
-import { AdminAuthContext } from '~/models/adminAuthContext.js'
+import { UserRole } from '~/constants/enums.js'
+import { AdminAuthContext } from '~/types/auth/admin-auth-context.type.js'
 
 class AdminAuthService {
   private getSessionKey(sessionId: string) {

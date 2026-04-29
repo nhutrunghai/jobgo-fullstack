@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { JobApplicationStatus } from '~/constants/enum'
+import { JobApplicationStatus } from '~/constants/enums'
 import databaseService from '~/configs/database.config'
 import Company from '~/models/schema/client/companies.schema'
 import JobApplication from '~/models/schema/client/jobApplications.schema'

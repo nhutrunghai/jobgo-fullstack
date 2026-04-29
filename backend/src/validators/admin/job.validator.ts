@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { JobModerationStatus, JobStatus } from '~/constants/enum.js'
-import UserMessages from '~/constants/messages.js'
+import { JobModerationStatus, JobStatus } from '~/constants/enums.js'
+import UserMessages from '~/constants/messages/index.js'
 
 const adminJobStatusValues = [
   JobStatus.DRAFT,

@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { UserRole, UserStatus, WalletTopUpOrderStatus } from '~/constants/enum.js'
-import UserMessages from '~/constants/messages.js'
+import { UserRole, UserStatus, WalletTopUpOrderStatus } from '~/constants/enums.js'
+import UserMessages from '~/constants/messages/index.js'
 
 const adminUserRoleValues = [UserRole.CANDIDATE, UserRole.EMPLOYER, UserRole.ADMIN] as const
 const adminUserStatusValues = [UserStatus.ACTIVE, UserStatus.BANNED, UserStatus.DELETED] as const

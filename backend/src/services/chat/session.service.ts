@@ -1,9 +1,15 @@
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config'
 import { ChatIntent } from '~/constants/chat-intent'
-import UserMessages from '~/constants/messages'
-import { AppError } from '~/models/appError'
-import { ChatSessionDetail, ChatSessionDocument, ChatSessionSummary, ChatSessionTurnRole, ChatSource } from '~/models/chat/chat.type'
+import UserMessages from '~/constants/messages/index'
+import { AppError } from '~/errors/app-error'
+import {
+  ChatSessionDetail,
+  ChatSessionDocument,
+  ChatSessionSummary,
+  ChatSessionTurnRole,
+  ChatSource
+} from '~/types/chat/chat.type'
 import ChatSession from '~/models/schema/client/chatSessions.schema'
 import { StatusCodes } from 'http-status-codes'
 

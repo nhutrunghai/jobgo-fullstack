@@ -1,5 +1,5 @@
 import jwt, { JwtPayload, SignOptions } from 'jsonwebtoken'
-import userInfo from '~/models/userInfo.js'
+import userInfo from '~/types/auth/user-info.type.js'
 export const generateJwt = (userInfo: userInfo, privateKey: string, option: SignOptions): Promise<string> => {
   return new Promise((resolve, reject) => {
     jwt.sign(userInfo, privateKey, option, (err, token) => {

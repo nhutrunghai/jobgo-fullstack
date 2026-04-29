@@ -1,5 +1,5 @@
 import databaseService from '~/configs/database.config.js'
-import { JobStatus } from '~/constants/enum.js'
+import { JobStatus } from '~/constants/enums.js'
 
 class AdminDashboardService {
   async getSummary() {

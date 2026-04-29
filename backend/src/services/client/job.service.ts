@@ -11,10 +11,10 @@ import {
   JobPromotionType,
   JobStatus,
   JobType
-} from '~/constants/enum'
+} from '~/constants/enums'
 import Job from '~/models/schema/client/jobs.schema'
-import { generateLocalEmbedding } from '~/services/embedding.service'
-import jobSearchService from '~/services/job-search.service'
+import { generateLocalEmbedding } from '~/services/ai/embedding.service'
+import jobSearchService from '~/services/search/job-search.service'
 
 type SearchPublicJobsParams = {
   q: string

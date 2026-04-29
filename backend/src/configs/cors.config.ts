@@ -1,6 +1,6 @@
 import { CorsOptions } from 'cors'
 import env from './env.config'
-import { AppError } from '~/models/appError'
+import { AppError } from '~/errors/app-error'
 import { StatusCodes } from 'http-status-codes'
 const isDev = env.BUILD_MODE === 'dev'
 const corsOptions: CorsOptions = {

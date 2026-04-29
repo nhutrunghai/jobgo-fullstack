@@ -2,10 +2,10 @@ import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config'
-import { JobApplicationStatus, JobModerationStatus, JobStatus, ResumeStatus } from '~/constants/enum'
-import UserMessages from '~/constants/messages'
-import { AppError } from '~/models/appError'
-import { ApplyJobLocals, CompanyApplicationLocals } from '~/models/requests/responseType'
+import { JobApplicationStatus, JobModerationStatus, JobStatus, ResumeStatus } from '~/constants/enums'
+import UserMessages from '~/constants/messages/index'
+import { AppError } from '~/errors/app-error'
+import { ApplyJobLocals, CompanyApplicationLocals } from '~/types/http/response.type'
 
 type ApplyJobBody = {
   cv_id: string

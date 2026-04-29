@@ -1,4 +1,4 @@
-import { RetrievedChatJob } from '~/models/chat/chat.type'
+import { RetrievedChatJob } from '~/types/chat/chat.type'
 
 const buildSalaryText = (job: RetrievedChatJob) => {
   if (!job.salary) {

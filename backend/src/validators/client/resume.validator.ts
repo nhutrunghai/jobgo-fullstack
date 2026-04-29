@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { z } from 'zod'
-import UserMessages from '~/constants/messages.js'
+import UserMessages from '~/constants/messages/index.js'
 
 export const createResumeValidator = z.object({
   body: z.object({

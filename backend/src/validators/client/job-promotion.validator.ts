@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { JobPromotionStatus, JobPromotionType } from '~/constants/enum.js'
-import UserMessages from '~/constants/messages.js'
+import { JobPromotionStatus, JobPromotionType } from '~/constants/enums.js'
+import UserMessages from '~/constants/messages/index.js'
 
 const objectIdSchema = (message: string) =>
   z

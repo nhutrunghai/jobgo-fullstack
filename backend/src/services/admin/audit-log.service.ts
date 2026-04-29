@@ -1,8 +1,8 @@
 import { Request } from 'express'
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config.js'
-import { AdminAuditAction, AdminAuditTargetType } from '~/constants/enum.js'
-import AdminAuditLog from '~/models/schema/adminAuditLogs.schema.js'
+import { AdminAuditAction, AdminAuditTargetType } from '~/constants/enums.js'
+import AdminAuditLog from '~/models/schema/admin/adminAuditLogs.schema.js'
 
 type CreateAuditLogInput = {
   req?: Request

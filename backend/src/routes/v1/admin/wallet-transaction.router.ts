@@ -1,12 +1,12 @@
 import { Router } from 'express'
-import { UserRole } from '~/constants/enum.js'
+import { UserRole } from '~/constants/enums.js'
 import {
   adjustAdminWalletTransactionController,
   getAdminWalletTransactionsController
-} from '~/controller/admin/wallet-transaction.controller.js'
+} from '~/controllers/admin/wallet-transaction.controller.js'
 import { adminAuthMiddleware } from '~/middlewares/admin/auth.middleware.js'
 import { authorizeAdmin } from '~/middlewares/admin/authorization.middleware.js'
-import validate from '~/middlewares/validator.middleware.js'
+import validate from '~/middlewares/common/validator.middleware.js'
 import {
   adjustAdminWalletTransactionValidator,
   getAdminWalletTransactionsValidator

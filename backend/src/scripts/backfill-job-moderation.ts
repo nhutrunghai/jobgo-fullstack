@@ -3,8 +3,8 @@ import databaseService from '~/configs/database.config.js'
 import ElasticsearchConfig from '~/configs/elasticsearch.config.js'
 import env from '~/configs/env.config.js'
 import { publicJobsSearchSchema } from '~/configs/search.config.js'
-import { JobModerationStatus } from '~/constants/enum.js'
-import jobSearchService from '~/services/job-search.service.js'
+import { JobModerationStatus } from '~/constants/enums.js'
+import jobSearchService from '~/services/search/job-search.service.js'
 
 async function backfillMongoJobs() {
   const result = await databaseService.jobs.updateMany(

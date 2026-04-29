@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { JobPromotionStatus, JobPromotionType } from '~/constants/enum.js'
+import { JobPromotionStatus, JobPromotionType } from '~/constants/enums.js'
 
 interface JobPromotionTypeSchema {
   _id?: ObjectId

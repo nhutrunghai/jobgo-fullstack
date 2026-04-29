@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { z } from 'zod'
-import UserMessages from '~/constants/messages'
+import UserMessages from '~/constants/messages/index'
 
 const companyNameSchema = z
   .string({ message: UserMessages.NAME_NOT_STRING })

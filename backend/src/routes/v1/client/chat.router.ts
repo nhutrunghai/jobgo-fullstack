@@ -4,9 +4,9 @@ import {
   deleteChatSessionController,
   getChatSessionController,
   getChatSessionsController
-} from '~/controller/client/chat.controller'
+} from '~/controllers/client/chat.controller'
 import isAuthorized from '~/middlewares/client/isAuthorized.middleware'
-import validate from '~/middlewares/validator.middleware'
+import validate from '~/middlewares/common/validator.middleware'
 import { chatJobsValidator, chatSessionParamsValidator } from '~/validators/client/chat.validator'
 
 const chatRouter = Router()

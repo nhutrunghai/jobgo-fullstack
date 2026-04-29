@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { UserRole } from '~/constants/enum.js'
+import { UserRole } from '~/constants/enums.js'
 import {
   createAdminJobPromotionController,
   deleteAdminJobPromotionController,
@@ -7,10 +7,10 @@ import {
   getAdminJobPromotionsController,
   reorderAdminJobPromotionsController,
   updateAdminJobPromotionController
-} from '~/controller/admin/job-promotion.controller.js'
+} from '~/controllers/admin/job-promotion.controller.js'
 import { adminAuthMiddleware } from '~/middlewares/admin/auth.middleware.js'
 import { authorizeAdmin } from '~/middlewares/admin/authorization.middleware.js'
-import validate from '~/middlewares/validator.middleware.js'
+import validate from '~/middlewares/common/validator.middleware.js'
 import {
   createAdminJobPromotionValidator,
   deleteAdminJobPromotionValidator,

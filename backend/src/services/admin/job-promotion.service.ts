@@ -7,9 +7,9 @@ import {
   JobPromotionStatus,
   JobPromotionType,
   JobStatus
-} from '~/constants/enum.js'
-import UserMessages from '~/constants/messages.js'
-import { AppError } from '~/models/appError.js'
+} from '~/constants/enums.js'
+import UserMessages from '~/constants/messages/index.js'
+import { AppError } from '~/errors/app-error.js'
 import JobPromotion from '~/models/schema/client/jobPromotions.schema.js'
 
 type JobPromotionListItem = JobPromotion & {

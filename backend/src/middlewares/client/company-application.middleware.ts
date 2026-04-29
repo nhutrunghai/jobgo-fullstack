@@ -2,14 +2,14 @@ import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config'
-import { JobApplicationStatus } from '~/constants/enum'
-import UserMessages from '~/constants/messages'
-import { AppError } from '~/models/appError'
+import { JobApplicationStatus } from '~/constants/enums'
+import UserMessages from '~/constants/messages/index'
+import { AppError } from '~/errors/app-error'
 import {
   CompanyApplicationDetailLocals,
   CompanyApplicationLocals,
   CompanyLocals
-} from '~/models/requests/responseType'
+} from '~/types/http/response.type'
 
 const allowedTransitions: Record<JobApplicationStatus, JobApplicationStatus[]> = {
   [JobApplicationStatus.SUBMITTED]: [

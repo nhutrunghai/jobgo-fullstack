@@ -3,15 +3,15 @@ import {
   applyJobController,
   getMyAppliedJobsController,
   withdrawMyJobApplicationController
-} from '~/controller/client/job-application.controller'
+} from '~/controllers/client/job-application.controller'
 import {
   getFeaturedPublicJobsController,
   getLatestPublicJobsController,
   getPublicJobDetailController,
   searchPublicJobsController
-} from '~/controller/client/public-job.controller'
+} from '~/controllers/client/public-job.controller'
 import isAuthorized from '~/middlewares/client/isAuthorized.middleware.js'
-import optionalDecodeToken from '~/middlewares/optionalDecodeToken.middleware'
+import optionalDecodeToken from '~/middlewares/common/optional-auth.middleware'
 import {
   ensureCanWithdrawApplication,
   ensureNotAppliedYet,
@@ -28,7 +28,7 @@ import {
   loadPublicJobDetail,
   requirePublicJobDetail
 } from '~/middlewares/client/public-job.middleware'
-import validate from '~/middlewares/validator.middleware'
+import validate from '~/middlewares/common/validator.middleware'
 import { applyJobValidator, getMyAppliedJobsValidator } from '~/validators/client/job-application.validator'
 import {
   getCompanyJobDetailValidator,
