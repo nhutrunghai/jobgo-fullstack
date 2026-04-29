@@ -2,9 +2,9 @@ import { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import env from '~/configs/env.config'
 import RedisService from '~/configs/redis.config'
-import ErrorCode from '~/constants/error'
-import UserMessages from '~/constants/messages'
-import { AppError } from '~/models/appError'
+import ErrorCode from '~/constants/error-code'
+import UserMessages from '~/constants/messages/index'
+import { AppError } from '~/errors/app-error'
 import { verifyToken } from '~/utils/jwt.util'
 
 const getBearerToken = (authorization?: string) => {

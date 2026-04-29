@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { OtpType } from '~/constants/enum.js'
+import { OtpType } from '~/constants/enums.js'
 interface OtpCodeType {
   _id?: ObjectId
   user_id: ObjectId

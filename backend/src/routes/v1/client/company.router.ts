@@ -4,26 +4,26 @@ import {
   getCompanyMeController,
   updateCompanyLogoController,
   updateCompanyController
-} from '~/controller/client/company.controller'
+} from '~/controllers/client/company.controller'
 import {
   updateCompanyApplicationStatusController,
   getCompanyApplicationDetailController,
   getCompanyJobApplicationsController
-} from '~/controller/client/job-application.controller'
+} from '~/controllers/client/job-application.controller'
 import {
   createCompanyJobController,
   getCompanyJobDetailController,
   getCompanyJobsController,
   updateCompanyJobController,
   updateCompanyJobStatusController
-} from '~/controller/client/job.controller'
+} from '~/controllers/client/job.controller'
 import {
   cancelCompanyJobPromotionController,
   getCompanyJobPromotionDetailController,
   getCompanyJobPromotionsController,
   getCompanyPromotionPlansController,
   purchaseCompanyJobPromotionController
-} from '~/controller/client/job-promotion.controller'
+} from '~/controllers/client/job-promotion.controller'
 import { loadCompany, requireCompany, checkCompany } from '~/middlewares/client/company.middleware'
 import {
   ensureValidApplicationStatusTransition,
@@ -33,8 +33,8 @@ import {
   requireCompanyApplicationDetail
 } from '~/middlewares/client/company-application.middleware'
 import { loadCompanyJob, requireCompanyJob } from '~/middlewares/client/job.middleware'
-import { isVerifiedCompany } from '~/middlewares/client/Verified.middleware'
-import validate from '~/middlewares/validator.middleware'
+import { isVerifiedCompany } from '~/middlewares/client/verification.middleware'
+import validate from '~/middlewares/common/validator.middleware'
 import { createCompanyValidator, updateCompanyLogoValidator, updateCompanyValidator } from '~/validators/client/company.validator'
 import {
   getCompanyApplicationDetailValidator,

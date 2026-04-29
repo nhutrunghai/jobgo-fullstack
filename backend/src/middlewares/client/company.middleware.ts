@@ -2,9 +2,9 @@ import { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config'
-import UserMessages from '~/constants/messages'
-import { AppError } from '~/models/appError'
-import { CompanyLocals } from '~/models/requests/responseType'
+import UserMessages from '~/constants/messages/index'
+import { AppError } from '~/errors/app-error'
+import { CompanyLocals } from '~/types/http/response.type'
 
 export const loadCompany = async (req: Request, res: Response<unknown, CompanyLocals>, next: NextFunction) => {
   const userId = req.decodeToken?.userId as string

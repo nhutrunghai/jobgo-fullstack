@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { NotificationType } from '~/constants/enum.js'
+import { NotificationType } from '~/constants/enums.js'
 
 type NotificationConstructor = {
   _id?: ObjectId

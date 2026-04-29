@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { z } from 'zod'
-import { JobApplicationStatus } from '~/constants/enum'
-import UserMessages from '~/constants/messages'
+import { JobApplicationStatus } from '~/constants/enums'
+import UserMessages from '~/constants/messages/index'
 
 const applicationStatusValues = Object.values(JobApplicationStatus) as [JobApplicationStatus, ...JobApplicationStatus[]]
 

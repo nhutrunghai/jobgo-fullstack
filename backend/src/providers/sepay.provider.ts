@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios'
 import { StatusCodes } from 'http-status-codes'
-import UserMessages from '~/constants/messages.js'
-import { AppError } from '~/models/appError.js'
+import UserMessages from '~/constants/messages/index.js'
+import { AppError } from '~/errors/app-error.js'
 import adminSystemSettingService from '~/services/admin/system-setting.service.js'
 
 type CreateSePayOrderPayload = {

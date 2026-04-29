@@ -1,8 +1,8 @@
 import { createRouteHandler, createUploadthing, type FileRouter } from 'uploadthing/express'
 import { UploadThingError, UTApi } from 'uploadthing/server'
 import env from '~/configs/env.config.js'
-import ErrorCode from '~/constants/error.js'
-import UserMessages from '~/constants/messages.js'
+import ErrorCode from '~/constants/error-code.js'
+import UserMessages from '~/constants/messages/index.js'
 import { verifyToken } from '~/utils/jwt.util.js'
 
 const f = createUploadthing({

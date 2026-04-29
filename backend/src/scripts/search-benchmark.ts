@@ -4,10 +4,10 @@ import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config'
 import ElasticsearchConfig from '~/configs/elasticsearch.config'
 import env from '~/configs/env.config'
-import { JobLevel, JobStatus, JobType } from '~/constants/enum'
+import { JobLevel, JobStatus, JobType } from '~/constants/enums'
 import Job from '~/models/schema/client/jobs.schema'
-import { generateLocalEmbedding } from '~/services/embedding.service'
-import jobSearchService from '~/services/job-search.service'
+import { generateLocalEmbedding } from '~/services/ai/embedding.service'
+import jobSearchService from '~/services/search/job-search.service'
 
 type SearchHit = {
   job_id: string

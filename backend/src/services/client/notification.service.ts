@@ -1,9 +1,9 @@
 import { ObjectId } from 'mongodb'
 import { StatusCodes } from 'http-status-codes'
 import databaseService from '~/configs/database.config.js'
-import { NotificationType } from '~/constants/enum.js'
-import UserMessages from '~/constants/messages.js'
-import { AppError } from '~/models/appError.js'
+import { NotificationType } from '~/constants/enums.js'
+import UserMessages from '~/constants/messages/index.js'
+import { AppError } from '~/errors/app-error.js'
 import Notification from '~/models/schema/client/notifications.schema.js'
 
 class NotificationService {

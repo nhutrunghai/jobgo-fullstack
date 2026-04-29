@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { UserRole } from '~/constants/enum.js'
-import UserMessages from '~/constants/messages.js'
-import { AppError } from '~/models/appError.js'
+import { UserRole } from '~/constants/enums.js'
+import UserMessages from '~/constants/messages/index.js'
+import { AppError } from '~/errors/app-error.js'
 
 export const authorizeAdmin = (roles: UserRole[]) => {
   return (req: Request, res: Response, next: NextFunction) => {

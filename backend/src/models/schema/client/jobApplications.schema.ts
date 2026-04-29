@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import { JobApplicationStatus } from '~/constants/enum.js'
+import { JobApplicationStatus } from '~/constants/enums.js'
 
 interface ResumeSnapshotType {
   full_name?: string

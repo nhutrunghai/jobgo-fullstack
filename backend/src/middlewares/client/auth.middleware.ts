@@ -1,24 +1,24 @@
 import { Request, Response, NextFunction } from 'express'
-import { checkConflict } from '../checkConflict.middleware.js'
+import { checkConflict } from '../common/check-conflict.middleware.js'
 import { ParamsDictionary } from 'express-serve-static-core'
 import databaseService from '~/configs/database.config.js'
 import { Collection, ObjectId } from 'mongodb'
-import { AppError } from '~/models/appError.js'
+import { AppError } from '~/errors/app-error.js'
 import { StatusCodes } from 'http-status-codes'
-import UserMessages from '~/constants/messages.js'
+import UserMessages from '~/constants/messages/index.js'
 import {
   EmailVerifyRqType,
   LoginRqType,
   RefreshRqType,
   RegisterRqType,
   ResetPasswordRqType
-} from '~/models/requests/requestsType.js'
+} from '~/types/http/request.type.js'
 import { verifyToken } from '~/utils/jwt.util.js'
 import env from '~/configs/env.config.js'
 import RedisService from '~/configs/redis.config.js'
 import { comparePassword, hashToken } from '~/utils/crypto.utils.js'
-import { OtpType } from '~/constants/enum.js'
-import { VerifyOtpLocals } from '~/models/requests/responseType.js'
+import { OtpType } from '~/constants/enums.js'
+import { VerifyOtpLocals } from '~/types/http/response.type.js'
 import OtpCode from '~/models/schema/client/otpCodes.schema.js'
 export const checkOtpVerify = async (condition: { code: string; type: OtpType }, next: NextFunction) => {
   const result = await databaseService.otpCodes.findOne(condition)

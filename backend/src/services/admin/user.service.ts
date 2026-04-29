@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config.js'
-import { UserRole, UserStatus, WalletStatus, WalletTopUpOrderStatus } from '~/constants/enum.js'
+import { UserRole, UserStatus, WalletStatus, WalletTopUpOrderStatus } from '~/constants/enums.js'
 
 class AdminUserService {
   async getUsers({

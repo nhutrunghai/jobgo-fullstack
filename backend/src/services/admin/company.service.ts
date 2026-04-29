@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config.js'
-import { JobApplicationStatus, JobStatus } from '~/constants/enum.js'
+import { JobApplicationStatus, JobStatus } from '~/constants/enums.js'
 
 class AdminCompanyService {
   async getCompanies({

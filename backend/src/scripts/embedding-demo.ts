@@ -5,7 +5,7 @@ import {
   LOCAL_EMBEDDING_MODEL,
   generateGeminiEmbedding,
   generateLocalEmbedding
-} from '../services/embedding.service'
+} from '../services/ai/embedding.service'
 
 const args = process.argv.slice(2)
 const providerArg = args.find((arg) => arg.startsWith('--provider=')) || '--provider=local'

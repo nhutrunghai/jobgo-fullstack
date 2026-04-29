@@ -5,7 +5,7 @@ const envSchema = z.object({
   PORT: z.coerce
     .number()
     .min(1, { message: 'PORT phải lớn hơn 0' })
-    .max(6553, { message: 'PORT không được vượt quá 6553' })
+    .max(65535, { message: 'PORT không được vượt quá 65535' })
     .default(3000),
   // Allow Origin Cors
   ALLOWED_ORIGINS: z
@@ -16,7 +16,7 @@ const envSchema = z.object({
   REDIS_PORT: z.coerce
     .number()
     .min(1, { message: 'REDIS_PORT phải lớn hơn 0' })
-    .max(6553, { message: 'REDIS_PORT không được vượt quá 6553' })
+    .max(65535, { message: 'REDIS_PORT không được vượt quá 65535' })
     .default(6379),
   REDIS_HOST: z.string().min(1, { message: 'REDIS_HOST không được rỗng' }).default('127.0.0.1'),
   REDIS_PASSWORD: z.string().min(1, { message: 'REDIS_PASSWORD không được rỗng' }).optional(),
@@ -26,16 +26,16 @@ const envSchema = z.object({
   DB_USER_NAME: z.string().min(1, { message: 'DB_USER_NAME không được rỗng' }),
   DB_COMPANY_NAME: z.string().min(1, { message: 'DB_COMPANY_NAME không được rỗng' }),
   DB_JOB_NAME: z.string().min(1, { message: 'DB_JOB_NAME không được rỗng' }),
-  DB_JOB_PROMOTION_NAME: z.string().min(1).default('job_promotions'),
-  DB_WALLET_NAME: z.string().min(1).default('wallets'),
-  DB_WALLET_TRANSACTION_NAME: z.string().min(1).default('wallet_transactions'),
-  DB_WALLET_TOPUP_ORDER_NAME: z.string().min(1).default('wallet_topup_orders'),
-  DB_NOTIFICATION_NAME: z.string().min(1).default('notifications'),
-  DB_ADMIN_AUDIT_LOG_NAME: z.string().min(1).default('admin_audit_logs'),
-  DB_SYSTEM_SETTING_NAME: z.string().min(1).default('system_settings'),
+  DB_JOB_PROMOTION_NAME: z.string().min(1, { message: 'DB_JOB_PROMOTION_NAME không được rỗng' }),
+  DB_WALLET_NAME: z.string().min(1, { message: 'DB_WALLET_NAME không được rỗng' }),
+  DB_WALLET_TRANSACTION_NAME: z.string().min(1, { message: 'DB_WALLET_TRANSACTION_NAME không được rỗng' }),
+  DB_WALLET_TOPUP_ORDER_NAME: z.string().min(1, { message: 'DB_WALLET_TOPUP_ORDER_NAME không được rỗng' }),
+  DB_NOTIFICATION_NAME: z.string().min(1, { message: 'DB_NOTIFICATION_NAME không được rỗng' }),
+  DB_ADMIN_AUDIT_LOG_NAME: z.string().min(1, { message: 'DB_ADMIN_AUDIT_LOG_NAME không được rỗng' }),
+  DB_SYSTEM_SETTING_NAME: z.string().min(1, { message: 'DB_SYSTEM_SETTING_NAME không được rỗng' }),
   PROMOTION_DAILY_PRICE: z.coerce.number().int().min(0).default(50000),
   PROMOTION_DEFAULT_PRIORITY: z.coerce.number().int().min(0).default(100),
-  DB_FAVORITE_JOB_NAME: z.string().default('favorite_jobs'),
+  DB_FAVORITE_JOB_NAME: z.string().min(1, { message: 'DB_FAVORITE_JOB_NAME không được rỗng' }),
   DB_RESUME_NAME: z.string().min(1, { message: 'DB_RESUME_NAME không được rỗng' }),
   DB_JOB_APPLICATION_NAME: z.string().min(1, { message: 'DB_JOB_APPLICATION_NAME không được rỗng' }),
   DB_REFRESH_TOKEN_NAME: z.string().min(1, { message: 'DB_REFRESH_TOKEN_NAME không được rỗng' }),
@@ -62,7 +62,7 @@ const envSchema = z.object({
   // ELASTICSEARCH
   ELASTICSEARCH_URL: z.string().min(1, { message: 'Không tồn tại ELASTICSEARCH_URL' }),
   PUBLIC_JOBS_SEARCH_INDEX: z.string().min(1, { message: 'PUBLIC_JOBS_SEARCH_INDEX không được rỗng' }),
-  RESUME_SEARCH_INDEX: z.string().min(1, { message: 'RESUME_SEARCH_INDEX không được rỗng' }).default('candidate_resumes_chunks'),
+  RESUME_SEARCH_INDEX: z.string().min(1, { message: 'RESUME_SEARCH_INDEX không được rỗng' }),
   RESUME_EMBEDDING_DIMS: z.coerce.number().min(1).default(1536),
   // Embedding service
   EMBEDDING_API_URL: z.url({ message: 'EMBEDDING_API_URL phải là một đường dẫn hợp lệ' }).default('http://localhost:8000'),
@@ -86,7 +86,7 @@ const envSchema = z.object({
     .default('gpt-4o-mini'),
   OPENAI_EMBEDDING_MODEL: z.string().min(1, { message: 'OPENAI_EMBEDDING_MODEL không được rỗng' }).default('text-embedding-3-small'),
   OPENAI_API_TIMEOUT_MS: z.coerce.number().min(1000).default(30000),
-  DB_CHAT_SESSION_NAME: z.string().min(1, { message: 'DB_CHAT_SESSION_NAME không được rỗng' }).default('chat_sessions'),
+  DB_CHAT_SESSION_NAME: z.string().min(1, { message: 'DB_CHAT_SESSION_NAME không được rỗng' }),
   // Admin session
   ADMIN_SESSION_COOKIE_NAME: z.string().min(1).default('admin_sid'),
   ADMIN_SESSION_PREFIX: z.string().min(1).default('admin:sessions'),

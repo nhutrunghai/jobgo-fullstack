@@ -3,13 +3,13 @@ import {
   getWalletController,
   getWalletTransactionsController,
   topUpWalletController
-} from '~/controller/client/wallet.controller'
+} from '~/controllers/client/wallet.controller'
 import {
   createWalletTopUpOrderController as createWalletTopUpOrderHandler,
   getWalletTopUpOrderDetailController as getWalletTopUpOrderDetailHandler
-} from '~/controller/client/wallet-topup.controller'
+} from '~/controllers/client/wallet-topup.controller'
 import isAuthorized from '~/middlewares/client/isAuthorized.middleware'
-import validate from '~/middlewares/validator.middleware'
+import validate from '~/middlewares/common/validator.middleware'
 import { getWalletTransactionsValidator, topUpWalletValidator } from '~/validators/client/wallet.validator'
 import {
   createWalletTopUpOrderValidator,

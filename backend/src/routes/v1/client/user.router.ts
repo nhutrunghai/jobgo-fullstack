@@ -9,29 +9,29 @@ import {
   updateUserAvatarController,
   updateProfileUserController,
   updateSettingUserController
-} from '~/controller/client/user.controller'
+} from '~/controllers/client/user.controller'
 import {
   createResumeController,
   deleteResumeController,
   getMyResumesController,
   getResumeDetailController
-} from '~/controller/client/resume.controller'
+} from '~/controllers/client/resume.controller'
 import {
   getFavoriteJobsController,
   removeFavoriteJobController,
   saveFavoriteJobController
-} from '~/controller/client/favoriteJob.controller'
+} from '~/controllers/client/favoriteJob.controller'
 import {
   getNotificationsController,
   getUnreadNotificationCountController,
   markAllNotificationsAsReadController,
   markNotificationAsReadController
-} from '~/controller/client/notification.controller'
+} from '~/controllers/client/notification.controller'
 import { newPasswordMiddleware, resendMailMiddleware } from '~/middlewares/client/user.middleware'
 import isAuthorized from '~/middlewares/client/isAuthorized.middleware'
 import { loadPublicJobDetail, requirePublicJobDetail } from '~/middlewares/client/public-job.middleware'
-import { mailLimiter } from '~/middlewares/rateLimit.middleware'
-import validate from '~/middlewares/validator.middleware'
+import { mailLimiter } from '~/middlewares/common/rate-limit.middleware'
+import validate from '~/middlewares/common/validator.middleware'
 import {
   getFavoriteJobsValidator,
   removeFavoriteJobValidator,

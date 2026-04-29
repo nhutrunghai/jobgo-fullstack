@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import UserMessages from '~/constants/messages.js'
+import UserMessages from '~/constants/messages/index.js'
 
 export const saveFavoriteJobValidator = z.object({
   params: z.object({

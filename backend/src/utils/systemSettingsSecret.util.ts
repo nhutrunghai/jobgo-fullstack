@@ -1,8 +1,8 @@
 import crypto from 'node:crypto'
 import { StatusCodes } from 'http-status-codes'
 import env from '~/configs/env.config.js'
-import UserMessages from '~/constants/messages.js'
-import { AppError } from '~/models/appError.js'
+import UserMessages from '~/constants/messages/index.js'
+import { AppError } from '~/errors/app-error.js'
 
 export type EncryptedSystemSecret = {
   algorithm: 'aes-256-gcm'

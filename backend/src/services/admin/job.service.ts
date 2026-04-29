@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config.js'
-import { JobModerationStatus, JobStatus } from '~/constants/enum.js'
-import jobSearchService from '~/services/job-search.service.js'
+import { JobModerationStatus, JobStatus } from '~/constants/enums.js'
+import jobSearchService from '~/services/search/job-search.service.js'
 
 type AdminJobListItem = {
   _id: ObjectId

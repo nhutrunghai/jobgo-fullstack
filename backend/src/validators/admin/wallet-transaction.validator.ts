@@ -3,8 +3,8 @@ import {
   WalletTransactionDirection,
   WalletTransactionStatus,
   WalletTransactionType
-} from '~/constants/enum.js'
-import UserMessages from '~/constants/messages.js'
+} from '~/constants/enums.js'
+import UserMessages from '~/constants/messages/index.js'
 
 const adminWalletTransactionTypeValues = [
   WalletTransactionType.TOP_UP,

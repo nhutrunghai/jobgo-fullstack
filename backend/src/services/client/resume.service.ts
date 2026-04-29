@@ -1,13 +1,13 @@
 import { ObjectId } from 'mongodb'
 import { StatusCodes } from 'http-status-codes'
 import databaseService from '~/configs/database.config.js'
-import { ResumeStatus } from '~/constants/enum.js'
-import UserMessages from '~/constants/messages.js'
-import { AppError } from '~/models/appError.js'
+import { ResumeStatus } from '~/constants/enums.js'
+import UserMessages from '~/constants/messages/index.js'
+import { AppError } from '~/errors/app-error.js'
 import Resume from '~/models/schema/client/resumes.schema.js'
 import uploadThingProvider from '~/providers/uploadthing.provider.js'
-import resumeIngestionService from '~/services/resume-ingestion.service.js'
-import resumeSearchService from '~/services/resume-search.service.js'
+import resumeIngestionService from '~/services/search/resume-ingestion.service.js'
+import resumeSearchService from '~/services/search/resume-search.service.js'
 
 type CreateResumePayload = {
   title: string

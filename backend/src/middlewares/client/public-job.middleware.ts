@@ -2,10 +2,10 @@ import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config'
-import { JobModerationStatus, JobStatus } from '~/constants/enum'
-import UserMessages from '~/constants/messages'
-import { AppError } from '~/models/appError'
-import { PublicJobLocals, PublicJobWithApplicationLocals } from '~/models/requests/responseType'
+import { JobModerationStatus, JobStatus } from '~/constants/enums'
+import UserMessages from '~/constants/messages/index'
+import { AppError } from '~/errors/app-error'
+import { PublicJobLocals, PublicJobWithApplicationLocals } from '~/types/http/response.type'
 
 export const loadPublicJobDetail = async (
   req: Request,

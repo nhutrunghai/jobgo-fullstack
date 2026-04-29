@@ -2,9 +2,9 @@ import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config'
-import UserMessages from '~/constants/messages'
-import { AppError } from '~/models/appError'
-import { CompanyLocals, JobLocals } from '~/models/requests/responseType'
+import UserMessages from '~/constants/messages/index'
+import { AppError } from '~/errors/app-error'
+import { CompanyLocals, JobLocals } from '~/types/http/response.type'
 
 export const loadCompanyJob = async (
   req: Request,
