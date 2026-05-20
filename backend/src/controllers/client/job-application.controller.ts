@@ -51,10 +51,7 @@ export const applyJobController = async (
       coverLetter: req.body.cover_letter
     })
 
-    const company = await databaseService.companies.findOne(
-      { _id: job.company_id },
-      { projection: { user_id: 1 } }
-    )
+    const company = await databaseService.companies.findOne({ _id: job.company_id }, { projection: { user_id: 1 } })
 
     if (company?.user_id && result?._id) {
       await notificationService.create({
@@ -95,10 +92,7 @@ export const applyJobController = async (
   })
 
   const result = await jobApplicationService.createJobApplication(newApplication)
-  const company = await databaseService.companies.findOne(
-    { _id: job.company_id },
-    { projection: { user_id: 1 } }
-  )
+  const company = await databaseService.companies.findOne({ _id: job.company_id }, { projection: { user_id: 1 } })
 
   if (company?.user_id) {
     await notificationService.create({
@@ -186,10 +180,7 @@ export const updateCompanyApplicationStatusController = async (
     applicationId: application._id!,
     status: req.body.status
   })
-  const job = await databaseService.jobs.findOne(
-    { _id: application.job_id },
-    { projection: { title: 1 } }
-  )
+  const job = await databaseService.jobs.findOne({ _id: application.job_id }, { projection: { title: 1 } })
 
   await notificationService.create({
     userId: application.candidate_id,
@@ -252,4 +243,3 @@ export const withdrawMyJobApplicationController = async (
     }
   })
 }
-

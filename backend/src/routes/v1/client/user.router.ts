@@ -37,10 +37,7 @@ import {
   removeFavoriteJobValidator,
   saveFavoriteJobValidator
 } from '~/validators/client/favoriteJob.validator'
-import {
-  getNotificationsValidator,
-  markNotificationAsReadValidator
-} from '~/validators/client/notification.validator'
+import { getNotificationsValidator, markNotificationAsReadValidator } from '~/validators/client/notification.validator'
 import { createResumeValidator, getResumeDetailValidator } from '~/validators/client/resume.validator'
 import {
   newPasswordValidator,
@@ -77,7 +74,12 @@ userRouter.post(
   requirePublicJobDetail,
   saveFavoriteJobController
 )
-userRouter.delete('/favorite-jobs/:jobId', isAuthorized, validate(removeFavoriteJobValidator), removeFavoriteJobController)
+userRouter.delete(
+  '/favorite-jobs/:jobId',
+  isAuthorized,
+  validate(removeFavoriteJobValidator),
+  removeFavoriteJobController
+)
 userRouter.post('/setting/resend-mail', isAuthorized, resendMailMiddleware, mailLimiter, resendMailController)
 userRouter.post('/setting/change-password', isAuthorized, changePasswordController) // mailLimiter ( rate limit theo tài khoản )
 userRouter.post(
@@ -87,6 +89,4 @@ userRouter.post(
   newPasswordMiddleware,
   newPasswordController
 ) // ( rate limit theo tài khoản )
-// Còn thiếu chức năng upload ảnh bìa và ảnh thumnail ... 
 export default userRouter
-

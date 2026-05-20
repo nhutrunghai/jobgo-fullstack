@@ -15,4 +15,3 @@ clientRouter.use('/user', userRouter)
 clientRouter.use('/wallet', walletRouter)
 clientRouter.use('/company', isAuthorized, isVerified, companyRouter)
 export default clientRouter
-
