@@ -15,8 +15,8 @@ const buildSalaryText = (job: RetrievedChatJob) => {
   return `${min} - ${max} ${job.salary.currency}`
 }
 
-export const buildJobChatAnswerPrompt = ({ message, jobs }: { message: string; jobs: RetrievedChatJob[] }) => {
-  const jobsContext = jobs
+const buildJobsContext = (jobs: RetrievedChatJob[]) =>
+  jobs
     .map(
       (job, index) => `Job ${index + 1}
 - job_id: ${job.job_id}
@@ -33,17 +33,37 @@ export const buildJobChatAnswerPrompt = ({ message, jobs }: { message: string; j
     )
     .join('\n\n')
 
-  return `
+const baseInstruction = `
 Bạn là chatbot tư vấn job cho JobGo.
 Chỉ được trả lời dựa trên danh sách job trong context.
 Nếu dữ liệu chưa đủ để kết luận chắc chắn, hãy nói rõ.
 Không được bịa thêm job ngoài context.
 Trả lời ngắn gọn, thực dụng, ưu tiên nêu rõ 2-3 job phù hợp nhất và lý do.
+`
+
+export const buildJobChatAnswerPrompt = ({ message, jobs }: { message: string; jobs: RetrievedChatJob[] }) => `
+${baseInstruction}
 
 User question:
 ${message}
 
 Jobs context:
-${jobsContext}
+${buildJobsContext(jobs)}
 `
-}
+
+export const buildJobChatJsonAnswerPrompt = ({ message, jobs }: { message: string; jobs: RetrievedChatJob[] }) => `
+${baseInstruction}
+
+Hãy trả về JSON hợp lệ theo schema.
+- answer: câu trả lời tiếng Việt hiển thị cho user.
+- selected_job_ids: danh sách job_id của đúng các job được nhắc/gợi ý trong answer.
+- Nếu answer nói 2 job thì selected_job_ids phải có đúng 2 id.
+- Nếu một job không được nhắc trong answer thì tuyệt đối không đưa vào selected_job_ids.
+- selected_job_ids chỉ được dùng job_id có trong Jobs context.
+
+User question:
+${message}
+
+Jobs context:
+${buildJobsContext(jobs)}
+`

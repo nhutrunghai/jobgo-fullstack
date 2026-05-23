@@ -14,9 +14,14 @@ import intentRouterService from './intent/intent-router.service'
 import resumeChatRetrievalService from './retrieval/resume-chat-retrieval.service'
 import { buildCvReviewAnswerPrompt } from './prompts/cv-review-answer.prompt'
 import jobChatRetrievalService from './retrieval/job-chat-retrieval.service'
-import { buildJobChatAnswerPrompt } from './prompts/job-chat-answer.prompt'
+import { buildJobChatAnswerPrompt, buildJobChatJsonAnswerPrompt } from './prompts/job-chat-answer.prompt'
 import sessionService from './session.service'
 import adminSystemSettingService, { RagChatRuntimeConfig } from '~/services/admin/system-setting.service'
+
+type JobChatJsonAnswer = {
+  answer: string
+  selected_job_ids: string[]
+}
 
 type ChatParams = {
   message: string
@@ -238,19 +243,67 @@ class RagChatService {
       }
     }
 
+    const contextJobs = jobs.slice(0, config.answer_context_limit)
+
+    try {
+      const jsonAnswer = await llmService.generateJson<JobChatJsonAnswer>({
+        provider: config.provider,
+        model: config.chat_model,
+        prompt: buildJobChatJsonAnswerPrompt({
+          message,
+          jobs: contextJobs
+        }),
+        schema: {
+          type: 'object',
+          properties: {
+            answer: { type: 'string' },
+            selected_job_ids: {
+              type: 'array',
+              items: { type: 'string' }
+            }
+          },
+          required: ['answer', 'selected_job_ids'],
+          additionalProperties: false
+        }
+      })
+
+      const selectedJobIds = new Set(jsonAnswer.selected_job_ids.filter((jobId) => contextJobs.some((job) => job.job_id === jobId)))
+      const selectedJobs = contextJobs.filter((job) => selectedJobIds.has(job.job_id))
+      const answerMatchedJobs = selectedJobs.length ? selectedJobs : this.matchJobsMentionedInAnswer(jsonAnswer.answer, contextJobs)
+
+      return {
+        answer: jsonAnswer.answer,
+        sources: contextAssemblyService.buildSources(answerMatchedJobs, answerMatchedJobs.length)
+      }
+    } catch (error) {
+      console.warn(
+        JSON.stringify({
+          tag: 'job_chat_json_answer_failed',
+          error: error instanceof Error ? error.message : String(error)
+        })
+      )
+    }
+
     const answer = await llmService.generateText({
       provider: config.provider,
       model: config.chat_model,
       prompt: buildJobChatAnswerPrompt({
         message,
-        jobs: jobs.slice(0, config.answer_context_limit)
+        jobs: contextJobs
       })
     })
 
+    const answerMatchedJobs = this.matchJobsMentionedInAnswer(answer, contextJobs)
+
     return {
       answer,
-      sources: contextAssemblyService.buildSources(jobs, config.answer_context_limit)
+      sources: contextAssemblyService.buildSources(answerMatchedJobs, answerMatchedJobs.length)
     }
+  }
+
+  private matchJobsMentionedInAnswer(answer: string, jobs: RetrievedChatJob[]) {
+    const normalizedAnswer = answer.toLowerCase()
+    return jobs.filter((job) => normalizedAnswer.includes(job.job_id.toLowerCase()) || normalizedAnswer.includes(job.title.toLowerCase()))
   }
 
   private buildFallbackAnswer(intent: ChatIntent) {
