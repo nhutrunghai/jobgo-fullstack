@@ -13,6 +13,7 @@ import cvVisualReviewService from './review/cv-visual-review.service'
 import intentRouterService from './intent/intent-router.service'
 import resumeChatRetrievalService from './retrieval/resume-chat-retrieval.service'
 import { buildCvReviewAnswerPrompt } from './prompts/cv-review-answer.prompt'
+import { buildCvJobMatchJsonAnswerPrompt } from './prompts/cv-job-match-answer.prompt'
 import jobChatRetrievalService from './retrieval/job-chat-retrieval.service'
 import { buildJobChatAnswerPrompt, buildJobChatJsonAnswerPrompt } from './prompts/job-chat-answer.prompt'
 import sessionService from './session.service'
@@ -79,6 +80,32 @@ class RagChatService {
       await sessionService.saveState(sessionObjectId, {
         lastIntent: intentResult.intent,
         jobIds: []
+      })
+
+      return {
+        session_id: sessionService.getSessionId(session),
+        intent: intentResult.intent,
+        answer: response.answer,
+        sources: response.sources
+      }
+    }
+
+    if (intentResult.intent === 'cv_job_match' || intentResult.intent === 'cv_match_previous_jobs') {
+      const response = await this.buildCvJobMatchAnswer({
+        intent: intentResult.intent,
+        message: normalizedMessage,
+        resumeId: resume_id,
+        userId: user_id,
+        lastJobIds: session.last_retrieved_job_ids || [],
+        config
+      })
+
+      const jobIds = response.sources.filter((source) => source.type === 'job').map((source) => source.job_id)
+
+      await sessionService.appendMessage(sessionObjectId, 'assistant', response.answer, response.sources)
+      await sessionService.saveState(sessionObjectId, {
+        lastIntent: intentResult.intent,
+        jobIds
       })
 
       return {
@@ -210,6 +237,132 @@ class RagChatService {
     }
   }
 
+  private async buildCvJobMatchAnswer({
+    intent,
+    message,
+    resumeId,
+    userId,
+    lastJobIds,
+    config
+  }: {
+    intent: Extract<ChatIntent, 'cv_job_match' | 'cv_match_previous_jobs'>
+    message: string
+    resumeId?: string
+    userId?: string
+    lastJobIds: string[]
+    config: RagChatRuntimeConfig
+  }): Promise<ChatAnswerResult> {
+    if (!userId) {
+      throw new AppError({
+        statusCode: StatusCodes.UNAUTHORIZED,
+        message: UserMessages.ACCESS_TOKEN_NOT_FOUND,
+        errorCode: ErrorCode.UNAUTHORIZED
+      })
+    }
+
+    const resume = await resumeService.getResumeForChat(userId, resumeId)
+    let chunks: RetrievedResumeChunk[] = []
+
+    try {
+      chunks = await resumeChatRetrievalService.retrieveForCvReview(message, resume, config.cv_review_top_k)
+    } catch (error) {
+      console.error(
+        JSON.stringify({
+          tag: 'cv_job_match_resume_retrieval_failed',
+          resume_id: resume._id ? String(resume._id) : null,
+          error: error instanceof Error ? error.message : String(error)
+        })
+      )
+    }
+
+    if (chunks.length === 0) {
+      return {
+        answer:
+          'Hiện tôi chưa lấy được dữ liệu text từ CV này để so khớp với job. Bạn hãy kiểm tra CV đã được ingest embedding hoặc chọn một CV khác.',
+        sources: [this.buildSingleResumeSource(resume)]
+      }
+    }
+
+    const jobs =
+      intent === 'cv_match_previous_jobs'
+        ? await jobChatRetrievalService.retrieveForExplanation(message, lastJobIds, config.job_explanation_top_k)
+        : await jobChatRetrievalService.retrieveForJobSearch(this.buildResumeJobSearchQuery(chunks), config.job_search_top_k)
+
+    if (intent === 'cv_match_previous_jobs' && jobs.length === 0) {
+      return {
+        answer:
+          'Tôi chưa thấy danh sách job nào trước đó trong cuộc trò chuyện này để so khớp với CV. Bạn hãy tìm job trước, ví dụ: "tìm job backend", rồi hỏi lại job nào phù hợp với CV.',
+        sources: this.buildResumeSources(chunks)
+      }
+    }
+
+    if (jobs.length === 0) {
+      return {
+        answer:
+          'Hiện tôi chưa tìm thấy job phù hợp để so khớp với CV này. Bạn có thể thử nêu rõ vị trí mong muốn, level hoặc địa điểm.',
+        sources: this.buildResumeSources(chunks)
+      }
+    }
+
+    const contextJobs = jobs.slice(0, config.answer_context_limit)
+
+    try {
+      const jsonAnswer = await llmService.generateJson<JobChatJsonAnswer>({
+        provider: config.provider,
+        model: config.chat_model,
+        prompt: buildCvJobMatchJsonAnswerPrompt({
+          message,
+          chunks,
+          jobs: contextJobs,
+          matchMode: intent === 'cv_match_previous_jobs' ? 'previous_jobs' : 'search_all_jobs'
+        }),
+        schema: {
+          type: 'object',
+          properties: {
+            answer: { type: 'string' },
+            selected_job_ids: {
+              type: 'array',
+              items: { type: 'string' }
+            }
+          },
+          required: ['answer', 'selected_job_ids'],
+          additionalProperties: false
+        }
+      })
+
+      const selectedJobIds = new Set(jsonAnswer.selected_job_ids.filter((jobId) => contextJobs.some((job) => job.job_id === jobId)))
+      const selectedJobs = contextJobs.filter((job) => selectedJobIds.has(job.job_id))
+      const answerMatchedJobs = selectedJobs.length ? selectedJobs : this.matchJobsMentionedInAnswer(jsonAnswer.answer, contextJobs)
+
+      return {
+        answer: jsonAnswer.answer,
+        sources: [...contextAssemblyService.buildSources(answerMatchedJobs, answerMatchedJobs.length), ...this.buildResumeSources(chunks)]
+      }
+    } catch (error) {
+      console.warn(
+        JSON.stringify({
+          tag: 'cv_job_match_json_answer_failed',
+          error: error instanceof Error ? error.message : String(error)
+        })
+      )
+    }
+
+    return {
+      answer:
+        'Tôi đã tìm được một số job có thể so khớp với CV, nhưng chưa tạo được phần giải thích chi tiết. Bạn có thể hỏi lại ngắn hơn hoặc thử chọn CV khác.',
+      sources: [...contextAssemblyService.buildSources(contextJobs, contextJobs.length), ...this.buildResumeSources(chunks)]
+    }
+  }
+
+  private buildResumeJobSearchQuery(chunks: RetrievedResumeChunk[]) {
+    return chunks
+      .map((chunk) => chunk.text)
+      .join('\n')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 2000)
+  }
+
   private async retrieveJobsByIntent(
     intent: ChatIntent,
     message: string,
@@ -312,7 +465,7 @@ class RagChatService {
 
   private isIntentDisabled(intent: ChatIntent, config: RagChatRuntimeConfig) {
     if (intent === 'cv_review') return !config.allow_cv_review
-    if (intent === 'job_search' || intent === 'job_explanation') return !config.allow_job_qa
+    if (intent === 'job_search' || intent === 'job_explanation' || intent === 'cv_job_match' || intent === 'cv_match_previous_jobs') return !config.allow_job_qa
     if (intent === 'policy_qa') return !config.allow_policy_qa
     if (intent === 'unsupported') return !config.allow_general_qa
     return false
