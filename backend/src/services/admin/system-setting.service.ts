@@ -22,7 +22,9 @@ export type RagChatRuntimeConfig = {
   cv_review_top_k: number
   answer_context_limit: number
   allow_cv_review: boolean
+  allow_job_qa: boolean
   allow_policy_qa: boolean
+  allow_general_qa: boolean
   maintenance_message: string | null
 }
 
@@ -53,7 +55,9 @@ class AdminSystemSettingService {
       cv_review_top_k: 6,
       answer_context_limit: 3,
       allow_cv_review: true,
+      allow_job_qa: true,
       allow_policy_qa: false,
+      allow_general_qa: false,
       maintenance_message: null
     }
   }

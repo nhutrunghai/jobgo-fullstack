@@ -50,20 +50,24 @@ class RagChatService {
     await sessionService.appendMessage(sessionObjectId, 'user', normalizedMessage)
 
     const intentResult = await intentRouterService.detectIntent(normalizedMessage, config)
-    if (intentResult.intent === 'cv_review') {
-      if (!config.allow_cv_review) {
-        const answer = this.buildFallbackAnswer('cv_review')
 
-        await sessionService.appendMessage(sessionObjectId, 'assistant', answer)
+    if (this.isIntentDisabled(intentResult.intent, config)) {
+      const answer = this.buildFallbackAnswer(intentResult.intent)
+      await sessionService.appendMessage(sessionObjectId, 'assistant', answer)
+      await sessionService.saveState(sessionObjectId, {
+        lastIntent: intentResult.intent,
+        jobIds: []
+      })
 
-        return {
-          session_id: sessionService.getSessionId(session),
-          intent: intentResult.intent,
-          answer,
-          sources: []
-        }
+      return {
+        session_id: sessionService.getSessionId(session),
+        intent: intentResult.intent,
+        answer,
+        sources: []
       }
+    }
 
+    if (intentResult.intent === 'cv_review') {
       const response = await this.buildCvReviewAnswer({
         message: normalizedMessage,
         resumeId: resume_id,
@@ -230,7 +234,7 @@ class RagChatService {
   ): Promise<ChatAnswerResult> {
     if (intent === 'policy_qa' || intent === 'unsupported') {
       return {
-        answer: this.buildFallbackAnswer(intent),
+        answer: await this.buildFreeformAnswer(intent, message, config),
         sources: []
       }
     }
@@ -304,6 +308,38 @@ class RagChatService {
   private matchJobsMentionedInAnswer(answer: string, jobs: RetrievedChatJob[]) {
     const normalizedAnswer = answer.toLowerCase()
     return jobs.filter((job) => normalizedAnswer.includes(job.job_id.toLowerCase()) || normalizedAnswer.includes(job.title.toLowerCase()))
+  }
+
+  private isIntentDisabled(intent: ChatIntent, config: RagChatRuntimeConfig) {
+    if (intent === 'cv_review') return !config.allow_cv_review
+    if (intent === 'job_search' || intent === 'job_explanation') return !config.allow_job_qa
+    if (intent === 'policy_qa') return !config.allow_policy_qa
+    if (intent === 'unsupported') return !config.allow_general_qa
+    return false
+  }
+
+  private async buildFreeformAnswer(intent: ChatIntent, message: string, config: RagChatRuntimeConfig) {
+    const scope = intent === 'policy_qa' ? 'câu hỏi chính sách/quy định' : 'câu hỏi ngoài phạm vi tuyển dụng'
+
+    try {
+      return await llmService.generateText({
+        provider: config.provider,
+        model: config.chat_model,
+        prompt: `Bạn là trợ lý JobGo. Hãy trả lời ngắn gọn, rõ ràng bằng tiếng Việt cho ${scope}. Nếu không chắc chắn, hãy nói rõ giới hạn thông tin.
+
+Câu hỏi của user:
+${message}`
+      })
+    } catch (error) {
+      console.warn(
+        JSON.stringify({
+          tag: 'freeform_chat_answer_failed',
+          intent,
+          error: error instanceof Error ? error.message : String(error)
+        })
+      )
+      return this.buildFallbackAnswer(intent)
+    }
   }
 
   private buildFallbackAnswer(intent: ChatIntent) {
