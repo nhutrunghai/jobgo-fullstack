@@ -130,7 +130,8 @@ class UploadThingProvider {
     return createRouteHandler({
       router: this.router,
       config: {
-        token: env.UPLOADTHING_TOKEN
+        token: env.UPLOADTHING_TOKEN,
+        callbackUrl: env.UPLOADTHING_CALLBACK_URL ?? `${env.FRONTEND_URL.replace(/\/$/, '')}/api/uploadthing`
       }
     })
   }

@@ -13,7 +13,9 @@ export const updateAdminRagChatConfigValidator = z.object({
       cv_review_top_k: z.coerce.number().int().min(1).max(20).optional(),
       answer_context_limit: z.coerce.number().int().min(1).max(10).optional(),
       allow_cv_review: z.boolean().optional(),
+      allow_job_qa: z.boolean().optional(),
       allow_policy_qa: z.boolean().optional(),
+      allow_general_qa: z.boolean().optional(),
       maintenance_message: z.string().trim().min(1).max(500).nullable().optional()
     })
     .refine((value) => Object.keys(value).length > 0)
