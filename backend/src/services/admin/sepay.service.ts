@@ -1,4 +1,5 @@
 import axios, { AxiosError } from 'axios'
+import env from '~/configs/env.config.js'
 import databaseService from '~/configs/database.config.js'
 import { WalletTopUpOrderStatus } from '~/constants/enums.js'
 import adminSystemSettingService from '~/services/admin/system-setting.service.js'
@@ -29,6 +30,7 @@ class AdminSePayService {
       webhook_secret_source: secretStatus.webhook_secret_source,
       webhook_secret_preview: secretStatus.webhook_secret_preview,
       webhook_path: '/api/v1/check-payment',
+      webhook_url: `${env.FRONTEND_URL.replace(/\/$/, '')}/api/v1/check-payment`,
       editable_in_admin: true,
       secret_editable_in_admin: true
     }

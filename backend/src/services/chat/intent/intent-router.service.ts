@@ -46,6 +46,14 @@ class IntentRouterService {
   }
 
   private detectFallbackIntent(message: string): ChatIntent {
+    if (this.isCvPreviousJobsMatchMessage(message)) {
+      return 'cv_match_previous_jobs'
+    }
+
+    if (this.isCvJobMatchMessage(message)) {
+      return 'cv_job_match'
+    }
+
     if (this.isCvReviewMessage(message)) {
       return 'cv_review'
     }
@@ -66,6 +74,14 @@ class IntentRouterService {
   }
 
   private applyIntentOverrides(intent: ChatIntent, message: string): ChatIntent {
+    if (this.isCvPreviousJobsMatchMessage(message)) {
+      return 'cv_match_previous_jobs'
+    }
+
+    if (this.isCvJobMatchMessage(message)) {
+      return 'cv_job_match'
+    }
+
     if (this.isCvReviewMessage(message)) {
       return 'cv_review'
     }
@@ -79,6 +95,23 @@ class IntentRouterService {
 
   private isCvReviewMessage(message: string) {
     return /(cv|resume|hồ sơ|ho so|sơ yếu lý lịch|so yeu ly lich)/i.test(message)
+  }
+
+  private isCvJobMatchMessage(message: string) {
+    return (
+      /(cv|resume|hồ sơ|ho so)/i.test(message) &&
+      /(job|việc|viec|vị trí|vi tri|công việc|cong viec)/i.test(message) &&
+      /(phù hợp|phu hop|hợp|hop|match|gợi ý|goi y|tìm|tim)/i.test(message)
+    )
+  }
+
+  private isCvPreviousJobsMatchMessage(message: string) {
+    return (
+      this.isCvJobMatchMessage(message) &&
+      /(các job đó|cac job do|mấy job|may job|những job|nhung job|danh sách trên|danh sach tren|vừa tìm|vua tim|ở trên|o tren|đấy|day)/i.test(
+        message
+      )
+    )
   }
 
   private isPolicyQuestion(message: string) {
