@@ -1,0 +1,106 @@
+export const jobDetails = [
+  {
+    id: 'mobile-react-native',
+    title: 'Senior Mobile Developer (React Native)',
+    company: 'Sky Tech Solutions',
+    salary: '35M - 50M VNĐ',
+    deadline: '15/05/2026',
+    location: 'Quận 1, TP.HCM / Hybrid',
+    experience: 'Từ 3 năm',
+    level: 'Senior / Lead',
+    openings: '02 người',
+    workMode: 'Hybrid / Full-time',
+    status: 'Đang xem xét',
+    postedAt: '2 ngày trước',
+    summary:
+      'Gia nhập product team đang xây dựng ứng dụng tài chính cho người dùng Việt Nam với quy mô tăng trưởng mạnh, tập trung vào trải nghiệm mượt, bảo mật và khả năng mở rộng.',
+    tags: ['React Native', 'TypeScript', 'REST API', 'Agile', 'Mobile Architecture', 'CI/CD'],
+    responsibilities: [
+      'Phát triển và tối ưu ứng dụng React Native cho hệ sinh thái sản phẩm tài chính của công ty.',
+      'Phối hợp với Product Designer và Backend để triển khai luồng nghiệp vụ ổn định, dễ mở rộng.',
+      'Chịu trách nhiệm code quality, review pull request và đề xuất cải tiến performance cho ứng dụng.',
+      'Tham gia phân tích yêu cầu, ước lượng công việc và hỗ trợ team phát hành phiên bản mới đúng tiến độ.',
+    ],
+    requirements: [
+      'Có kinh nghiệm thực tế với React Native, TypeScript và quản lý state trong ứng dụng quy mô vừa hoặc lớn.',
+      'Nắm chắc cách làm việc với REST API, authentication flow, deep linking và push notification.',
+      'Tư duy sản phẩm tốt, giao tiếp rõ ràng với designer, QA và backend.',
+      'Ưu tiên ứng viên từng làm sản phẩm fintech, ecommerce hoặc app có lượng người dùng thực.',
+    ],
+    benefits: [
+      'Lương tháng 13, review thu nhập 2 lần mỗi năm theo hiệu suất.',
+      'Lịch làm việc linh hoạt, hybrid 3 ngày văn phòng và 2 ngày remote.',
+      'MacBook cấu hình cao, ngân sách học tập cá nhân và tài trợ chứng chỉ chuyên môn.',
+      'Bảo hiểm sức khỏe mở rộng và chính sách chăm sóc nhân sự dài hạn.',
+    ],
+  },
+  {
+    id: 'frontend-react',
+    title: 'Frontend Developer (ReactJS)',
+    company: 'Mycoder Tech Editorial',
+    salary: '18M - 30M VNĐ',
+    deadline: '20/05/2026',
+    location: 'TP.HCM / Remote linh hoạt',
+    experience: 'Từ 2 năm',
+    level: 'Mid / Senior',
+    openings: '03 người',
+    workMode: 'Remote / Full-time',
+    status: 'Chờ duyệt',
+    postedAt: '1 ngày trước',
+    summary:
+      'Xây dựng giao diện dashboard và hệ thống quản lý việc làm với trọng tâm về tốc độ, trải nghiệm người dùng và khả năng maintain lâu dài.',
+    tags: ['React', 'Vite', 'Tailwind CSS', 'UI System', 'REST API'],
+    responsibilities: [
+      'Phát triển các module dashboard bằng React, tối ưu component theo hướng tái sử dụng.',
+      'Làm việc cùng BA/Designer để đảm bảo UI bám sát design system.',
+      'Viết unit test cho các logic quan trọng và xử lý edge cases UI.',
+      'Phối hợp backend chuẩn hóa contract API và xử lý loading/error state.',
+    ],
+    requirements: [
+      'Kinh nghiệm React từ 2 năm, hiểu hooks và component composition.',
+      'Thành thạo HTML/CSS/JS, nắm responsive và accessibility.',
+      'Biết làm việc với Git flow, code review và quy trình CI.',
+    ],
+    benefits: [
+      'Làm việc remote linh hoạt, hỗ trợ setup thiết bị làm việc.',
+      'Lộ trình phát triển rõ ràng lên Senior Frontend.',
+      'Môi trường startup năng động, quyết định nhanh.',
+    ],
+  },
+  {
+    id: 'backend-nodejs',
+    title: 'Backend Developer (Node.js)',
+    company: 'Mekong Fintech',
+    salary: '25M - 40M VNĐ',
+    deadline: '28/05/2026',
+    location: 'Hà Nội / Hybrid',
+    experience: 'Từ 3 năm',
+    level: 'Senior',
+    openings: '02 người',
+    workMode: 'Hybrid / Full-time',
+    status: 'Chấp nhận',
+    postedAt: '3 ngày trước',
+    summary:
+      'Phát triển hệ thống backend phục vụ hàng trăm nghìn người dùng với yêu cầu cao về bảo mật, hiệu năng và tính sẵn sàng.',
+    tags: ['Node.js', 'PostgreSQL', 'Redis', 'Kafka', 'Microservices'],
+    responsibilities: [
+      'Thiết kế và triển khai service backend theo kiến trúc microservices.',
+      'Tối ưu truy vấn database và cache để cải thiện latency.',
+      'Thiết lập monitoring, alerting và quy trình xử lý sự cố production.',
+      'Mentor thành viên junior trong team backend.',
+    ],
+    requirements: [
+      'Kinh nghiệm Node.js production từ 3 năm trở lên.',
+      'Hiểu sâu SQL, indexing và performance tuning.',
+      'Có kinh nghiệm triển khai dịch vụ trên cloud (AWS/GCP là lợi thế).',
+    ],
+    benefits: [
+      'Gói thu nhập cạnh tranh theo năng lực.',
+      'Thưởng hiệu suất theo quý.',
+      'Môi trường kỹ thuật mạnh, nhiều bài toán quy mô lớn.',
+    ],
+  },
+]
+
+export const getJobById = (id) => jobDetails.find((job) => job.id === id) || jobDetails[0]
+

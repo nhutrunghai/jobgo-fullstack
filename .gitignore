@@ -4,3 +4,13 @@ embedding-api/.cache/
 embedding-api/.models/
 embedding-api/__pycache__/
 backups/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.env
+frontend/.env.local
+frontend/*.local
+frontend/logs/
+frontend/*.log

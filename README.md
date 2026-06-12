@@ -154,3 +154,19 @@ Các hạng mục đang được ưu tiên tiếp tục:
 ## License
 
 Dự án sử dụng giấy phép MIT. Xem thêm tại [LICENSE](./LICENSE).
+
+## Frontend Application
+
+Frontend React/Vite da duoc them vao thu muc `frontend/` de repo the hien day du ung dung fullstack.
+
+- `frontend/src`: ma nguon giao dien nguoi dung, nha tuyen dung va admin
+- `frontend/public`: static assets va mock API data
+- `frontend/package.json`: script dev/build/lint cua frontend
+
+Chay frontend:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
