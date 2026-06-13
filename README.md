@@ -1,74 +1,45 @@
-# Project JobGo
+# JobGo Fullstack
 
-Project JobGo là hệ thống backend cho nền tảng kết nối ứng viên và nhà tuyển dụng. Mục tiêu của dự án là xây dựng một kiến trúc đủ tốt để xử lý các bài toán xác thực người dùng, quản lý hồ sơ công ty, đăng tin tuyển dụng, quản lý ứng tuyển và mở rộng sang tìm kiếm việc làm.
+JobGo is a full-stack recruitment platform that connects candidates with employers. The project includes a backend API, frontend application, authentication flow, company profile management, job-posting foundation, and supporting infrastructure for search and scalability.
 
-## Mục tiêu dự án
+## Overview
 
-Dự án tập trung vào các nhóm nghiệp vụ chính:
+The goal of JobGo is to build a practical recruitment system with a clean architecture that can grow into a complete job marketplace. The project focuses on authentication, user profiles, employer workflows, job management, and infrastructure readiness.
 
-- Xác thực và bảo mật tài khoản
-  - đăng ký, đăng nhập, đăng xuất
-  - refresh token
-  - xác minh email
-  - quên mật khẩu và đặt lại mật khẩu
-  - đăng nhập Google OAuth
-  - rate limiting cho các thao tác nhạy cảm
-- Quản lý người dùng
-  - xem hồ sơ cá nhân
-  - xem hồ sơ công khai
-  - cập nhật hồ sơ
-  - cài đặt tài khoản
-- Quản lý công ty tuyển dụng
-  - tạo hồ sơ công ty
-  - cập nhật hồ sơ công ty
-  - lấy hồ sơ công ty hiện tại
-- Nền tảng quản lý tin tuyển dụng
-  - schema và validator cho job
-  - schema quan hệ giữa ứng viên và job
-  - MongoDB indexes cho luồng company và job
-  - nền tảng cho employer tạo bài đăng tuyển dụng
-- Hạ tầng phục vụ mở rộng
+## Core Features
+
+- Authentication and account security
+  - Register, login, logout
+  - Refresh token flow
+  - Email verification
+  - Forgot password and reset password
+  - Google OAuth login
+  - Rate limiting for sensitive actions
+- User management
+  - View personal profile
+  - View public profile
+  - Update profile information
+  - Account settings foundation
+- Employer/company management
+  - Create company profile
+  - Update company profile
+  - Get current employer company profile
+- Job platform foundation
+  - Job schema and validation
+  - Candidate-job relationship schema
+  - MongoDB indexes for company and job workflows
+  - Foundation for employer job posting
+- Scalable infrastructure
   - MongoDB
   - Redis
   - Elasticsearch
   - Kibana
-  - Postman collection cho kiểm thử API
+  - Docker Compose
+  - Postman collection for API testing
 
-## Kiến trúc hiện tại
+## Architecture
 
-Backend được xây dựng theo hướng module hóa với các lớp chính:
-
-- `routes`: định nghĩa endpoint
-- `middlewares`: xác thực, phân quyền, validate request
-- `controller`: điều phối request/response
-- `services`: xử lý nghiệp vụ và thao tác dữ liệu
-- `models`: schema và kiểu dữ liệu
-- `validators`: validate đầu vào bằng Zod
-- `configs`: cấu hình môi trường, database, hạ tầng
-
-Các quyết định kỹ thuật đang được áp dụng:
-
-- Node.js + Express + TypeScript
-- MongoDB là nguồn dữ liệu giao dịch chính
-- Redis phục vụ hạ tầng và mở rộng hiệu năng
-- Elasticsearch dành cho bài toán search và retrieval
-- Zod để kiểm soát dữ liệu đầu vào
-- tổ chức code theo domain để dễ mở rộng về sau
-
-## Công nghệ sử dụng
-
-- Node.js
-- Express
-- TypeScript
-- MongoDB
-- Redis
-- Elasticsearch
-- Kibana
-- Zod
-- Jest
-- Docker Compose
-
-## Cấu trúc thư mục
+The backend is organized with a modular/domain-oriented structure:
 
 ```text
 backend/
@@ -83,48 +54,83 @@ backend/
     validators/
 ```
 
-## Cách chạy dự án
+Main responsibilities:
 
-### 1. Cài dependencies
+- `routes`: API endpoint definitions
+- `middlewares`: authentication, authorization, and request validation
+- `controller`: request/response coordination
+- `services`: business logic and data operations
+- `models`: database schemas and data models
+- `validators`: request validation with Zod
+- `configs`: environment, database, and infrastructure configuration
+
+## Tech Stack
+
+### Backend
+
+- Node.js
+- Express.js
+- TypeScript
+- MongoDB
+- Redis
+- Elasticsearch
+- Kibana
+- Zod
+- Jest
+
+### Frontend
+
+- React
+- Vite
+- JavaScript/TypeScript foundation
+- Static assets and mock API data
+
+### DevOps & Tooling
+
+- Docker Compose
+- Postman
+- Git/GitHub
+
+## Getting Started
+
+### 1. Install backend dependencies
 
 ```bash
 cd backend
 npm install
 ```
 
-### 2. Cấu hình môi trường
+### 2. Configure environment variables
 
-Tạo hoặc cập nhật file:
+Create or update:
 
 ```bash
 backend/.env
 ```
 
-Các nhóm biến môi trường quan trọng:
+Important environment groups:
 
-- cổng chạy ứng dụng
+- Application port
 - MongoDB connection
 - JWT secrets
 - Redis connection
-- mail service settings
+- Mail service settings
 - Elasticsearch settings
 
-### 3. Chạy hạ tầng local
-
-Repo có sẵn `docker-compose.yml` để chạy các dịch vụ hỗ trợ như Redis, Elasticsearch và Kibana.
+### 3. Start local infrastructure
 
 ```bash
 docker compose up -d
 ```
 
-### 4. Chạy backend ở môi trường development
+### 4. Run backend in development
 
 ```bash
 cd backend
 npm run dev
 ```
 
-### 5. Build production
+### 5. Build backend for production
 
 ```bash
 cd backend
@@ -132,41 +138,31 @@ npm run build
 npm start
 ```
 
-## Trạng thái phát triển
-
-Dự án vẫn đang trong quá trình hoàn thiện. Trọng tâm hiện tại là hoàn chỉnh luồng của nhà tuyển dụng trước khi mở rộng dashboard tổng hợp, bao gồm:
-
-- quản lý hồ sơ công ty
-- quản lý vòng đời tin tuyển dụng
-- quản lý luồng ứng tuyển của ứng viên
-- chuẩn hóa dữ liệu và index cho các bảng quan trọng
-
-## Định hướng tiếp theo
-
-Các hạng mục đang được ưu tiên tiếp tục:
-
-- hoàn thiện CRUD job cho employer
-- hoàn thiện luồng apply job cho candidate
-- quản lý trạng thái application
-- xây dựng dashboard tổng quan sau khi các luồng cốt lõi ổn định
-- tích hợp search nâng cao dựa trên Elasticsearch và retrieval workflow
-
-## License
-
-Dự án sử dụng giấy phép MIT. Xem thêm tại [LICENSE](./LICENSE).
-
-## Frontend Application
-
-Frontend React/Vite da duoc them vao thu muc `frontend/` de repo the hien day du ung dung fullstack.
-
-- `frontend/src`: ma nguon giao dien nguoi dung, nha tuyen dung va admin
-- `frontend/public`: static assets va mock API data
-- `frontend/package.json`: script dev/build/lint cua frontend
-
-Chay frontend:
+### 6. Run frontend
 
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
+
+## Current Status
+
+JobGo is under active development. The current focus is completing employer-side workflows before expanding into analytics and dashboard features.
+
+Priority areas:
+
+- Company profile management
+- Job lifecycle management
+- Candidate application workflow
+- Data normalization and indexes
+- Dashboard overview after core workflows are stable
+- Advanced search with Elasticsearch and retrieval workflow
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](./LICENSE) for details.
+
+## Author
+
+Developed by [Nhữ Trung Hải](https://github.com/nhutrunghai).
