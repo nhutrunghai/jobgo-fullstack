@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
 import { ChatIntent } from '~/constants/chat-intent'
-import { ChatSessionDocument, ChatSessionTurn } from '~/types/chat/chat.type'
+import { ChatSessionDocument, ChatSessionTurn } from '~/services/chat/types/chat.type'
 
 type ChatSessionSchemaType = {
   _id?: ObjectId

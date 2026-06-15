@@ -2,7 +2,7 @@ import axios from 'axios'
 import { PDFParse } from 'pdf-parse'
 import { ResumeStatus } from '~/constants/enums'
 import Resume from '~/models/schema/client/resumes.schema'
-import resumeSearchService, { ResumeChunkInput } from '~/services/search/resume-search.service'
+import resumeIndexService, { ResumeChunkInput } from '~/services/chat/indexing/resume-index.service'
 
 type ResumeIndexingResult = {
   status: 'completed' | 'skipped' | 'failed'
@@ -30,8 +30,8 @@ class ResumeIngestionService {
         }
       }
 
-      await resumeSearchService.deleteResumeChunks(String(resume.candidate_id), String(resume._id))
-      const result = await resumeSearchService.indexResumeChunks(chunks)
+      await resumeIndexService.deleteResumeChunks(String(resume.candidate_id), String(resume._id))
+      const result = await resumeIndexService.indexResumeChunks(chunks)
 
       return {
         status: 'completed',

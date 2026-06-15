@@ -1,4 +1,4 @@
-import { ChatSource, RetrievedChatJob } from '~/types/chat/chat.type'
+import { ChatSource, RetrievedChatJob } from '~/services/chat/types/chat.type'
 
 class ContextAssemblyService {
   buildSources(jobs: RetrievedChatJob[], limit = 3): ChatSource[] {

@@ -4,7 +4,7 @@ import ElasticsearchConfig from '~/configs/elasticsearch.config.js'
 import env from '~/configs/env.config.js'
 import { publicJobsSearchSchema } from '~/configs/search.config.js'
 import { JobModerationStatus } from '~/constants/enums.js'
-import jobSearchService from '~/services/search/job-search.service.js'
+import jobIndexService from '~/services/chat/indexing/job-index.service.js'
 
 async function backfillMongoJobs() {
   const result = await databaseService.jobs.updateMany(
@@ -59,7 +59,7 @@ async function reindexAllJobs() {
   let processed = 0
 
   for await (const job of cursor) {
-    await jobSearchService.upsertJobDocument(job._id as ObjectId)
+    await jobIndexService.upsertJobDocument(job._id as ObjectId)
     processed += 1
   }
 

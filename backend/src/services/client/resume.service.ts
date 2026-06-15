@@ -6,8 +6,8 @@ import UserMessages from '~/constants/messages/index.js'
 import { AppError } from '~/errors/app-error.js'
 import Resume from '~/models/schema/client/resumes.schema.js'
 import uploadThingProvider from '~/providers/uploadthing.provider.js'
-import resumeIngestionService from '~/services/search/resume-ingestion.service.js'
-import resumeSearchService from '~/services/search/resume-search.service.js'
+import resumeIngestionService from '~/services/chat/ingestion/resume-ingestion.service.js'
+import resumeIndexService from '~/services/chat/indexing/resume-index.service.js'
 
 type CreateResumePayload = {
   title: string
@@ -139,7 +139,7 @@ class ResumeService {
 
   private async promoteDefaultResume(candidateId: ObjectId, resumeId: ObjectId) {
     await this.setDefaultResumeInDatabase(candidateId, resumeId)
-    await resumeSearchService.syncCandidateDefaultResume(String(candidateId), String(resumeId))
+    await resumeIndexService.syncCandidateDefaultResume(String(candidateId), String(resumeId))
   }
 
   private async setDefaultResumeInDatabase(candidateId: ObjectId, resumeId: ObjectId) {
@@ -166,7 +166,7 @@ class ResumeService {
       const resumeIndexing = await resumeIngestionService.ingestResume(resume)
 
       if (options.shouldSyncDefaultMetadata && resumeIndexing.status === 'completed') {
-        await resumeSearchService.syncCandidateDefaultResume(String(resume.candidate_id), String(resume._id))
+        await resumeIndexService.syncCandidateDefaultResume(String(resume.candidate_id), String(resume._id))
       }
     })().catch((error) => {
       console.error(
@@ -198,7 +198,7 @@ class ResumeService {
       candidate_id: candidateId
     })
 
-    await resumeSearchService.deleteResumeChunks(String(resume.candidate_id), String(resume._id))
+    await resumeIndexService.deleteResumeChunks(String(resume.candidate_id), String(resume._id))
 
     if (wasDefault) {
       const nextDefaultResume = await this.getLatestActiveResume(candidateId, resume._id)
@@ -206,7 +206,7 @@ class ResumeService {
       if (nextDefaultResume?._id) {
         await this.promoteDefaultResume(candidateId, nextDefaultResume._id)
       } else {
-        await resumeSearchService.clearCandidateDefaultChunks(String(candidateId))
+        await resumeIndexService.clearCandidateDefaultChunks(String(candidateId))
       }
     }
 

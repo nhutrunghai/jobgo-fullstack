@@ -1,4 +1,4 @@
-import { RetrievedChatJob, RetrievedResumeChunk } from '~/types/chat/chat.type'
+import { RetrievedChatJob, RetrievedResumeChunk } from '~/services/chat/types/chat.type'
 
 const buildResumeContext = (chunks: RetrievedResumeChunk[]) =>
   chunks.length > 0

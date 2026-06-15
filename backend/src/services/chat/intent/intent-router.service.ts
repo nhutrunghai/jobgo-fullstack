@@ -1,8 +1,8 @@
 import env from '~/configs/env.config'
 import { ChatIntent } from '~/constants/chat-intent'
-import { ChatIntentResult } from '~/types/chat/chat.type'
+import { ChatIntentResult } from '~/services/chat/types/chat.type'
 import { RagChatRuntimeConfig } from '~/services/admin/system-setting.service'
-import llmService from '~/services/ai/llm.service'
+import llmService from '~/services/chat/ai/llm.service'
 import { buildIntentRouterPrompt } from '../prompts/intent-router.prompt'
 import { intentRouterJsonSchema, intentRouterSchema } from '../schemas/intent-router.schema'
 

@@ -3,7 +3,7 @@ import databaseService from '~/configs/database.config'
 import ElasticsearchConfig from '~/configs/elasticsearch.config'
 import env from '~/configs/env.config'
 import Job from '~/models/schema/client/jobs.schema'
-import { generateLocalEmbedding } from '~/services/ai/embedding.service'
+import { generateLocalEmbedding } from '~/services/chat/ai/embedding.service'
 
 export interface PublicJobSearchDocument {
   job_id: string
@@ -24,7 +24,7 @@ export interface PublicJobSearchDocument {
   expired_at?: Date
 }
 
-class JobSearchService {
+class JobIndexService {
   buildSearchDocument(job: Job): PublicJobSearchDocument {
     const title = job.title?.trim() || ''
     const description = job.description?.trim() || ''
@@ -75,6 +75,6 @@ class JobSearchService {
   }
 }
 
-const jobSearchService = new JobSearchService()
-export default jobSearchService
+const jobIndexService = new JobIndexService()
+export default jobIndexService
 

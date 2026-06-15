@@ -1,9 +1,9 @@
 import ElasticsearchConfig from '~/configs/elasticsearch.config'
 import env from '~/configs/env.config'
 import { ResumeStatus } from '~/constants/enums'
-import { RetrievedResumeChunk } from '~/types/chat/chat.type'
+import { RetrievedResumeChunk } from '~/services/chat/types/chat.type'
 import Resume from '~/models/schema/client/resumes.schema'
-import { generateOpenAiEmbedding } from '~/services/ai/embedding.service'
+import { generateOpenAiEmbedding } from '~/services/chat/ai/embedding.service'
 
 type ResumeChunkDocument = {
   resume_id: string

@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config.js'
 import { JobModerationStatus, JobStatus } from '~/constants/enums.js'
-import jobSearchService from '~/services/search/job-search.service.js'
+import jobIndexService from '~/services/chat/indexing/job-index.service.js'
 
 type AdminJobListItem = {
   _id: ObjectId
@@ -183,7 +183,7 @@ class AdminJobService {
           )
 
     if (updatedJob?._id) {
-      await jobSearchService.upsertJobDocument(updatedJob._id)
+      await jobIndexService.upsertJobDocument(updatedJob._id)
     }
 
     return updatedJob

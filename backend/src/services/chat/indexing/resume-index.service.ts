@@ -1,7 +1,7 @@
 import ElasticsearchConfig from '~/configs/elasticsearch.config'
 import env from '~/configs/env.config'
 import { ResumeStatus } from '~/constants/enums'
-import { OPENAI_EMBEDDING_MODEL_NAME, generateOpenAiEmbedding } from '~/services/ai/embedding.service'
+import { OPENAI_EMBEDDING_MODEL_NAME, generateOpenAiEmbedding } from '~/services/chat/ai/embedding.service'
 
 type ResumeChunkMetadata = {
   status?: ResumeStatus
@@ -22,7 +22,7 @@ export type ResumeChunkInput = {
   resume_file_key?: string
 }
 
-class ResumeSearchService {
+class ResumeIndexService {
   private async ignoreMissingIndex<T>(operation: () => Promise<T>): Promise<T | null> {
     try {
       return await operation()
@@ -160,5 +160,5 @@ class ResumeSearchService {
   }
 }
 
-const resumeSearchService = new ResumeSearchService()
-export default resumeSearchService
+const resumeIndexService = new ResumeIndexService()
+export default resumeIndexService

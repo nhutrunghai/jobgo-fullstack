@@ -9,7 +9,7 @@ import {
   ChatSessionSummary,
   ChatSessionTurnRole,
   ChatSource
-} from '~/types/chat/chat.type'
+} from '~/services/chat/types/chat.type'
 import ChatSession from '~/models/schema/client/chatSessions.schema'
 import { StatusCodes } from 'http-status-codes'
 

@@ -1,4 +1,4 @@
-import { RetrievedResumeChunk } from '~/types/chat/chat.type'
+import { RetrievedResumeChunk } from '~/services/chat/types/chat.type'
 
 export const buildCvReviewAnswerPrompt = ({
   message,

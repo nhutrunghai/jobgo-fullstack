@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb'
 import databaseService from '~/configs/database.config'
 import { JobModerationStatus, JobStatus } from '~/constants/enums'
-import { RetrievedChatJob } from '~/types/chat/chat.type'
+import { RetrievedChatJob } from '~/services/chat/types/chat.type'
 import jobsService from '~/services/client/job.service'
 
 class JobChatRetrievalService {

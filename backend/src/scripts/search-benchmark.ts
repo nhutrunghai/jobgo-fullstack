@@ -6,8 +6,8 @@ import ElasticsearchConfig from '~/configs/elasticsearch.config'
 import env from '~/configs/env.config'
 import { JobLevel, JobStatus, JobType } from '~/constants/enums'
 import Job from '~/models/schema/client/jobs.schema'
-import { generateLocalEmbedding } from '~/services/ai/embedding.service'
-import jobSearchService from '~/services/search/job-search.service'
+import { generateLocalEmbedding } from '~/services/chat/ai/embedding.service'
+import jobIndexService from '~/services/chat/indexing/job-index.service'
 
 type SearchHit = {
   job_id: string
@@ -295,7 +295,7 @@ const main = async () => {
     createdJobIds.push(...Object.values(insertResult.insertedIds))
 
     for (const jobId of createdJobIds) {
-      await jobSearchService.upsertJobDocument(jobId)
+      await jobIndexService.upsertJobDocument(jobId)
     }
 
     await ElasticsearchConfig.getInstance().indices.refresh({
