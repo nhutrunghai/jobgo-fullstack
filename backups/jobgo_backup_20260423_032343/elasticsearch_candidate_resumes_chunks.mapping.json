@@ -1,0 +1,56 @@
+﻿{
+    "mappings":  {
+                     "properties":  {
+                                        "candidate_id":  {
+                                                             "type":  "keyword"
+                                                         },
+                                        "chunk_id":  {
+                                                         "type":  "keyword"
+                                                     },
+                                        "chunk_index":  {
+                                                            "type":  "integer"
+                                                        },
+                                        "created_at":  {
+                                                           "type":  "date"
+                                                       },
+                                        "embedding":  {
+                                                          "type":  "dense_vector",
+                                                          "dims":  1536,
+                                                          "index":  true,
+                                                          "similarity":  "cosine"
+                                                      },
+                                        "embedding_model":  {
+                                                                "type":  "keyword"
+                                                            },
+                                        "is_default":  {
+                                                           "type":  "boolean"
+                                                       },
+                                        "resume_file_key":  {
+                                                                "type":  "keyword",
+                                                                "index":  false
+                                                            },
+                                        "resume_id":  {
+                                                          "type":  "keyword"
+                                                      },
+                                        "section":  {
+                                                        "type":  "keyword"
+                                                    },
+                                        "source_url":  {
+                                                           "type":  "keyword",
+                                                           "index":  false
+                                                       },
+                                        "status":  {
+                                                       "type":  "keyword"
+                                                   },
+                                        "text":  {
+                                                     "type":  "text"
+                                                 },
+                                        "title":  {
+                                                      "type":  "text"
+                                                  },
+                                        "updated_at":  {
+                                                           "type":  "date"
+                                                       }
+                                    }
+                 }
+}

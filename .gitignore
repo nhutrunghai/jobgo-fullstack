@@ -3,7 +3,6 @@ embedding-api/.venv_local/
 embedding-api/.cache/
 embedding-api/.models/
 embedding-api/__pycache__/
-backups/
 
 # Frontend
 frontend/node_modules/

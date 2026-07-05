@@ -1,0 +1,19 @@
+﻿{
+    "index":  {
+                  "routing":  {
+                                  "allocation":  {
+                                                     "include":  {
+                                                                     "_tier_preference":  "data_content"
+                                                                 }
+                                                 }
+                              },
+                  "number_of_shards":  "1",
+                  "provided_name":  "candidate_resumes_chunks",
+                  "creation_date":  "1776584670222",
+                  "number_of_replicas":  "0",
+                  "uuid":  "B3oq_8URR4CMdNyA3f2syA",
+                  "version":  {
+                                  "created":  "8500003"
+                              }
+              }
+}
