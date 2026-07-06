@@ -465,7 +465,7 @@ function BlockedReasonModal({ jobTitle, reason, isLoading, onClose }) {
       <div className="w-full max-w-xl overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_30px_80px_-40px_rgba(15,23,42,0.45)]">
         <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-5 py-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Ly do admin chan</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Lý do admin chặn</p>
             <h3 className="mt-1 text-xl font-extrabold tracking-tight text-slate-900">{jobTitle}</h3>
           </div>
           <button
@@ -480,7 +480,7 @@ function BlockedReasonModal({ jobTitle, reason, isLoading, onClose }) {
         <div className="px-5 py-4">
           {isLoading ? (
             <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-6 text-sm font-medium text-slate-500">
-              Dang tai ly do chan...
+              Đang tải lý do chặn...
             </div>
           ) : (
             <div className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-4 text-sm font-semibold leading-6 text-rose-700">
@@ -754,41 +754,39 @@ export default function EmployerJobList() {
       reason: '',
       loading: true,
     })
-
     try {
       const response = await getCompanyJob(job.backendId || job.id)
-      const blockedReason = response?.data?.blocked_reason || ''
-
-      if (!blockedReason) {
-        setReasonModal({ open: false, jobTitle: '', reason: '', loading: false })
-        setToast({
-          type: 'info',
-          message: 'Backend employer API hien chua tra ly do chan cho job nay.',
-        })
-        return
-      }
+      const blockedReason =
+        response?.data?.blocked_reason ||
+        response?.blocked_reason ||
+        response?.data?.job?.blocked_reason ||
+        ''
 
       setReasonModal({
         open: true,
         jobTitle: job.title,
-        reason: blockedReason,
+        reason: blockedReason || 'Admin chưa nhập lý do chặn cho job này.',
         loading: false,
       })
-      setJobs((prev) =>
-        prev.map((item) =>
-          item.id === job.id
-            ? {
-                ...item,
-                blockedReason,
-              }
-            : item,
-        ),
-      )
-    } catch (loadError) {
-      setReasonModal({ open: false, jobTitle: '', reason: '', loading: false })
-      setToast({
-        type: 'error',
-        message: loadError.message || 'Khong the tai ly do admin chan.',
+
+      if (blockedReason) {
+        setJobs((prev) =>
+          prev.map((item) =>
+            item.id === job.id
+              ? {
+                  ...item,
+                  blockedReason,
+                }
+              : item,
+          ),
+        )
+      }
+    } catch {
+      setReasonModal({
+        open: true,
+        jobTitle: job.title,
+        reason: 'Không tải được lý do từ backend. Admin có thể chưa nhập lý do chặn cho job này.',
+        loading: false,
       })
     }
   }
