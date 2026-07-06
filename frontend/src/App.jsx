@@ -416,7 +416,7 @@ export default function App() {
           </button>
         </div>
 
-        <section className="mx-0 mb-6 animate-fade-up lg:mx-[calc(50%-50vw+5rem)] lg:mb-10">
+        <section className="mx-auto mb-6 max-w-[1360px] animate-fade-up lg:mb-10">
           <div className="soft-radius relative flex h-[220px] items-center overflow-hidden bg-gradient-to-r from-[#20c3d0] via-[#2489d2] to-[#1e58b1] shadow-lg md:h-[280px]">
             <div className="z-10 w-full px-5 text-left text-white md:w-[72%] md:px-14">
               <h1 className="typewriter-title mb-2 text-[32px] font-black leading-tight tracking-tight md:text-[56px]" aria-label={heroTitle}>

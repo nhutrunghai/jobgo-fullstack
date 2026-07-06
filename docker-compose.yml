@@ -25,7 +25,7 @@ services:
       REDIS_PORT: 6379
       ELASTICSEARCH_URL: http://elasticsearch:9200
       EMBEDDING_API_URL: http://embedding-api:8000
-      ALLOWED_ORIGINS: http://nhutrunghai.id.vn,http://www.nhutrunghai.id.vn,https://nhutrunghai.id.vn,https://www.nhutrunghai.id.vn
+      ALLOWED_ORIGINS: http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://127.0.0.1:8080,http://localhost:4001,http://127.0.0.1:4001,http://nhutrunghai.id.vn,http://www.nhutrunghai.id.vn,https://nhutrunghai.id.vn,https://www.nhutrunghai.id.vn
       FRONTEND_URL: https://nhutrunghai.id.vn
     depends_on:
       mongo:
