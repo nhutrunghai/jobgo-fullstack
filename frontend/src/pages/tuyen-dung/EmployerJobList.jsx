@@ -177,7 +177,7 @@ function MetaBlock({ label, value }) {
         <span className={`material-symbols-outlined flex h-6 w-6 items-center justify-center rounded-md text-[15px] ${tone}`}>
           {label === 'Ngày đăng' ? 'calendar_month' : label === 'Hạn chót' ? 'event_busy' : 'group'}
         </span>
-        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">{label}</p>
+        <p className="text-[12px] font-semibold text-slate-500">{label}</p>
       </div>
       <p className="mt-1 text-[12px] font-semibold text-slate-700">{value}</p>
     </div>
@@ -201,7 +201,7 @@ function CompactMetaBlock({ label, value, order }) {
   return (
     <div className="rounded-lg border border-slate-200/80 bg-slate-50 px-3 py-2.5">
       <div className="flex items-center justify-between gap-2">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">{label}</p>
+        <p className="text-[12px] font-semibold text-slate-500">{label}</p>
         <span className="text-[11px] font-semibold text-slate-300">{order}</span>
       </div>
       <p className="mt-1.5 text-[12px] font-semibold leading-5 text-slate-700">{value}</p>
@@ -354,15 +354,15 @@ function PromotionPurchaseModal({ job, plans, isLoadingPlans, submitting, onClos
             ) : selectedPlan ? (
               <div className="mt-4 space-y-3">
                 <div className="rounded-lg border border-slate-200 bg-white px-4 py-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">Loại gói</p>
+                  <p className="text-[12px] font-semibold text-slate-500">Loại gói</p>
                   <p className="mt-1 text-sm font-semibold text-slate-800">{mapPromotionTypeLabel(selectedPlan.type)}</p>
                 </div>
                 <div className="rounded-lg border border-slate-200 bg-white px-4 py-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">Đơn giá mỗi ngày</p>
+                  <p className="text-[12px] font-semibold text-slate-500">Đơn giá mỗi ngày</p>
                   <p className="mt-1 text-sm font-semibold text-slate-800">{formatMoney(selectedPlan.daily_price, selectedPlan.currency)}</p>
                 </div>
                 <div className="rounded-lg border border-slate-200 bg-white px-4 py-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">Thời lượng hợp lệ</p>
+                  <p className="text-[12px] font-semibold text-slate-500">Thời lượng hợp lệ</p>
                   <p className="mt-1 text-sm font-semibold text-slate-800">{selectedPlan.min_duration_days} - {selectedPlan.max_duration_days} ngày</p>
                 </div>
                 <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3">
@@ -1010,12 +1010,12 @@ export default function EmployerJobList() {
                       </div>
 
                       {moderationState.isBlocked && (
-                        <div className="rounded-lg border border-rose-200 bg-white px-3 py-2.5 text-[12px] font-semibold leading-5 text-rose-700">
-                          {moderationState.description}
+                        <div className="flex flex-col gap-2 rounded-lg border border-rose-200 bg-white px-3 py-2.5 text-[12px] font-semibold leading-5 text-rose-700 sm:flex-row sm:items-center sm:justify-between">
+                          <span>{moderationState.description}</span>
                           <button
                             type="button"
                             onClick={() => handleOpenBlockedReason(job)}
-                            className="mt-2 inline-flex h-8 items-center justify-center rounded-lg border border-rose-200 bg-rose-50 px-3 text-[11px] font-bold text-rose-700 transition hover:bg-rose-100 sm:ml-2 sm:mt-0"
+                            className="inline-flex h-8 shrink-0 items-center justify-center rounded-lg border border-rose-200 bg-rose-50 px-3 text-[11px] font-bold text-rose-700 transition hover:bg-rose-100"
                           >
                             <span className="material-symbols-outlined mr-1 text-[14px]">info</span>
                             Xem lý do
@@ -1050,7 +1050,7 @@ export default function EmployerJobList() {
                             </div>
 
                             <div className="min-w-0">
-                              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">Hồ sơ gần nhất</p>
+                              <p className="text-[12px] font-semibold text-slate-500">Hồ sơ gần nhất</p>
                               <p className="mt-1 truncate text-[13px] font-semibold text-slate-700">
                                 {job.latestApplication ? job.latestApplication.name : 'Chưa có ứng viên'}
                               </p>
@@ -1101,7 +1101,7 @@ export default function EmployerJobList() {
                     <aside className="w-full xl:w-[220px]">
                       <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
                         <div className="flex items-center justify-between gap-3">
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">Cập nhật trạng thái</p>
+                          <p className="text-[12px] font-semibold text-slate-500">Cập nhật trạng thái</p>
                           {statusUpdatingId === job.id && <span className="text-[11px] font-medium text-blue-600">Đang lưu...</span>}
                         </div>
 
