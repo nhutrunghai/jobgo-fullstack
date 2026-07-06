@@ -68,7 +68,7 @@ export default function UploadedCvs() {
     const q = keyword.trim().toLowerCase()
     if (!q) return cvs
     return cvs.filter((item) =>
-      `${item.title} ${item.fileKey} ${item.fileType} ${getStatusLabel(item.status)}`.toLowerCase().includes(q),
+      `${item.title} ${item.fileType} ${getStatusLabel(item.status)}`.toLowerCase().includes(q),
     )
   }, [cvs, keyword])
 
@@ -262,11 +262,6 @@ export default function UploadedCvs() {
                           <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">Cập nhật</p>
                           <p className="mt-1 text-sm font-semibold text-slate-700">{formatDateTime(cv.updatedAt)}</p>
                         </div>
-                      </div>
-
-                      <div className="mt-4 rounded-lg border border-slate-100 bg-slate-50 px-3.5 py-3">
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">File key</p>
-                        <p className="mt-2 break-all text-[13px] leading-6 text-slate-600">{cv.fileKey || 'Không có dữ liệu'}</p>
                       </div>
                     </div>
 
@@ -501,3 +496,4 @@ export default function UploadedCvs() {
     </div>
   )
 }
+

@@ -22,7 +22,7 @@ export const createApp = async () => {
     app.use(morgan('dev'))
   }
   app.disable('etag')
-  // Xử lý no-cache cho các API request
+  // Xá»­ lÃ½ no-cache cho cÃ¡c API request
   app.use((req, res, next) => {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate')
     res.setHeader('Pragma', 'no-cache')
@@ -38,6 +38,12 @@ export const createApp = async () => {
     res.send('Hello World')
   })
   app.use(BASE_PATH, v1Router)
+  app.use(BASE_PATH, (req, res) => {
+    res.status(404).json({
+      status: 'fail',
+      message: 'Không tìm thấy tài nguyên yêu cầu.'
+    })
+  })
   app.use(globalErrorHandle)
   return app
 }

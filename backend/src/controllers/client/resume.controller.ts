@@ -4,6 +4,11 @@ import UserMessages from '~/constants/messages/index.js'
 import { CreateResumeRqType, ResumeIdParamType } from '~/types/http/request.type.js'
 import resumeService from '~/services/client/resume.service.js'
 
+const serializeResume = (resume: Record<string, unknown>) => {
+  const { resume_file_key: _resumeFileKey, ...publicResume } = resume
+  return publicResume
+}
+
 export const createResumeController = async (req: Request<any, any, CreateResumeRqType>, res: Response) => {
   const result = await resumeService.createResume(req.decodeToken?.userId as string, req.body)
 
@@ -11,7 +16,7 @@ export const createResumeController = async (req: Request<any, any, CreateResume
     status: 'success',
     message: UserMessages.RESUME_CREATED_SUCCESS,
     data: {
-      ...result.resume,
+      ...serializeResume(result.resume as unknown as Record<string, unknown>),
       _id: result.insertedId,
       resume_indexing: result.resume_indexing
     }
@@ -23,7 +28,7 @@ export const getMyResumesController = async (req: Request, res: Response) => {
 
   return res.status(StatusCodes.OK).json({
     status: 'success',
-    data: resumes
+    data: resumes.map((resume) => serializeResume(resume as Record<string, unknown>))
   })
 }
 
@@ -32,7 +37,7 @@ export const getResumeDetailController = async (req: Request<ResumeIdParamType>,
 
   return res.status(StatusCodes.OK).json({
     status: 'success',
-    data: resume
+    data: serializeResume(resume as Record<string, unknown>)
   })
 }
 
@@ -47,3 +52,4 @@ export const deleteResumeController = async (req: Request<ResumeIdParamType>, re
     }
   })
 }
+

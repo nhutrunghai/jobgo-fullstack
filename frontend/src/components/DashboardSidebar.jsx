@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { getUserNotificationUnreadCount, subscribeUnreadNotificationCount } from '../api/notificationService.js'
 import { getMyProfile } from '../api/userService.js'
 import UserAvatar from './UserAvatar.jsx'
@@ -92,7 +92,24 @@ const activeKeyAliases = {
   'employer-job-promotions': 'job-promotions',
 }
 
-function SidebarSections({ sections, normalizedActiveKey, onNavigateClose }) {
+const roleSwitchToastByPath = {
+  '/employer-dashboard': { type: 'success', message: 'Đã chuyển sang chế độ nhà tuyển dụng.' },
+  '/dashboard': { type: 'success', message: 'Đã chuyển sang chế độ người dùng.' },
+}
+
+function RoleSwitchOverlay({ message }) {
+  return (
+    <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-slate-950/45 backdrop-blur-[2px]">
+      <div className="flex min-w-[240px] flex-col items-center rounded-3xl border border-white/20 bg-white/95 px-8 py-7 text-center shadow-2xl">
+        <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-100 border-t-blue-600" />
+        <p className="text-sm font-extrabold text-slate-900">Đang chuyển chế độ</p>
+        <p className="mt-1 text-xs font-semibold text-slate-500">{message}</p>
+      </div>
+    </div>
+  )
+}
+
+function SidebarSections({ sections, normalizedActiveKey, onNavigateClose, onRoleSwitch }) {
   return (
     <>
       {sections.map((section) => (
@@ -109,11 +126,20 @@ function SidebarSections({ sections, normalizedActiveKey, onNavigateClose }) {
                   ? 'bg-emerald-50 font-bold text-emerald-500'
                   : 'font-semibold text-slate-500 hover:bg-slate-50'
 
+              const isRoleSwitch = item.key === 'switch-role'
+
               return (
                 <Link
                   key={item.key}
                   to={item.to}
-                  onClick={onNavigateClose}
+                  onClick={(event) => {
+                    if (isRoleSwitch) {
+                      event.preventDefault()
+                      onRoleSwitch?.(item)
+                      return
+                    }
+                    onNavigateClose?.()
+                  }}
                   state={
                     item.key === 'switch-role' && item.to === '/employer-dashboard'
                       ? { toast: { type: 'success', message: 'Đã chuyển sang chế độ nhà tuyển dụng.' } }
@@ -140,9 +166,11 @@ function SidebarSections({ sections, normalizedActiveKey, onNavigateClose }) {
 
 export default function DashboardSidebar({ activeKey }) {
   const { pathname } = useLocation()
+  const navigate = useNavigate()
   const [profile, setProfile] = useState(null)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
+  const [roleSwitchLoading, setRoleSwitchLoading] = useState(null)
 
   const isEmployerDashboard =
     pathname.startsWith('/employer-dashboard') ||
@@ -153,6 +181,16 @@ export default function DashboardSidebar({ activeKey }) {
   const normalizedActiveKey = activeKeyAliases[activeKey] || activeKey
   const displayName = profile?.fullName || profile?.username || 'Tài khoản'
   const displaySubtext = profile?.username ? `@${profile.username}` : isEmployerDashboard ? 'Nhà tuyển dụng' : 'Ứng viên'
+
+  const handleRoleSwitch = (item) => {
+    const toast = roleSwitchToastByPath[item.to]
+    setMobileOpen(false)
+    setRoleSwitchLoading(item.to === '/employer-dashboard' ? 'Vui lòng chờ trong giây lát...' : 'Đang quay về dashboard người dùng...')
+
+    window.setTimeout(() => {
+      navigate(item.to, { state: { toast } })
+    }, 750)
+  }
 
   useEffect(() => {
     let mounted = true
@@ -268,7 +306,7 @@ export default function DashboardSidebar({ activeKey }) {
             </div>
 
             <nav className="flex-1 space-y-4 overflow-y-auto pr-1">
-              <SidebarSections sections={sections} normalizedActiveKey={normalizedActiveKey} onNavigateClose={() => setMobileOpen(false)} />
+              <SidebarSections sections={sections} normalizedActiveKey={normalizedActiveKey} onNavigateClose={() => setMobileOpen(false)} onRoleSwitch={handleRoleSwitch} />
             </nav>
 
             <div className="mt-4 rounded-2xl border border-slate-100 bg-slate-50 px-3 py-3 shadow-sm">
@@ -300,7 +338,7 @@ export default function DashboardSidebar({ activeKey }) {
         </div>
 
         <nav className="flex-1 space-y-4 overflow-y-auto pr-1">
-          <SidebarSections sections={sections} normalizedActiveKey={normalizedActiveKey} />
+          <SidebarSections sections={sections} normalizedActiveKey={normalizedActiveKey} onRoleSwitch={handleRoleSwitch} />
         </nav>
 
         <div className="mt-4 rounded-2xl border border-slate-100 bg-slate-50 px-3 py-3 shadow-sm">
@@ -313,6 +351,7 @@ export default function DashboardSidebar({ activeKey }) {
           </div>
         </div>
       </aside>
+      {roleSwitchLoading ? <RoleSwitchOverlay message={roleSwitchLoading} /> : null}
     </>
   )
 }

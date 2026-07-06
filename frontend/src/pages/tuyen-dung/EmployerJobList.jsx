@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Toast from '../../components/Toast.jsx'
 import DashboardSidebar from '../../components/DashboardSidebar.jsx'
@@ -886,7 +886,7 @@ export default function EmployerJobList() {
           </section>
 
           <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,1.4fr)_220px_160px]">
+            <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,1.4fr)_220px_280px]">
               <label className="relative block">
                 <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
                 <input
@@ -919,15 +919,15 @@ export default function EmployerJobList() {
                 <span className="material-symbols-outlined pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">expand_more</span>
               </div>
 
-              <label className="flex h-11 items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-600">
-                <span>Hiển thị</span>
+              <label className="flex h-11 items-center justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-600">
+                <span className="shrink-0 whitespace-nowrap">Hiển thị</span>
                 <select
                   value={pageSize}
                   onChange={(event) => {
                     setPageSize(Number(event.target.value))
                     setCurrentPage(1)
                   }}
-                  className="h-full min-w-0 flex-1 bg-transparent text-right text-sm font-semibold text-slate-700 outline-none"
+                  className="h-full w-[170px] shrink-0 bg-transparent px-2 text-left text-sm font-semibold text-slate-700 outline-none"
                 >
                   {pageSizeOptions.map((option) => (
                     <option key={option} value={option}>
@@ -1018,7 +1018,7 @@ export default function EmployerJobList() {
                             className="mt-2 inline-flex h-8 items-center justify-center rounded-lg border border-rose-200 bg-rose-50 px-3 text-[11px] font-bold text-rose-700 transition hover:bg-rose-100 sm:ml-2 sm:mt-0"
                           >
                             <span className="material-symbols-outlined mr-1 text-[14px]">info</span>
-                            Xem ly do
+                            Xem lý do
                           </button>
                         </div>
                       )}

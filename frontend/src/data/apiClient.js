@@ -1,5 +1,6 @@
 import { refreshAccessToken } from '../api/tokenRefresh.js'
 import { genUploader } from 'uploadthing/client'
+import { repairText } from '../utils/textRepair.js'
 import { buildApiUrl, clearStoredAuthSession, createJsonHeaders, getAccessToken, getApiOrigin, getRefreshToken } from '../config/api'
 
 const FAVORITE_STORAGE_KEY = 'favorite_job_ids'
@@ -85,7 +86,9 @@ async function requestJson(path, options = {}) {
     }
   }
 
-  const payload = await res.json().catch(() => null)
+  const contentType = res.headers.get('Content-Type') || ''
+  const isJsonResponse = contentType.includes('application/json')
+  const payload = isJsonResponse ? await res.json().catch(() => null) : null
 
   if (!res.ok) {
     const validationMessage = Array.isArray(payload?.error)
@@ -94,11 +97,15 @@ async function requestJson(path, options = {}) {
           .filter(Boolean)
           .join('. ')
       : ''
-    const error = new Error(validationMessage || payload?.message || `Request failed: ${res.status}`)
+    const error = new Error(validationMessage || payload?.message || 'Khong the tai du lieu luc nay. Vui long thu lai sau.')
     error.status = res.status
     error.payload = payload
     throw error
   }
+
+    if (!isJsonResponse) {
+      throw new Error('Khong the tai du lieu luc nay. Vui long thu lai sau.')
+    }
 
     if (cacheable) {
       jsonGetCache.set(cacheKey, {
@@ -124,7 +131,7 @@ async function requestJson(path, options = {}) {
 }
 
 async function loadMockJobs() {
-  mockJobsPromise ??= fetch('/api/jobs.json').then((res) => res.json())
+  mockJobsPromise ??= fetch('/api/jobs.json').then((res) => (res.ok ? res.json() : { jobDetails: [] })).catch(() => ({ jobDetails: [] }))
   return mockJobsPromise
 }
 
@@ -139,10 +146,10 @@ async function loadMockProfileEdit() {
 }
 
 function formatSalary(salary) {
-  if (!salary || typeof salary !== 'object') return 'Thỏa thuận'
-  if (salary.is_negotiable && salary.min == null && salary.max == null) return 'Thỏa thuận'
+  if (!salary || typeof salary !== 'object') return 'Th\u1ecfa thu\u1eadn'
+  if (salary.is_negotiable && salary.min == null && salary.max == null) return 'Th\u1ecfa thu\u1eadn'
 
-  const unit = salary.currency === 'USD' ? 'USD' : 'VNĐ'
+  const unit = salary.currency === 'USD' ? 'USD' : 'VN\u0110'
   const formatAmount = (value) => {
     if (typeof value !== 'number') return null
     if (salary.currency === 'USD') return value.toLocaleString('en-US')
@@ -153,9 +160,9 @@ function formatSalary(salary) {
   const max = formatAmount(salary.max)
 
   if (min && max) return `${min} - ${max} ${unit}`
-  if (min) return `Từ ${min} ${unit}`
-  if (max) return `Đến ${max} ${unit}`
-  return 'Thỏa thuận'
+  if (min) return `T\u1eeb ${min} ${unit}`
+  if (max) return `\u0110\u1ebfn ${max} ${unit}`
+  return 'Th\u1ecfa thu\u1eadn'
 }
 
 function normalizeObjectId(value) {
@@ -180,20 +187,20 @@ function getJobApplyId(job) {
 }
 
 function formatDate(value) {
-  if (!value) return 'Đang cập nhật'
+  if (!value) return '\u0110ang c\u1eadp nh\u1eadt'
   const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return 'Đang cập nhật'
+  if (Number.isNaN(date.getTime())) return '\u0110ang c\u1eadp nh\u1eadt'
   return date.toLocaleDateString('vi-VN')
 }
 
 function formatEmployerRelativeTime(value) {
-  if (!value) return 'Mới đăng'
+  if (!value) return 'M\u1edbi \u0111\u0103ng'
   const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return 'Mới đăng'
+  if (Number.isNaN(date.getTime())) return 'M\u1edbi \u0111\u0103ng'
   const diffDays = Math.max(0, Math.floor((Date.now() - date.getTime()) / 86400000))
-  if (diffDays === 0) return 'Hôm nay'
-  if (diffDays === 1) return '1 ngày trước'
-  return `${diffDays} ngày trước`
+  if (diffDays === 0) return 'H\u00f4m nay'
+  if (diffDays === 1) return '1 ng\u00e0y tr\u01b0\u1edbc'
+  return `${diffDays} ng\u00e0y tr\u01b0\u1edbc`
 }
 
 function splitTextList(value) {
@@ -207,157 +214,130 @@ function splitTextList(value) {
 
 function mapApplicationStatus(status) {
   switch (status) {
-    case 'submitted':
-      return 'Chờ duyệt'
+    case 'submitted': return 'Ch\u1edd duy\u1ec7t'
     case 'reviewing':
-      return 'Đang xem xét'
+    case 'interviewing': return '\u0110ang xem x\u00e9t'
     case 'shortlisted':
-    case 'hired':
-      return 'Chấp nhận'
-    case 'rejected':
-      return 'Từ chối'
-    case 'interviewing':
-      return 'Đang xem xét'
-    case 'withdrawn':
-      return 'Đã rút'
-    default:
-      return 'Đang xem xét'
+    case 'hired': return 'Ch\u1ea5p nh\u1eadn'
+    case 'rejected': return 'T\u1eeb ch\u1ed1i'
+    case 'withdrawn': return '\u0110\u00e3 r\u00fat'
+    default: return '\u0110ang xem x\u00e9t'
   }
 }
 
 function mapJobLifecycleStatus(status) {
   switch (status) {
-    case 'open':
-      return 'Đang mở'
-    case 'paused':
-      return 'Tạm dừng'
-    case 'closed':
-      return 'Đã đóng'
-    case 'expired':
-      return 'Hết hạn'
-    case 'draft':
-      return 'Bản nháp'
-    default:
-      return 'Đang mở'
+    case 'open': return '\u0110ang m\u1edf'
+    case 'paused': return 'T\u1ea1m d\u1eebng'
+    case 'closed': return '\u0110\u00e3 \u0111\u00f3ng'
+    case 'expired': return 'H\u1ebft h\u1ea1n'
+    case 'draft': return 'B\u1ea3n nh\u00e1p'
+    default: return '\u0110ang m\u1edf'
   }
 }
 
 function mapJobType(value) {
   switch (value) {
     case 'full-time':
-    case 'full_time':
-      return 'Toàn thời gian'
+    case 'full_time': return 'To\u00e0n th\u1eddi gian'
     case 'part-time':
-    case 'part_time':
-      return 'Bán thời gian'
-    case 'internship':
-      return 'Thực tập'
-    case 'contract':
-      return 'Hợp đồng'
-    case 'remote':
-      return 'Remote'
-    case 'hybrid':
-      return 'Hybrid'
-    default:
-      return value || 'Đang cập nhật'
+    case 'part_time': return 'B\u00e1n th\u1eddi gian'
+    case 'internship': return 'Th\u1ef1c t\u1eadp'
+    case 'contract': return 'H\u1ee3p \u0111\u1ed3ng'
+    case 'remote': return 'Remote'
+    case 'hybrid': return 'Hybrid'
+    default: return value || '\u0110ang c\u1eadp nh\u1eadt'
   }
 }
 
 function mapLevel(value) {
   switch (value) {
-    case 'intern':
-      return 'Intern'
-    case 'fresher':
-      return 'Fresher'
-    case 'junior':
-      return 'Junior'
-    case 'middle':
-      return 'Middle'
-    case 'senior':
-      return 'Senior'
-    case 'lead':
-      return 'Lead'
-    default:
-      return value || 'Đang cập nhật'
+    case 'intern': return 'Intern'
+    case 'fresher': return 'Fresher'
+    case 'junior': return 'Junior'
+    case 'middle': return 'Middle'
+    case 'senior': return 'Senior'
+    case 'lead': return 'Lead'
+    default: return value || '\u0110ang c\u1eadp nh\u1eadt'
   }
 }
 
 function normalizePublicJob(job) {
   const company = job.company || {}
   const applicationStatus = job.my_application?.status || job.application_status || job.applied_status
-  const requirements = splitTextList(job.requirements)
-  const responsibilities = splitTextList(job.description)
-  const benefits = splitTextList(job.benefits)
+  const requirements = splitTextList(job.requirements).map(repairText)
+  const responsibilities = splitTextList(job.description).map(repairText)
+  const benefits = splitTextList(job.benefits).map(repairText)
   const backendId = normalizeObjectId(job._id || job.id)
 
   return {
     id: backendId || job.id,
     backendId,
     applyId: backendId,
-    title: job.title,
-    company: company.company_name || job.company_name || job.company || 'Đang cập nhật',
+    title: repairText(job.title),
+    company: repairText(company.company_name || job.company_name || job.company || '\u0110ang c\u1eadp nh\u1eadt'),
     avatar: company.logo || job.logo || job.avatar || 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=96&h=96&fit=crop',
     salary: formatSalary(job.salary),
-    location: job.location || company.address || 'Đang cập nhật',
+    location: repairText(job.location || company.address || '\u0110ang c\u1eadp nh\u1eadt'),
     status: applicationStatus ? mapApplicationStatus(applicationStatus) : mapJobLifecycleStatus(job.status),
     postedAt: formatRelativeTime(job.published_at),
     publishedAt: job.published_at,
     appliedAt: job.my_application?.applied_at || job.applied_at || '',
     updatedAt: job.my_application?.updated_at || job.updated_at || '',
-    skills: Array.isArray(job.skills) ? job.skills : [],
-    requirements: requirements[0] || responsibilities[0] || 'Đang cập nhật yêu cầu',
+    skills: Array.isArray(job.skills) ? job.skills.map(repairText) : [],
+    requirements: requirements[0] || responsibilities[0] || '\u0110ang c\u1eadp nh\u1eadt y\u00eau c\u1ea7u',
     deadline: formatDate(job.expired_at),
     experience: mapLevel(job.level),
     level: mapLevel(job.level),
-    openings: typeof job.quantity === 'number' ? `${String(job.quantity).padStart(2, '0')} người` : 'Đang cập nhật',
+    openings: typeof job.quantity === 'number' ? `${String(job.quantity).padStart(2, '0')} ng\u01b0\u1eddi` : '\u0110ang c\u1eadp nh\u1eadt',
     workMode: mapJobType(job.job_type),
-    summary: responsibilities[0] || company.description || 'Đang cập nhật',
-    tags: [...new Set([...(job.skills || []), ...(job.category || []), job.job_type, job.level].filter(Boolean))],
+    summary: responsibilities[0] || repairText(company.description) || '\u0110ang c\u1eadp nh\u1eadt',
+    tags: [...new Set([...(job.skills || []), ...(job.category || []), job.job_type, job.level].filter(Boolean).map(repairText))],
     responsibilities,
     requirementsList: requirements,
     benefits,
-    companyDescription: company.description || 'Đang cập nhật',
+    companyDescription: repairText(company.description || '\u0110ang c\u1eadp nh\u1eadt'),
     companyFacts: {
-      size: company.size || company.company_size || '',
+      size: repairText(company.size || company.company_size || ''),
       website: company.website || '',
-      address: company.address || '',
+      address: repairText(company.address || ''),
       verified: company.verified || false,
     },
   }
 }
 
 function normalizeJobDetail(job, company, myApplication) {
-  const requirements = splitTextList(job.requirements)
-  const responsibilities = splitTextList(job.description)
-  const benefits = splitTextList(job.benefits)
+  const requirements = splitTextList(job.requirements).map(repairText)
+  const responsibilities = splitTextList(job.description).map(repairText)
+  const benefits = splitTextList(job.benefits).map(repairText)
   const backendId = normalizeObjectId(job._id || job.id)
 
   return {
     id: backendId || job.id,
     backendId,
     applyId: backendId,
-    title: job.title,
-    company: company?.company_name || 'Đang cập nhật',
+    title: repairText(job.title),
+    company: repairText(company?.company_name || '\u0110ang c\u1eadp nh\u1eadt'),
     avatar: company?.logo || job.logo || '',
     salary: formatSalary(job.salary),
     deadline: formatDate(job.expired_at),
-    location: job.location || company?.address || 'Đang cập nhật',
+    location: repairText(job.location || company?.address || '\u0110ang c\u1eadp nh\u1eadt'),
     experience: mapLevel(job.level),
     level: mapLevel(job.level),
-    openings: typeof job.quantity === 'number' ? `${String(job.quantity).padStart(2, '0')} người` : 'Đang cập nhật',
+    openings: typeof job.quantity === 'number' ? `${String(job.quantity).padStart(2, '0')} ng\u01b0\u1eddi` : '\u0110ang c\u1eadp nh\u1eadt',
     workMode: mapJobType(job.job_type),
     status: myApplication?.status ? mapApplicationStatus(myApplication.status) : mapJobLifecycleStatus(job.status),
     postedAt: formatRelativeTime(job.published_at),
-    summary: responsibilities[0] || company?.description || 'Đang cập nhật',
-    tags: [...new Set([...(job.skills || []), ...(job.category || [])])],
+    summary: responsibilities[0] || repairText(company?.description) || '\u0110ang c\u1eadp nh\u1eadt',
+    tags: [...new Set([...(job.skills || []), ...(job.category || [])].map(repairText))],
     responsibilities,
     requirements,
     benefits,
-    companyDescription: company?.description || 'Đang cập nhật',
+    companyDescription: repairText(company?.description || '\u0110ang c\u1eadp nh\u1eadt'),
     companyFacts: {
-      size: company?.size || company?.company_size || '',
+      size: repairText(company?.size || company?.company_size || ''),
       website: company?.website || '',
-      address: company?.address || '',
+      address: repairText(company?.address || ''),
       verified: company?.verified || false,
     },
     companyInfo: company || {},
@@ -382,9 +362,9 @@ function getApplicationUpdatedAt(item) {
 }
 
 function getApplicationTitle(item) {
-  const jobTitle = item.job?.title || item.title || 'công việc'
+  const jobTitle = item.job?.title || item.title || 'cÃƒÂ´ng viÃ¡Â»â€¡c'
   const companyName = item.company?.company_name || item.job?.company?.company_name || item.company_name || ''
-  return companyName ? `${jobTitle} tại ${companyName}` : jobTitle
+  return companyName ? `${jobTitle} tÃ¡ÂºÂ¡i ${companyName}` : jobTitle
 }
 
 function mapApplicationActivity(item) {
@@ -395,44 +375,44 @@ function mapApplicationActivity(item) {
   switch (status) {
     case 'reviewing':
       return {
-        title: `Nhà tuyển dụng đang xem xét hồ sơ cho vị trí ${target}`,
+        title: `NhÃƒÂ  tuyÃ¡Â»Æ’n dÃ¡Â»Â¥ng Ã„â€˜ang xem xÃƒÂ©t hÃ¡Â»â€œ sÃ†Â¡ cho vÃ¡Â»â€¹ trÃƒÂ­ ${target}`,
         time: formatRelativeTime(updatedAt),
         tone: 'text-blue-600',
       }
     case 'shortlisted':
       return {
-        title: `Hồ sơ của bạn đã vào danh sách phù hợp cho vị trí ${target}`,
+        title: `HÃ¡Â»â€œ sÃ†Â¡ cÃ¡Â»Â§a bÃ¡ÂºÂ¡n Ã„â€˜ÃƒÂ£ vÃƒÂ o danh sÃƒÂ¡ch phÃƒÂ¹ hÃ¡Â»Â£p cho vÃ¡Â»â€¹ trÃƒÂ­ ${target}`,
         time: formatRelativeTime(updatedAt),
         tone: 'text-emerald-600',
       }
     case 'interviewing':
       return {
-        title: `Bạn đã được mời phỏng vấn cho vị trí ${target}`,
+        title: `BÃ¡ÂºÂ¡n Ã„â€˜ÃƒÂ£ Ã„â€˜Ã†Â°Ã¡Â»Â£c mÃ¡Â»Âi phÃ¡Â»Âng vÃ¡ÂºÂ¥n cho vÃ¡Â»â€¹ trÃƒÂ­ ${target}`,
         time: formatRelativeTime(updatedAt),
         tone: 'text-amber-600',
       }
     case 'hired':
       return {
-        title: `Bạn đã được nhận cho vị trí ${target}`,
+        title: `BÃ¡ÂºÂ¡n Ã„â€˜ÃƒÂ£ Ã„â€˜Ã†Â°Ã¡Â»Â£c nhÃ¡ÂºÂ­n cho vÃ¡Â»â€¹ trÃƒÂ­ ${target}`,
         time: formatRelativeTime(updatedAt),
         tone: 'text-emerald-600',
       }
     case 'rejected':
       return {
-        title: `Hồ sơ chưa phù hợp với vị trí ${target}`,
+        title: `HÃ¡Â»â€œ sÃ†Â¡ chÃ†Â°a phÃƒÂ¹ hÃ¡Â»Â£p vÃ¡Â»â€ºi vÃ¡Â»â€¹ trÃƒÂ­ ${target}`,
         time: formatRelativeTime(updatedAt),
         tone: 'text-rose-600',
       }
     case 'withdrawn':
       return {
-        title: `Bạn đã rút hồ sơ khỏi vị trí ${target}`,
+        title: `BÃ¡ÂºÂ¡n Ã„â€˜ÃƒÂ£ rÃƒÂºt hÃ¡Â»â€œ sÃ†Â¡ khÃ¡Â»Âi vÃ¡Â»â€¹ trÃƒÂ­ ${target}`,
         time: formatRelativeTime(updatedAt),
         tone: 'text-slate-500',
       }
     case 'submitted':
     default:
       return {
-        title: `Đã ứng tuyển vị trí ${target}`,
+        title: `Ã„ÂÃƒÂ£ Ã¡Â»Â©ng tuyÃ¡Â»Æ’n vÃ¡Â»â€¹ trÃƒÂ­ ${target}`,
         time: formatRelativeTime(updatedAt),
         tone: 'text-violet-600',
       }
@@ -619,8 +599,8 @@ export async function searchPublicJobs(queryOrParams) {
 export async function loadJobDetail(id) {
   try {
     const payload = await requestJson(`/jobs/${id}`, { auth: Boolean(getAccessToken()) })
-    const job = payload?.data?.job
-    const company = payload?.data?.company
+    const job = payload?.data?.job || payload?.data
+    const company = payload?.data?.company || job?.company
     const myApplication = payload?.data?.my_application
     if (job) {
       return normalizeJobDetail(job, company, myApplication)
@@ -657,8 +637,8 @@ export async function loadJobDetail(id) {
 
       if (backendId) {
         const detailPayload = await requestJson(`/jobs/${backendId}`, { auth: Boolean(getAccessToken()) })
-        const job = detailPayload?.data?.job
-        const company = detailPayload?.data?.company
+        const job = detailPayload?.data?.job || detailPayload?.data
+        const company = detailPayload?.data?.company || job?.company
         const myApplication = detailPayload?.data?.my_application
         if (job) {
           return normalizeJobDetail(job, company, myApplication)
@@ -804,7 +784,7 @@ function normalizeChatSessionSummary(item = {}) {
   return {
     id: String(item.session_id || item.id || ''),
     sessionId: String(item.session_id || item.id || ''),
-    title: String(item.title || 'Cuộc trò chuyện mới').trim() || 'Cuộc trò chuyện mới',
+    title: String(item.title || 'CuÃ¡Â»â„¢c trÃƒÂ² chuyÃ¡Â»â€¡n mÃ¡Â»â€ºi').trim() || 'CuÃ¡Â»â„¢c trÃƒÂ² chuyÃ¡Â»â€¡n mÃ¡Â»â€ºi',
     lastMessage: String(item.last_message || ''),
     intent: item.last_intent || '',
     createdAt: item.created_at || '',
@@ -955,21 +935,21 @@ export async function loadCandidateDashboardSnapshot() {
 }
 
 function formatRelativeTime(value) {
-  if (!value) return 'Vừa cập nhật'
+  if (!value) return 'VÃ¡Â»Â«a cÃ¡ÂºÂ­p nhÃ¡ÂºÂ­t'
   const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return 'Vừa cập nhật'
+  if (Number.isNaN(date.getTime())) return 'VÃ¡Â»Â«a cÃ¡ÂºÂ­p nhÃ¡ÂºÂ­t'
 
   const diffMs = Date.now() - date.getTime()
   const diffMinutes = Math.max(0, Math.floor(diffMs / 60000))
-  if (diffMinutes < 1) return 'Vừa xong'
-  if (diffMinutes < 60) return `${diffMinutes} phút trước`
+  if (diffMinutes < 1) return 'VÃ¡Â»Â«a xong'
+  if (diffMinutes < 60) return `${diffMinutes} phÃƒÂºt trÃ†Â°Ã¡Â»â€ºc`
 
   const diffHours = Math.floor(diffMinutes / 60)
-  if (diffHours < 24) return `${diffHours} giờ trước`
+  if (diffHours < 24) return `${diffHours} giÃ¡Â»Â trÃ†Â°Ã¡Â»â€ºc`
 
   const diffDays = Math.floor(diffHours / 24)
-  if (diffDays === 1) return 'Hôm qua'
-  if (diffDays < 7) return `${diffDays} ngày trước`
+  if (diffDays === 1) return 'HÃƒÂ´m qua'
+  if (diffDays < 7) return `${diffDays} ngÃƒÂ y trÃ†Â°Ã¡Â»â€ºc`
 
   return date.toLocaleDateString('vi-VN')
 }
@@ -1001,46 +981,31 @@ function getEmployerApplicantInitials(name) {
 
 function mapEmployerApplicationStatus(status) {
   switch (status) {
-    case 'submitted':
-      return 'Mới nhận'
-    case 'reviewing':
-      return 'Đang xem'
-    case 'shortlisted':
-      return 'Tiềm năng'
-    case 'interviewing':
-      return 'Phỏng vấn'
-    case 'hired':
-      return 'Đã nhận'
-    case 'rejected':
-      return 'Từ chối'
-    case 'withdrawn':
-      return 'Đã rút'
-    default:
-      return 'Chưa rõ'
+    case 'submitted': return 'M\u1edbi nh\u1eadn'
+    case 'reviewing': return '\u0110ang xem'
+    case 'shortlisted': return 'Ti\u1ec1m n\u0103ng'
+    case 'interviewing': return 'Ph\u1ecfng v\u1ea5n'
+    case 'hired': return '\u0110\u00e3 nh\u1eadn'
+    case 'rejected': return 'T\u1eeb ch\u1ed1i'
+    case 'withdrawn': return '\u0110\u00e3 r\u00fat'
+    default: return 'Ch\u01b0a r\u00f5'
   }
 }
 
 function getEmployerApplicantTone(status) {
   switch (status) {
-    case 'hired':
-      return 'bg-emerald-100 text-emerald-700'
-    case 'interviewing':
-      return 'bg-amber-100 text-amber-700'
-    case 'shortlisted':
-      return 'bg-cyan-100 text-cyan-700'
-    case 'rejected':
-      return 'bg-rose-100 text-rose-700'
-    case 'withdrawn':
-      return 'bg-slate-200 text-slate-600'
-    case 'reviewing':
-      return 'bg-blue-100 text-blue-700'
-    default:
-      return 'bg-violet-100 text-violet-700'
+    case 'hired': return 'bg-emerald-100 text-emerald-700'
+    case 'interviewing': return 'bg-amber-100 text-amber-700'
+    case 'shortlisted': return 'bg-cyan-100 text-cyan-700'
+    case 'rejected': return 'bg-rose-100 text-rose-700'
+    case 'withdrawn': return 'bg-slate-200 text-slate-600'
+    case 'reviewing': return 'bg-blue-100 text-blue-700'
+    default: return 'bg-violet-100 text-violet-700'
   }
 }
 
 function normalizeEmployerApplicant(application = {}) {
-  const name = application?.candidate?.full_name || application?.resume_snapshot?.full_name || 'Ứng viên mới'
+  const name = repairText(application?.candidate?.full_name || application?.resume_snapshot?.full_name || '\u1ee8ng vi\u00ean m\u1edbi')
   const status = application?.status || 'submitted'
 
   return {
@@ -1063,18 +1028,12 @@ function normalizeEmployerApplicant(application = {}) {
 
 function mapEmployerJobStatus(status) {
   switch (status) {
-    case 'open':
-      return 'Đang hoạt động'
-    case 'draft':
-      return 'Bản nháp'
-    case 'closed':
-      return 'Đã đóng'
-    case 'paused':
-      return 'Tạm dừng'
-    case 'expired':
-      return 'Hết hạn'
-    default:
-      return 'Đang cập nhật'
+    case 'open': return '\u0110ang ho\u1ea1t \u0111\u1ed9ng'
+    case 'draft': return 'B\u1ea3n nh\u00e1p'
+    case 'closed': return '\u0110\u00e3 \u0111\u00f3ng'
+    case 'paused': return 'T\u1ea1m d\u1eebng'
+    case 'expired': return 'H\u1ebft h\u1ea1n'
+    default: return '\u0110ang c\u1eadp nh\u1eadt'
   }
 }
 
@@ -1083,23 +1042,23 @@ function normalizeEmployerJobListItem(job = {}) {
   return {
     id: jobId,
     backendId: jobId,
-    title: job.title || 'Tin tuyển dụng chưa đặt tên',
-    department: Array.isArray(job.category) && job.category.length ? job.category[0] : mapLevel(job.level),
+    title: repairText(job.title || 'Tin tuy\u1ec3n d\u1ee5ng ch\u01b0a \u0111\u1eb7t t\u00ean'),
+    department: repairText(Array.isArray(job.category) && job.category.length ? job.category[0] : mapLevel(job.level)),
     type: mapJobType(job.job_type),
     workMode: mapJobType(job.job_type),
-    location: job.location || 'Đang cập nhật',
+    location: repairText(job.location || '\u0110ang c\u1eadp nh\u1eadt'),
     postedAt: job.published_at || job.created_at || '',
     deadline: job.expired_at || '',
     status: mapEmployerJobStatus(job.status),
     rawStatus: job.status || '',
     moderationStatus: job.moderation_status || '',
-    blockedReason: job.blocked_reason || '',
+    blockedReason: repairText(job.blocked_reason || ''),
     blockedAt: job.blocked_at || '',
     level: mapLevel(job.level),
     applicants: [],
     applicantsCount: Number(job.applications_count || job.total_applications || 0),
     latestApplication: null,
-    packageType: 'Gói thường',
+    packageType: 'G\u00f3i th\u01b0\u1eddng',
   }
 }
 
@@ -1132,18 +1091,18 @@ function clearEmployerOverviewCache() {
 }
 
 function mapEmployerApplicationActivity(application, job) {
-  const candidateName = application?.resume_snapshot?.full_name || 'Ứng viên mới'
-  const jobTitle = job?.title || 'vị trí tuyển dụng'
+  const candidateName = application?.resume_snapshot?.full_name || 'Ã¡Â»Â¨ng viÃƒÂªn mÃ¡Â»â€ºi'
+  const jobTitle = job?.title || 'vÃ¡Â»â€¹ trÃƒÂ­ tuyÃ¡Â»Æ’n dÃ¡Â»Â¥ng'
   const status = application?.status || 'submitted'
   const statusText = {
-    submitted: 'đã nộp hồ sơ',
-    reviewing: 'đang được xem xét',
-    shortlisted: 'vào danh sách tiềm năng',
-    interviewing: 'đang phỏng vấn',
-    rejected: 'đã bị từ chối',
-    hired: 'đã được nhận',
-    withdrawn: 'đã rút hồ sơ',
-  }[status] || 'có cập nhật hồ sơ'
+    submitted: 'Ã„â€˜ÃƒÂ£ nÃ¡Â»â„¢p hÃ¡Â»â€œ sÃ†Â¡',
+    reviewing: 'Ã„â€˜ang Ã„â€˜Ã†Â°Ã¡Â»Â£c xem xÃƒÂ©t',
+    shortlisted: 'vÃƒÂ o danh sÃƒÂ¡ch tiÃ¡Â»Âm nÃ„Æ’ng',
+    interviewing: 'Ã„â€˜ang phÃ¡Â»Âng vÃ¡ÂºÂ¥n',
+    rejected: 'Ã„â€˜ÃƒÂ£ bÃ¡Â»â€¹ tÃ¡Â»Â« chÃ¡Â»â€˜i',
+    hired: 'Ã„â€˜ÃƒÂ£ Ã„â€˜Ã†Â°Ã¡Â»Â£c nhÃ¡ÂºÂ­n',
+    withdrawn: 'Ã„â€˜ÃƒÂ£ rÃƒÂºt hÃ¡Â»â€œ sÃ†Â¡',
+  }[status] || 'cÃƒÂ³ cÃ¡ÂºÂ­p nhÃ¡ÂºÂ­t hÃ¡Â»â€œ sÃ†Â¡'
 
   return {
     id: application?._id || `${job?._id || job?.id}-${candidateName}-${application?.updated_at || application?.applied_at}`,
@@ -1291,7 +1250,7 @@ export async function loadEmployerJobsList({ page = 1, limit = 5, status, keywor
 
 export async function updateEmployerJobStatus(jobId, status) {
   if (!jobId) {
-    throw new Error('Thiếu mã job.')
+    throw new Error('ThiÃ¡ÂºÂ¿u mÃƒÂ£ job.')
   }
 
   const payload = await requestJson(`/company/jobs/${encodeURIComponent(jobId)}/status`, {
@@ -1364,7 +1323,7 @@ export async function loadEmployerReceivedApplications({ status, keyword = '', p
         return {
           ...applicant,
           jobId,
-          jobTitle: job?.title || 'Tin tuyển dụng',
+          jobTitle: job?.title || 'Tin tuyÃ¡Â»Æ’n dÃ¡Â»Â¥ng',
           jobLocation: job?.location || '',
           jobType: mapJobType(job?.job_type),
           jobLevel: mapLevel(job?.level),
@@ -1405,7 +1364,7 @@ export async function loadEmployerReceivedApplications({ status, keyword = '', p
 
 export async function loadEmployerApplicationDetail(applicationId) {
   if (!applicationId) {
-    throw new Error('Thiếu mã hồ sơ ứng tuyển.')
+    throw new Error('ThiÃ¡ÂºÂ¿u mÃƒÂ£ hÃ¡Â»â€œ sÃ†Â¡ Ã¡Â»Â©ng tuyÃ¡Â»Æ’n.')
   }
 
   const payload = await requestJson(`/company/applications/${encodeURIComponent(applicationId)}`, { auth: true })
@@ -1427,7 +1386,7 @@ export async function loadEmployerApplicationDetail(applicationId) {
 
 export async function updateEmployerApplicationStatus(applicationId, status) {
   if (!applicationId) {
-    throw new Error('Thiếu mã hồ sơ ứng tuyển.')
+    throw new Error('ThiÃ¡ÂºÂ¿u mÃƒÂ£ hÃ¡Â»â€œ sÃ†Â¡ Ã¡Â»Â©ng tuyÃ¡Â»Æ’n.')
   }
 
   const payload = await requestJson(`/company/applications/${encodeURIComponent(applicationId)}/status`, {
@@ -1538,7 +1497,7 @@ export async function loadFavoriteIds() {
 export async function toggleFavoriteJob(jobId, shouldFavorite) {
   const token = getAccessToken()
   if (!token) {
-    throw new Error('Bạn cần đăng nhập để lưu công việc.')
+    throw new Error('BÃ¡ÂºÂ¡n cÃ¡ÂºÂ§n Ã„â€˜Ã„Æ’ng nhÃ¡ÂºÂ­p Ã„â€˜Ã¡Â»Æ’ lÃ†Â°u cÃƒÂ´ng viÃ¡Â»â€¡c.')
   }
 
   if (shouldFavorite) {
@@ -1558,15 +1517,14 @@ export async function loadUserUploadedCvs() {
     const items = Array.isArray(payload?.data) ? payload.data : []
     return items.map((item) => {
       const resumeId = normalizeObjectId(item._id || item.id || item.resume_id)
-      const fileSource = item.resume_file_key || item.cv_url || ''
+      const fileSource = item.cv_url || ''
       const extensionMatch = String(fileSource).match(/\.([a-z0-9]+)(?:[?#].*)?$/i)
       const fileType = extensionMatch?.[1]?.toUpperCase() || 'CV'
 
       return {
         id: resumeId,
-        title: item.title || 'CV chưa đặt tên',
+        title: item.title || 'CV chÃ†Â°a Ã„â€˜Ã¡ÂºÂ·t tÃƒÂªn',
         cvUrl: item.cv_url || '',
-        fileKey: item.resume_file_key || '',
         fileType,
         isDefault: Boolean(item.is_default),
         status: item.status || 'active',
@@ -1587,14 +1545,13 @@ export async function loadUserResumeDetail(resumeId) {
 
   const payload = await requestJson(`/user/resumes/${normalizedResumeId}`, { auth: true })
   const item = payload?.data || {}
-  const fileSource = item.resume_file_key || item.cv_url || ''
+  const fileSource = item.cv_url || ''
   const extensionMatch = String(fileSource).match(/\.([a-z0-9]+)(?:[?#].*)?$/i)
 
   return {
     id: normalizeObjectId(item._id || item.id || item.resume_id) || normalizedResumeId,
-    title: item.title || 'CV chưa đặt tên',
+    title: item.title || 'CV chÃ†Â°a Ã„â€˜Ã¡ÂºÂ·t tÃƒÂªn',
     cvUrl: item.cv_url || '',
-    fileKey: item.resume_file_key || '',
     fileType: extensionMatch?.[1]?.toUpperCase() || 'CV',
     isDefault: Boolean(item.is_default),
     status: item.status || 'active',
@@ -1610,15 +1567,15 @@ export async function deleteUserUploadedCv(cvId) {
 
 export async function uploadUserResume({ title, file, isDefault = false, onProgress } = {}) {
   if (!title?.trim()) {
-    throw new Error('Vui lòng nhập tên CV.')
+    throw new Error('Vui lÃƒÂ²ng nhÃ¡ÂºÂ­p tÃƒÂªn CV.')
   }
   if (!file) {
-    throw new Error('Vui lòng chọn file CV.')
+    throw new Error('Vui lÃƒÂ²ng chÃ¡Â»Ân file CV.')
   }
 
   const token = getAccessToken()
   if (!token) {
-    throw new Error('Bạn cần đăng nhập để upload CV.')
+    throw new Error('BÃ¡ÂºÂ¡n cÃ¡ÂºÂ§n Ã„â€˜Ã„Æ’ng nhÃ¡ÂºÂ­p Ã„â€˜Ã¡Â»Æ’ upload CV.')
   }
 
   const uploadedFiles = await uploadFiles('userResume', {
@@ -1638,7 +1595,7 @@ export async function uploadUserResume({ title, file, isDefault = false, onProgr
   const fileKey = uploadedFile?.key || uploadedFile?.serverData?.key
 
   if (!cvUrl || !fileKey) {
-    throw new Error('Upload CV thành công nhưng thiếu URL hoặc file key.')
+    throw new Error('Upload CV thÃƒÂ nh cÃƒÂ´ng nhÃ†Â°ng thiÃ¡ÂºÂ¿u URL hoÃ¡ÂºÂ·c file key.')
   }
 
   const response = await requestJson('/user/resumes', {
@@ -1662,7 +1619,6 @@ export async function uploadUserResume({ title, file, isDefault = false, onProgr
     id: resumeId,
     title: item.title || title.trim(),
     cvUrl: item.cv_url || cvUrl,
-    fileKey: item.resume_file_key || fileKey,
     fileType: file.name.split('.').pop()?.toUpperCase() || 'CV',
     isDefault: Boolean(item.is_default),
     status: item.status || 'active',
@@ -1676,3 +1632,6 @@ export async function loadEditableAppliedProfile(cvId) {
   const items = Array.isArray(mock?.data?.profiles) ? mock.data.profiles : []
   return items.find((item) => String(item.cv_id) === String(cvId)) || null
 }
+
+
+

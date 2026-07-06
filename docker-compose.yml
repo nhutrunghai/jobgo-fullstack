@@ -1,11 +1,11 @@
 services:
   frontend:
     build:
-      context: ./frontend_real
+      context: ./frontend
       args:
         VITE_API_BASE_URL: /api/v1
     ports:
-      - "80:80"
+      - "8080:80"
     depends_on:
       - backend
     restart: unless-stopped
@@ -14,7 +14,7 @@ services:
     build:
       context: ./backend
     ports:
-      - "4000:4000"
+      - "4001:4000"
     env_file:
       - ./backend/.env
     environment:
@@ -23,6 +23,7 @@ services:
       DB_URL: mongodb://mongo:27017/jobgo
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      REDIS_PASSWORD: 30122005
       ELASTICSEARCH_URL: http://elasticsearch:9200
       EMBEDDING_API_URL: http://embedding-api:8000
       ALLOWED_ORIGINS: http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://127.0.0.1:8080,http://localhost:4001,http://127.0.0.1:4001,http://nhutrunghai.id.vn,http://www.nhutrunghai.id.vn,https://nhutrunghai.id.vn,https://www.nhutrunghai.id.vn
@@ -41,9 +42,8 @@ services:
   embedding-api:
     build: ./embedding-api
     ports:
-      - "8000:8000"
+      - "8001:8000"
     environment:
-      MODEL_DIR: /app/.models/dangvantuan__vietnamese-document-embedding
       HF_HOME: /app/.cache/huggingface
       HF_MODULES_CACHE: /app/.cache/hf_modules
       TORCH_HOME: /app/.cache/torch
@@ -64,7 +64,7 @@ services:
   mongo:
     image: mongo:8.2
     ports:
-      - "27017:27017"
+      - "27019:27017"
     volumes:
       - mongo_data:/data/db
     healthcheck:
@@ -79,7 +79,7 @@ services:
     image: redis:7-alpine
     command: redis-server --appendonly yes --requirepass 30122005
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -97,7 +97,7 @@ services:
       xpack.security.enabled: "false"
       ES_JAVA_OPTS: -Xms512m -Xmx512m
     ports:
-      - "9200:9200"
+      - "9201:9200"
     volumes:
       - es_data:/usr/share/elasticsearch/data
     healthcheck:
@@ -111,7 +111,7 @@ services:
   kibana:
     image: docker.elastic.co/kibana/kibana:8.11.1
     ports:
-      - "5601:5601"
+      - "5602:5601"
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
     depends_on:
