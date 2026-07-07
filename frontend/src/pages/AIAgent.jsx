@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { getMyProfile } from '../api/userService.js'
 import UserAvatar from '../components/UserAvatar.jsx'
+import JobCategoryNavItem from '../components/JobCategoryNavItem.jsx'
 import { getAccessToken, getRefreshToken } from '../config/api.js'
 import {
   deleteChatSession,
@@ -853,14 +854,18 @@ export default function AIAgent() {
             </Link>
             <div className="hidden items-center gap-4 text-[13.5px] font-medium text-slate-600 lg:flex">
               {homeNav.map((item) => (
-                <Link
-                  key={item.label}
-                  className={`nav-link-animate flex items-center gap-1.5 ${item.path === '/ai-agent' ? 'font-semibold text-[#2b59ff]' : ''}`}
-                  to={item.path}
-                >
-                  <span className="material-symbols-outlined text-[17px]">{item.icon}</span>
-                  {item.label}
-                </Link>
+                item.path === '/search-jobs' ? (
+                  <JobCategoryNavItem key={item.label} item={item} active={item.path === '/ai-agent'} />
+                ) : (
+                  <Link
+                    key={item.label}
+                    className={`nav-link-animate flex items-center gap-1.5 ${item.path === '/ai-agent' ? 'font-semibold text-[#2b59ff]' : ''}`}
+                    to={item.path}
+                  >
+                    <span className="material-symbols-outlined text-[17px]">{item.icon}</span>
+                    {item.label}
+                  </Link>
+                )
               ))}
             </div>
           </div>

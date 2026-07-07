@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { getMyProfile } from '../api/userService.js'
 import Toast from '../components/Toast.jsx'
 import UserAvatar from '../components/UserAvatar.jsx'
+import JobCategoryNavItem from '../components/JobCategoryNavItem.jsx'
 import { getAccessToken, getRefreshToken } from '../config/api.js'
 import { applyToJob, loadJobDetail, loadOtherJobDetails, loadUserUploadedCvs, withdrawAppliedJob } from '../data/apiClient.js'
 
@@ -291,10 +292,14 @@ export default function JobDetail() {
             </Link>
             <div className="hidden items-center gap-4 text-[13.5px] font-medium text-slate-600 lg:flex">
               {homeNav.map((item) => (
-                <Link key={item.label} className="nav-link-animate flex items-center gap-1.5" to={item.path}>
-                  <span className="material-symbols-outlined text-[17px]">{item.icon}</span>
-                  {item.label}
-                </Link>
+                item.path === '/search-jobs' ? (
+                  <JobCategoryNavItem key={item.label} item={item} active />
+                ) : (
+                  <Link key={item.label} className="nav-link-animate flex items-center gap-1.5" to={item.path}>
+                    <span className="material-symbols-outlined text-[17px]">{item.icon}</span>
+                    {item.label}
+                  </Link>
+                )
               ))}
             </div>
           </div>

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { getMyProfile } from '../api/userService.js'
 import UserAvatar from '../components/UserAvatar.jsx'
+import JobCategoryNavItem from '../components/JobCategoryNavItem.jsx'
 import { getAccessToken, getRefreshToken } from '../config/api.js'
 import { loadPortalMock } from '../data/mockClient.js'
 
@@ -92,14 +93,18 @@ export default function Discussions() {
             </Link>
             <div className="hidden items-center gap-4 text-[13.5px] font-medium text-slate-600 lg:flex">
               {homeNav.map((item) => (
-                <Link
-                  key={item.label}
-                  className={`nav-link-animate flex items-center gap-1.5 ${item.path === '/discussions' ? 'font-semibold text-[#2b59ff]' : ''}`}
-                  to={item.path}
-                >
-                  <span className="material-symbols-outlined text-[17px]">{item.icon}</span>
-                  {item.label}
-                </Link>
+                item.path === '/search-jobs' ? (
+                  <JobCategoryNavItem key={item.label} item={item} active={item.path === '/discussions'} />
+                ) : (
+                  <Link
+                    key={item.label}
+                    className={`nav-link-animate flex items-center gap-1.5 ${item.path === '/discussions' ? 'font-semibold text-[#2b59ff]' : ''}`}
+                    to={item.path}
+                  >
+                    <span className="material-symbols-outlined text-[17px]">{item.icon}</span>
+                    {item.label}
+                  </Link>
+                )
               ))}
             </div>
           </div>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { getUserNotificationUnreadCount, subscribeUnreadNotificationCount } from './api/notificationService.js'
 import { getMyProfile } from './api/userService.js'
 import UserAvatar from './components/UserAvatar.jsx'
+import JobCategoryNavItem from './components/JobCategoryNavItem.jsx'
 import { loadFavoriteIds, loadFeaturedJobs, loadHomeMeta, loadLatestJobs, toggleFavoriteJob } from './data/apiClient.js'
 
 const AUTH_SESSION_KEYS = ['token', 'accessToken', 'refreshToken', 'isLoggedIn']
@@ -119,6 +120,7 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('favorite_job_ids', JSON.stringify(Array.from(favoriteSet)))
   }, [favoriteSet])
+
 
   useEffect(() => {
     let active = true
@@ -314,10 +316,14 @@ export default function App() {
             </Link>
             <div className="hidden items-center gap-4 text-[13.5px] font-medium text-slate-600 lg:flex">
               {homeNav.map((item) => (
-                <Link key={item.label} className="nav-link-animate flex items-center gap-1.5" to={item.path}>
-                  <span className="material-symbols-outlined text-[17px]">{item.icon}</span>
-                  {item.label}
-                </Link>
+                item.path === '/search-jobs' ? (
+                  <JobCategoryNavItem key={item.label} item={item} />
+                ) : (
+                  <Link key={item.label} className="nav-link-animate flex items-center gap-1.5" to={item.path}>
+                    <span className="material-symbols-outlined text-[17px]">{item.icon}</span>
+                    {item.label}
+                  </Link>
+                )
               ))}
             </div>
           </div>
