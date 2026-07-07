@@ -21,7 +21,7 @@ export type AdminJobDetail = {
   location: string
   job_type: Job['job_type']
   level: Job['level']
-  category: string[]
+  category_ids: ObjectId[]
   skills: string[]
   quantity: number
   status?: Job['status']
@@ -55,7 +55,7 @@ export type PublicJobDetail = {
     location: string
     job_type: Job['job_type']
     level: Job['level']
-    category: string[]
+    category_ids: ObjectId[]
     skills: string[]
     quantity: number
     expired_at: Date

@@ -25,6 +25,7 @@ const envSchema = z.object({
   DB_NAME: z.string().min(1, { message: 'DB_NAME không được rỗng' }),
   DB_USER_NAME: z.string().min(1, { message: 'DB_USER_NAME không được rỗng' }),
   DB_COMPANY_NAME: z.string().min(1, { message: 'DB_COMPANY_NAME không được rỗng' }),
+  DB_JOB_CATEGORY_NAME: z.string().min(1, { message: 'DB_JOB_CATEGORY_NAME kh?ng ???c r?ng' }).default('job_category'),
   DB_JOB_NAME: z.string().min(1, { message: 'DB_JOB_NAME không được rỗng' }),
   DB_JOB_PROMOTION_NAME: z.string().min(1, { message: 'DB_JOB_PROMOTION_NAME không được rỗng' }),
   DB_WALLET_NAME: z.string().min(1, { message: 'DB_WALLET_NAME không được rỗng' }),

@@ -5,6 +5,7 @@ import Company from '~/models/schema/client/companies.schema.js'
 import FavoriteJob from '~/models/schema/client/favoriteJobs.schema.js'
 import JobApplication from '~/models/schema/client/jobApplications.schema.js'
 import Job from '~/models/schema/client/jobs.schema.js'
+import JobCategory from '~/models/schema/client/job-categories.schema.js'
 import JobPromotion from '~/models/schema/client/jobPromotions.schema.js'
 import OtpCode from '~/models/schema/client/otpCodes.schema.js'
 import Resume from '~/models/schema/client/resumes.schema.js'
@@ -48,6 +49,10 @@ class DatabaseService {
 
   get jobs(): Collection<Job> {
     return this.db.collection(env.DB_JOB_NAME)
+  }
+
+  get jobCategories(): Collection<JobCategory> {
+    return this.db.collection(env.DB_JOB_CATEGORY_NAME)
   }
 
   get jobPromotions(): Collection<JobPromotion> {

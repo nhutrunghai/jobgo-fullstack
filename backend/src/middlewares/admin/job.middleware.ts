@@ -42,7 +42,7 @@ export const findAdminJobByIdOrThrow = async (
           location: 1,
           job_type: 1,
           level: 1,
-          category: 1,
+          category_ids: 1,
           skills: 1,
           quantity: 1,
           status: 1,

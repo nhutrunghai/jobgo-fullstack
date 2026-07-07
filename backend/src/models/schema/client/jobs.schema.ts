@@ -19,7 +19,7 @@ interface JobTypeSchema {
   location: string
   job_type: JobType
   level: JobLevel
-  category: string[]
+  category_ids: ObjectId[]
   skills: string[]
   quantity: number
   expired_at: Date
@@ -44,7 +44,7 @@ export default class Job {
   location: string
   job_type: JobType
   level: JobLevel
-  category: string[]
+  category_ids: ObjectId[]
   skills: string[]
   quantity: number
   expired_at: Date
@@ -75,7 +75,7 @@ export default class Job {
     this.location = job.location
     this.job_type = job.job_type
     this.level = job.level
-    this.category = job.category || []
+    this.category_ids = job.category_ids || []
     this.skills = job.skills || []
     this.quantity = job.quantity
     this.expired_at = job.expired_at

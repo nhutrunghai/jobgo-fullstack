@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { ObjectId } from 'mongodb'
 import { z } from 'zod'
 import { JobLevel, JobStatus, JobType } from '~/constants/enums'
 import UserMessages from '~/constants/messages/index'
@@ -51,16 +52,17 @@ const locationSchema = z
   .max(100, { message: UserMessages.JOB_LOCATION_MAX_LENGTH })
   .transform((value) => _.escape(value))
 
-const categorySchema = z
+const categoryIdsSchema = z
   .array(
     z
       .string({ message: UserMessages.JOB_CATEGORY_ITEM_NOT_STRING })
       .trim()
-      .min(1, { message: UserMessages.JOB_CATEGORY_ITEM_EMPTY })
-      .transform((value) => _.escape(value)),
+      .refine((value) => ObjectId.isValid(value), { message: UserMessages.JOB_CATEGORY_ITEM_INVALID }),
     { message: UserMessages.JOB_CATEGORY_NOT_ARRAY }
   )
   .min(1, { message: UserMessages.JOB_CATEGORY_MIN_LENGTH })
+  .max(5, { message: UserMessages.JOB_CATEGORY_MAX_LENGTH })
+  .transform((values) => [...new Set(values)].map((value) => new ObjectId(value)))
 
 const skillsSchema = z
   .array(
@@ -151,7 +153,7 @@ export const createJobValidator = z.object({
     job_type: jobTypeSchema,
     level: jobLevelSchema,
     status: createStatusSchema.optional(),
-    category: categorySchema,
+    category_ids: categoryIdsSchema,
     skills: skillsSchema,
     quantity: quantitySchema,
     expired_at: expiredAtSchema
@@ -169,7 +171,7 @@ export const updateJobValidator = z.object({
       location: locationSchema.optional(),
       job_type: jobTypeSchema.optional(),
       level: jobLevelSchema.optional(),
-      category: categorySchema.optional(),
+      category_ids: categoryIdsSchema.optional(),
       skills: skillsSchema.optional(),
       quantity: quantitySchema.optional(),
       expired_at: expiredAtSchema.optional()

@@ -71,7 +71,7 @@ export default function EmployerJobPromotions() {
         }))
       })
       .catch((error) => {
-        if (active) setToast({ type: 'error', message: error.message || 'Không thể tải danh sách đẩy tin.' })
+        if (active) setToast({ type: 'error', message: error.message || 'Không thể tải danh sách quảng cáo.' })
       })
       .finally(() => {
         if (active) setLoading(false)
@@ -106,8 +106,8 @@ export default function EmployerJobPromotions() {
           <div className="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
             <div className="min-w-0">
               <p className="text-sm font-semibold text-blue-600">Quản lý tuyển dụng</p>
-              <h1 className="mt-1 text-[28px] font-extrabold tracking-tight text-slate-950 sm:text-[32px]">Đẩy tin tuyển dụng</h1>
-              <p className="mt-1.5 text-sm text-slate-500">Theo dõi các gói đẩy tin đã mua, thời gian hiển thị và trạng thái từng job.</p>
+              <h1 className="mt-1 text-[28px] font-extrabold tracking-tight text-slate-950 sm:text-[32px]">Quảng cáo tuyển dụng</h1>
+              <p className="mt-1.5 text-sm text-slate-500">Theo dõi các gói quảng cáo đã mua, thời gian hiển thị và trạng thái từng job.</p>
             </div>
             <Link
               to="/employer-job-list"
@@ -148,7 +148,7 @@ export default function EmployerJobPromotions() {
                 ))}
               </select>
               <div className="rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-medium text-blue-700">
-                Chọn một mục để xem chi tiết hoặc hủy gói đẩy tin còn hiệu lực.
+                Chọn một mục để xem chi tiết hoặc hủy gói quảng cáo còn hiệu lực.
               </div>
             </div>
           </section>
@@ -156,7 +156,7 @@ export default function EmployerJobPromotions() {
           <section className="space-y-3">
             {loading ? (
               <div className="rounded-lg border border-slate-200 bg-white px-5 py-8 text-sm font-semibold text-slate-400 shadow-sm">
-                Đang tải danh sách đẩy tin...
+                Đang tải danh sách quảng cáo...
               </div>
             ) : null}
 
@@ -166,8 +166,8 @@ export default function EmployerJobPromotions() {
                   <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-lg bg-slate-100 text-slate-400">
                     <span className="material-symbols-outlined text-[26px]">rocket_launch</span>
                   </div>
-                  <p className="mt-4 text-lg font-bold text-slate-800">Chưa có gói đẩy tin nào</p>
-                  <p className="mt-2 text-sm text-slate-500">Hãy mở danh sách job và mua đẩy tin cho tin đang đủ điều kiện hiển thị.</p>
+                  <p className="mt-4 text-lg font-bold text-slate-800">Chưa có gói quảng cáo nào</p>
+                  <p className="mt-2 text-sm text-slate-500">Hãy mở danh sách job và mua quảng cáo cho tin đang đủ điều kiện hiển thị.</p>
                 </div>
               </div>
             ) : null}
@@ -225,7 +225,7 @@ export default function EmployerJobPromotions() {
 
           <section className="rounded-lg border border-slate-200 bg-white px-4 py-4 shadow-sm lg:px-5">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-400">Tổng số gói đẩy tin: {pagination.total || promotions.length}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-400">Tổng số gói quảng cáo: {pagination.total || promotions.length}</p>
               <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"

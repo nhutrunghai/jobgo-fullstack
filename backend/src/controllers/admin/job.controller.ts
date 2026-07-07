@@ -67,7 +67,7 @@ export const getAdminJobDetailController = async (
       location: job.location,
       job_type: job.job_type,
       level: job.level,
-      category: job.category,
+      category_ids: job.category_ids,
       skills: job.skills,
       quantity: job.quantity,
       status: job.status,

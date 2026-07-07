@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Toast from '../../components/Toast.jsx'
 import DashboardSidebar from '../../components/DashboardSidebar.jsx'
-import { createCompanyJob, getCompanyJob, getCompanyPromotionPlans, updateCompanyJob } from '../../api/companyService.js'
+import { createCompanyJob, getCompanyJob, getCompanyPromotionPlans, getJobCategories, updateCompanyJob } from '../../api/companyService.js'
 import { loadHardcodedMock } from '../../data/hardcodedClient.js'
 
 const jobTypeOptions = [
@@ -29,12 +29,12 @@ const defaultSteps = [
   { id: 3, label: 'Xem trước và đăng' },
 ]
 
-const defaultPackageOptions = ['Đăng thường', 'Đẩy tin nổi bật']
+const defaultPackageOptions = ['Đăng thường', 'Quảng cáo nổi bật']
 
 const emptyForm = {
   title: '',
   location: '',
-  category: 'Phòng Kỹ thuật',
+  categoryIds: [],
   level: 'senior',
   jobType: 'full-time',
   quantity: '1',
@@ -88,7 +88,7 @@ function mapInitialForm(initialForm = {}, packageOptions = defaultPackageOptions
     ...emptyForm,
     title: initialForm.title || '',
     location: initialForm.location || '',
-    category: initialForm.department || initialForm.category?.[0] || emptyForm.category,
+    categoryIds: Array.isArray(initialForm.category_ids) ? initialForm.category_ids.map(String) : [],
     level: normalizeLevel(initialForm.level),
     jobType: normalizeJobType(initialForm.job_type || initialForm.workMode),
     quantity: String(initialForm.openings || initialForm.quantity || 1),
@@ -110,7 +110,7 @@ function mapJobToForm(job = {}, packageType = emptyForm.packageType) {
     ...emptyForm,
     title: job.title || '',
     location: job.location || '',
-    category: Array.isArray(job.category) ? job.category[0] || emptyForm.category : emptyForm.category,
+    categoryIds: Array.isArray(job.category_ids) ? job.category_ids.map(String) : [],
     level: normalizeLevel(job.level),
     jobType: normalizeJobType(job.job_type),
     quantity: String(job.quantity || 1),
@@ -148,7 +148,7 @@ function buildJobPayload(form, status) {
     job_type: form.jobType,
     level: form.level,
     status,
-    category: splitList(form.category),
+    category_ids: form.categoryIds,
     skills: splitList(form.skillsText),
     quantity: Number(form.quantity || 1),
     expired_at: new Date(form.deadline).toISOString(),
@@ -158,7 +158,8 @@ function buildJobPayload(form, status) {
 function validateForm(form) {
   if (!form.title.trim()) return 'Vui lòng nhập tiêu đề công việc.'
   if (!form.location.trim()) return 'Vui lòng nhập địa điểm.'
-  if (!splitList(form.category).length) return 'Vui lòng nhập ít nhất một danh mục.'
+  if (!Array.isArray(form.categoryIds) || form.categoryIds.length < 1) return 'Vui lòng chọn ít nhất một danh mục.'
+  if (form.categoryIds.length > 5) return 'Chỉ được chọn tối đa 5 danh mục.'
   if (!splitList(form.skillsText).length) return 'Vui lòng nhập ít nhất một kỹ năng.'
   if (!Number.isInteger(Number(form.quantity)) || Number(form.quantity) < 1) return 'Số lượng tuyển phải lớn hơn 0.'
   if (!form.negotiable) {
@@ -206,7 +207,7 @@ function DetailSection({ title, icon, children }) {
   )
 }
 
-function SmallPreviewCard({ form, selectedJobType, selectedLevel, salaryLabel }) {
+function SmallPreviewCard({ form, selectedJobType, selectedLevel, salaryLabel, selectedCategoryLabels }) {
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm lg:p-5">
       <h2 className="text-base font-bold text-slate-900 lg:text-lg">Xem trước nhanh</h2>
@@ -262,6 +263,7 @@ export default function EmployerRecruitmentDashboard() {
   const isEditing = Boolean(editJobId)
   const [steps, setSteps] = useState(defaultSteps)
   const [packageOptions, setPackageOptions] = useState(defaultPackageOptions)
+  const [categoryOptions, setCategoryOptions] = useState([])
   const [form, setForm] = useState(null)
   const [currentStep, setCurrentStep] = useState(1)
   const [loading, setLoading] = useState(false)
@@ -274,10 +276,13 @@ export default function EmployerRecruitmentDashboard() {
     const loadData = async () => {
       const mock = await loadHardcodedMock().catch(() => null)
       const recruitment = mock?.employerRecruitment || {}
-      const plansResponse = await getCompanyPromotionPlans().catch(() => ({ plans: [] }))
+      const [plansResponse, categoriesResponse] = await Promise.all([
+        getCompanyPromotionPlans().catch(() => ({ plans: [] })),
+        getJobCategories().catch(() => []),
+      ])
       const planOptions = Array.isArray(plansResponse?.plans)
         ? plansResponse.plans.map((plan) => {
-            const typeLabel = plan.type === 'homepage_featured' ? 'Đẩy tin nổi bật' : plan.name || 'Đẩy tin'
+            const typeLabel = plan.type === 'homepage_featured' ? 'Quảng cáo nổi bật' : plan.name || 'Quảng cáo'
             const dailyPrice = Number(plan.daily_price || 0).toLocaleString('vi-VN')
             return `${typeLabel} • ${dailyPrice} ${plan.currency || 'VND'}/ngày`
           })
@@ -293,6 +298,7 @@ export default function EmployerRecruitmentDashboard() {
       if (!active) return
       setSteps(nextSteps)
       setPackageOptions(nextPackageOptions)
+      setCategoryOptions(Array.isArray(categoriesResponse) ? categoriesResponse : [])
 
       if (editJobId) {
         const response = await getCompanyJob(editJobId)
@@ -317,6 +323,26 @@ export default function EmployerRecruitmentDashboard() {
 
   const selectedJobType = useMemo(() => jobTypeOptions.find((item) => item.value === form?.jobType) || jobTypeOptions[0], [form])
   const selectedLevel = useMemo(() => levelOptions.find((item) => item.value === form?.level) || levelOptions[0], [form])
+  const categoryLabelMap = useMemo(() => new Map(categoryOptions.map((item) => [String(item._id || item.id), item.name || item.slug || 'Danh m?c'])), [categoryOptions])
+  const selectedCategoryLabels = useMemo(() => (form?.categoryIds || []).map((id) => categoryLabelMap.get(String(id)) || String(id)), [form?.categoryIds, categoryLabelMap])
+  const categoryGroups = useMemo(() => {
+    const normalized = categoryOptions.map((item) => ({
+      ...item,
+      id: String(item._id || item.id),
+      parentId: item.parent_id ? String(item.parent_id) : '',
+      label: item.name || item.slug || 'Danh m?c',
+    }))
+    const byParent = normalized.reduce((groups, item) => {
+      const key = item.parentId || 'root'
+      groups[key] = [...(groups[key] || []), item]
+      return groups
+    }, {})
+
+    return (byParent.root || []).map((parent) => ({
+      ...parent,
+      children: byParent[parent.id] || [],
+    }))
+  }, [categoryOptions])
   const salaryLabel = useMemo(() => {
     if (!form) return ''
     if (form.negotiable) return 'Thỏa thuận'
@@ -324,6 +350,19 @@ export default function EmployerRecruitmentDashboard() {
   }, [form])
 
   const updateForm = (patch) => setForm((current) => ({ ...current, ...patch }))
+  const updateCategoryIds = (values) => updateForm({ categoryIds: values.slice(0, 5) })
+  const toggleCategoryId = (categoryId) => {
+    const currentIds = form?.categoryIds || []
+    if (currentIds.includes(categoryId)) {
+      updateCategoryIds(currentIds.filter((id) => id !== categoryId))
+      return
+    }
+    if (currentIds.length >= 5) {
+      setToast({ type: 'error', message: 'Ch? ???c ch?n t?i ?a 5 danh m?c.' })
+      return
+    }
+    updateCategoryIds([...currentIds, categoryId])
+  }
 
   const goNext = () => setCurrentStep((step) => Math.min(3, step + 1))
   const goBack = () => setCurrentStep((step) => Math.max(1, step - 1))
@@ -400,16 +439,68 @@ export default function EmployerRecruitmentDashboard() {
                 placeholder="Ha Noi"
               />
             </label>
+            <div>
+              <FieldLabel icon="category" label="Danh m?c" />
+              <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+                {selectedCategoryLabels.length ? (
+                  <div className="mb-3 flex flex-wrap gap-2">
+                    {form.categoryIds.map((categoryId) => (
+                      <button
+                        key={categoryId}
+                        type="button"
+                        onClick={() => toggleCategoryId(categoryId)}
+                        className="inline-flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700 transition hover:bg-blue-100"
+                      >
+                        {categoryLabelMap.get(categoryId) || categoryId}
+                        <span className="material-symbols-outlined text-[14px]">close</span>
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
 
-            <label>
-              <FieldLabel icon="category" label="Danh mục" />
-              <input
-                className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-100"
-                value={form.category}
-                onChange={(event) => updateForm({ category: event.target.value })}
-                placeholder="IT, Backend"
-              />
-            </label>
+                <div className="max-h-64 space-y-3 overflow-y-auto pr-1">
+                  {categoryGroups.map((parent) => (
+                    <div key={parent.id} className="rounded-lg border border-slate-100 bg-slate-50 p-2.5">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-slate-500">{parent.label}</p>
+                        <button
+                          type="button"
+                          onClick={() => toggleCategoryId(parent.id)}
+                          className={`rounded-md px-2 py-1 text-[11px] font-bold transition ${
+                            form.categoryIds.includes(parent.id) ? 'bg-blue-600 text-white' : 'bg-white text-slate-500 hover:text-blue-600'
+                          }`}
+                        >
+                          {form.categoryIds.includes(parent.id) ? '?? ch?n' : 'Ch?n nh?m'}
+                        </button>
+                      </div>
+                      <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        {(parent.children.length ? parent.children : [parent]).map((category) => {
+                          const checked = form.categoryIds.includes(category.id)
+                          return (
+                            <button
+                              key={category.id}
+                              type="button"
+                              onClick={() => toggleCategoryId(category.id)}
+                              className={`flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-left text-sm font-semibold transition ${
+                                checked
+                                  ? 'border-blue-200 bg-blue-50 text-blue-700 ring-1 ring-blue-100'
+                                  : 'border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:bg-blue-50/60'
+                              }`}
+                            >
+                              <span>{category.label}</span>
+                              <span className={`material-symbols-outlined text-[18px] ${checked ? 'text-blue-600' : 'text-slate-300'}`}>
+                                {checked ? 'check_circle' : 'radio_button_unchecked'}
+                              </span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <p className="mt-1 text-xs font-medium text-slate-500">Ch?n t? 1 ??n 5 danh m?c. C? th? ch?n nh?m cha ho?c danh m?c con.</p>
+            </div>
 
             <label>
               <FieldLabel icon="military_tech" label="Cấp độ" />
@@ -463,7 +554,7 @@ export default function EmployerRecruitmentDashboard() {
             </label>
 
             <label>
-              <FieldLabel icon="sell" label="Gói đăng tin" />
+              <FieldLabel icon="sell" label="Gói quảng cáo" />
               <select
                 className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-semibold outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-100"
                 value={form.packageType}
@@ -547,9 +638,10 @@ export default function EmployerRecruitmentDashboard() {
           selectedJobType={selectedJobType}
           selectedLevel={selectedLevel}
           salaryLabel={salaryLabel}
+          selectedCategoryLabels={selectedCategoryLabels}
         />
 
-        <SectionBlock title="Gói đăng tin">
+        <SectionBlock title="Gói quảng cáo">
           <div className="grid gap-2">
             {packageOptions.map((item) => {
               const active = form.packageType === item
@@ -653,7 +745,7 @@ export default function EmployerRecruitmentDashboard() {
             ['location_on', 'Địa điểm', form.location || 'Đang cập nhật'],
             ['group_add', 'Số lượng', `${form.quantity || 1} vị trí`],
             ['event', 'Hạn ứng tuyển', form.deadline || 'Chưa chọn'],
-            ['category', 'Danh mục', splitList(form.category).join(', ') || 'Chưa có'],
+            ['category', 'Danh mục', selectedCategoryLabels.join(', ') || 'Chưa có'],
           ].map(([icon, label, value]) => (
             <div key={label} className="rounded-lg border border-slate-200 bg-white px-4 py-3">
               <span className="material-symbols-outlined text-[18px] text-blue-600">{icon}</span>

@@ -10,6 +10,7 @@
     "embedding:demo": "npm run build && node dist/scripts/embedding-demo.js",
     "embedding:demo:tsx": "tsx src/scripts/embedding-demo.ts",
     "jobs:backfill-moderation": "tsx src/scripts/backfill-job-moderation.ts",
+    "jobs:migrate-categories": "tsx src/scripts/migrate-job-categories.ts",
     "test": "jest --no-cache",
     "test:watch": "jest --watchAll --no-cache",
     "test:ci": "jest --ci --coverage --no-cache",

@@ -26,6 +26,12 @@ function writeStorageJson(key, value) {
   window.localStorage.setItem(key, JSON.stringify(value))
 }
 
+
+export async function getJobCategories() {
+  const response = await apiClient.get('/job-categories', { auth: false })
+  return response.data?.data?.categories || []
+}
+
 export async function createCompanyJob(payload) {
   const response = await apiClient.post('/company/jobs', payload, { auth: true })
   return response.data

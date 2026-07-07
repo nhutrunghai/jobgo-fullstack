@@ -109,21 +109,21 @@ function formatMoney(value, currency = 'VND') {
 }
 
 function mapPromotionTypeLabel(value) {
-  if (value === 'homepage_featured') return 'Nổi bật trang chủ'
-  return value || 'Đẩy tin'
+  if (value === 'homepage_featured') return 'Quảng cáo trang chủ'
+  return value || 'Quảng cáo'
 }
 
 function getPromotionBlockedReason(job, plans, plansLoading, plansError) {
   if (!job?.backendId) return 'Tin tuyển dụng này chưa có mã backend hợp lệ.'
-  if (plansLoading) return 'Hệ thống đang tải danh sách gói đẩy tin. Hãy thử lại sau ít giây.'
+  if (plansLoading) return 'Hệ thống đang tải danh sách gói quảng cáo. Hãy thử lại sau ít giây.'
   if (plansError) return plansError
-  if (!Array.isArray(plans) || plans.length === 0) return 'Hiện chưa có gói đẩy tin khả dụng cho tài khoản này.'
-  if (job.moderationStatus === 'blocked') return 'Job này đang bị admin chặn nên không thể mua gói đẩy tin.'
-  if (job.rawStatus !== 'open') return 'Chỉ job đang mở tuyển dụng mới có thể mua gói đẩy tin.'
+  if (!Array.isArray(plans) || plans.length === 0) return 'Hiện chưa có gói quảng cáo khả dụng cho tài khoản này.'
+  if (job.moderationStatus === 'blocked') return 'Job này đang bị admin chặn nên không thể mua gói quảng cáo.'
+  if (job.rawStatus !== 'open') return 'Chỉ job đang mở tuyển dụng mới có thể mua gói quảng cáo.'
 
   const deadlineTime = job.deadline ? new Date(job.deadline).getTime() : NaN
   if (!Number.isNaN(deadlineTime) && deadlineTime <= Date.now()) {
-    return 'Job này đã hết hạn nên không thể mua gói đẩy tin.'
+    return 'Job này đã hết hạn nên không thể mua gói quảng cáo.'
   }
 
   return ''
@@ -256,7 +256,7 @@ function PromotionPurchaseModal({ job, plans, isLoadingPlans, submitting, onClos
       <div className="w-full max-w-2xl overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_30px_80px_-40px_rgba(15,23,42,0.45)]">
         <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-5 py-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Mua đẩy tin</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Mua quảng cáo</p>
             <h3 className="mt-1 text-xl font-extrabold tracking-tight text-slate-900">{job.title}</h3>
             <p className="mt-1 text-sm text-slate-500">{job.location || 'Chưa có địa điểm'} • {job.level || 'Chưa có cấp bậc'}</p>
           </div>
@@ -282,7 +282,7 @@ function PromotionPurchaseModal({ job, plans, isLoadingPlans, submitting, onClos
             }}
           >
             <label className="block">
-              <span className="mb-2 block text-sm font-semibold text-slate-700">Gói đẩy tin</span>
+              <span className="mb-2 block text-sm font-semibold text-slate-700">Gói quảng cáo</span>
               <select
                 value={selectedType}
                 onChange={(event) => setSelectedType(event.target.value)}
@@ -299,7 +299,7 @@ function PromotionPurchaseModal({ job, plans, isLoadingPlans, submitting, onClos
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <label className="block">
-                <span className="mb-2 block text-sm font-semibold text-slate-700">Số ngày đẩy tin</span>
+                <span className="mb-2 block text-sm font-semibold text-slate-700">Số ngày quảng cáo</span>
                 <input
                   type="number"
                   min={minDays}
@@ -584,7 +584,7 @@ export default function EmployerJobList() {
       .catch((loadError) => {
         if (!active) return
         setPromotionPlans([])
-        setPlansError(loadError.message || 'Khong the tai danh sach goi day tin.')
+        setPlansError(loadError.message || 'Kh?ng th? t?i danh s?ch g?i qu?ng c?o.')
       })
       .finally(() => {
         if (active) setPlansLoading(false)
@@ -675,14 +675,14 @@ export default function EmployerJobList() {
       setPromotionModalJob(null)
       setToast({
         type: 'success',
-        message: `Đã mua đẩy tin cho job "${promotionModalJob.title}".`,
+        message: `Đã mua quảng cáo cho job "${promotionModalJob.title}".`,
       })
 
       if (promotion?._id) {
         navigate(`/employer-job-promotions/${promotion._id}`)
       }
     } catch (error) {
-      setToast({ type: 'error', message: error.message || 'Không thể mua đẩy tin cho job.' })
+      setToast({ type: 'error', message: error.message || 'Không thể mua quảng cáo cho job.' })
     } finally {
       setPromotionSubmitting(false)
     }
@@ -985,7 +985,7 @@ export default function EmployerJobList() {
                             )}
                             {activePromotion && (
                               <span className="rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-emerald-700">
-                                Đang được đẩy tin
+                                Đang được quảng cáo
                               </span>
                             )}
                           </div>
@@ -1075,7 +1075,7 @@ export default function EmployerJobList() {
                             />
                             <JobActionButton
                               icon={activePromotion ? 'rocket_launch' : 'local_fire_department'}
-                              label={activePromotion ? 'Xem đẩy tin' : 'Mua đẩy tin'}
+                              label={activePromotion ? 'Xem quảng cáo' : 'Mua quảng cáo'}
                               onClick={() => {
                                 if (activePromotion?._id) {
                                   navigate(`/employer-job-promotions/${activePromotion._id}`)

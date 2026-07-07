@@ -29,7 +29,7 @@ const seedJobs = [
       { name: 'Bảo Ngọc', initials: 'BN', tone: 'bg-violet-100 text-violet-600' },
     ],
     extraApplicants: 15,
-    packageType: 'Gói nổi bật',
+    packageType: 'Gói quảng cáo',
   },
   {
     id: 2,
@@ -81,7 +81,7 @@ const seedJobs = [
       { name: 'Thùy Dương', initials: 'TD', tone: 'bg-fuchsia-100 text-fuchsia-600' },
     ],
     extraApplicants: 28,
-    packageType: 'Gói nổi bật',
+    packageType: 'Gói quảng cáo',
   },
   {
     id: 4,
@@ -133,7 +133,7 @@ export const departments = [
 export const levels = ['Intern', 'Junior', 'Middle', 'Senior', 'Lead']
 export const experienceOptions = ['Chưa yêu cầu', '1-2 năm', '2-4 năm', '3-5 năm', '5+ năm']
 export const workModes = ['Văn phòng', 'Hybrid', 'Remote']
-export const packageOptions = ['Gói thường', 'Gói nổi bật']
+export const packageOptions = ['Gói thường', 'Gói quảng cáo']
 
 function isBrowser() {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined'
@@ -256,7 +256,7 @@ export function getStatCards(jobs) {
   const activeJobs = jobs.filter((job) => job.status === 'Đang hoạt động').length
   const draftJobs = jobs.filter((job) => job.status === 'Bản nháp').length
   const totalApplicants = jobs.reduce((sum, job) => sum + job.extraApplicants + job.applicants.length, 0)
-  const featuredJobs = jobs.filter((job) => job.packageType === 'Gói nổi bật').length
+  const featuredJobs = jobs.filter((job) => job.packageType === 'Gói quảng cáo').length
 
   return [
     {
@@ -284,7 +284,7 @@ export function getStatCards(jobs) {
       deltaTone: 'bg-emerald-50 text-emerald-600',
     },
     {
-      title: 'Gói nổi bật',
+      title: 'Gói quảng cáo',
       value: String(featuredJobs),
       delta: draftJobs > 0 ? `${draftJobs} draft` : '0 draft',
       icon: 'auto_awesome',

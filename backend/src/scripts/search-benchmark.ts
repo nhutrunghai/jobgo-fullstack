@@ -42,11 +42,15 @@ type BenchmarkJobSeed = {
   location: string
   job_type: JobType
   level: JobLevel
-  category: string[]
+  category_ids: ObjectId[]
   skills: string[]
 }
 
 const SEARCH_CANDIDATE_LIMIT = 100
+const IT_CATEGORY_ID = new ObjectId('700000000000000000000001')
+const BACKEND_CATEGORY_ID = new ObjectId('700000000000000000000002')
+const FRONTEND_CATEGORY_ID = new ObjectId('700000000000000000000003')
+const DATA_AI_CATEGORY_ID = new ObjectId('700000000000000000000007')
 const FORMULAS: Formula[] = [
   {
     name: 'current_0.4_lex_0.6_sem',
@@ -103,7 +107,7 @@ const BENCHMARK_JOBS: BenchmarkJobSeed[] = [
     location: 'Ha Noi',
     job_type: JobType.FULL_TIME,
     level: JobLevel.SENIOR,
-    category: ['backend', 'platform'],
+    category_ids: [IT_CATEGORY_ID, BACKEND_CATEGORY_ID],
     skills: ['nodejs', 'typescript', 'express', 'redis', 'elasticsearch']
   },
   {
@@ -115,7 +119,7 @@ const BENCHMARK_JOBS: BenchmarkJobSeed[] = [
     location: 'Ha Noi',
     job_type: JobType.FULL_TIME,
     level: JobLevel.MIDDLE,
-    category: ['backend', 'search'],
+    category_ids: [IT_CATEGORY_ID, BACKEND_CATEGORY_ID],
     skills: ['typescript', 'api', 'elasticsearch', 'microservices', 'platform']
   },
   {
@@ -127,7 +131,7 @@ const BENCHMARK_JOBS: BenchmarkJobSeed[] = [
     location: 'Ho Chi Minh',
     job_type: JobType.FULL_TIME,
     level: JobLevel.MIDDLE,
-    category: ['backend'],
+    category_ids: [IT_CATEGORY_ID, BACKEND_CATEGORY_ID],
     skills: ['java', 'spring', 'api', 'sql']
   },
   {
@@ -139,7 +143,7 @@ const BENCHMARK_JOBS: BenchmarkJobSeed[] = [
     location: 'Da Nang',
     job_type: JobType.CONTRACT,
     level: JobLevel.LEAD,
-    category: ['search', 'ml'],
+    category_ids: [IT_CATEGORY_ID, DATA_AI_CATEGORY_ID],
     skills: ['vector search', 'embeddings', 'ranking', 'elasticsearch', 'retrieval']
   },
   {
@@ -151,7 +155,7 @@ const BENCHMARK_JOBS: BenchmarkJobSeed[] = [
     location: 'Da Nang',
     job_type: JobType.CONTRACT,
     level: JobLevel.SENIOR,
-    category: ['ai', 'search'],
+    category_ids: [IT_CATEGORY_ID, DATA_AI_CATEGORY_ID],
     skills: ['llm', 'ranking', 'embeddings', 'vector search', 'recommendation']
   },
   {
@@ -163,7 +167,7 @@ const BENCHMARK_JOBS: BenchmarkJobSeed[] = [
     location: 'Da Nang',
     job_type: JobType.FULL_TIME,
     level: JobLevel.MIDDLE,
-    category: ['frontend'],
+    category_ids: [IT_CATEGORY_ID, FRONTEND_CATEGORY_ID],
     skills: ['vue', 'frontend', 'ui', 'web', 'search']
   },
   {
@@ -175,7 +179,7 @@ const BENCHMARK_JOBS: BenchmarkJobSeed[] = [
     location: 'Da Nang',
     job_type: JobType.FULL_TIME,
     level: JobLevel.SENIOR,
-    category: ['frontend', 'performance'],
+    category_ids: [IT_CATEGORY_ID, FRONTEND_CATEGORY_ID],
     skills: ['frontend', 'web', 'performance', 'javascript', 'ux']
   }
 ]
@@ -280,7 +284,7 @@ const main = async () => {
           location: seed.location,
           job_type: seed.job_type,
           level: seed.level,
-          category: seed.category,
+          category_ids: seed.category_ids,
           skills: seed.skills,
           quantity: 1,
           expired_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 60),
@@ -334,7 +338,7 @@ const main = async () => {
               {
                 multi_match: {
                   query: benchmarkQuery.query,
-                  fields: ['title^4', 'skills^3', 'category^2', 'description', 'requirements', 'benefits']
+                  fields: ['title^4', 'skills^3', 'category_names^2', 'description', 'requirements', 'benefits']
                 }
               }
             ],

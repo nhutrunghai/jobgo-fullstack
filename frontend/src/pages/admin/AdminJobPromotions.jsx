@@ -13,7 +13,7 @@ import {
   updateAdminJobPromotion,
 } from '../../api/adminService.js'
 
-const promotionTypeOptions = [{ value: 'homepage_featured', label: 'Nổi bật trang chủ' }]
+const promotionTypeOptions = [{ value: 'homepage_featured', label: 'Quảng cáo trang chủ' }]
 
 const promotionStatusOptions = [
   { value: 'active', label: 'Đang hiển thị' },
@@ -184,8 +184,8 @@ function JobPickerModal({ open, onClose, onSelect }) {
     <PickerModal
       open={open}
       onClose={onClose}
-      title="Chọn tin tuyển dụng"
-      subtitle="Mở preview và gắn job ngay trong màn quản lý đẩy tin."
+      title="Qu?ng C?o Tuy?n D?ng"
+      subtitle="Mở preview và gắn job ngay trong màn quản lý quảng cáo."
     >
       <div className="p-5">
         <label className="relative block">
@@ -317,7 +317,7 @@ export default function AdminJobPromotions() {
           }
         })
         .catch((error) => {
-          if (active) setToast({ type: 'error', message: error.message || 'Không thể tải danh sách đẩy tin.' })
+          if (active) setToast({ type: 'error', message: error.message || 'Không thể tải danh sách quảng cáo.' })
         })
         .finally(() => {
           if (active) setLoading(false)
@@ -357,7 +357,7 @@ export default function AdminJobPromotions() {
       setSelectedPromotion(promotion)
       setEditForm(buildEditForm(promotion))
     } catch (error) {
-      setToast({ type: 'error', message: error.message || 'Không thể tải chi tiết đẩy tin.' })
+      setToast({ type: 'error', message: error.message || 'Không thể tải chi tiết quảng cáo.' })
     } finally {
       setDetailLoading(false)
     }
@@ -397,7 +397,7 @@ export default function AdminJobPromotions() {
   const handleCreatePromotion = async (event) => {
     event.preventDefault()
     if (!selectedJobPreview?._id) {
-      setToast({ type: 'error', message: 'Hãy chọn job ngay trong màn này trước khi tạo đẩy tin.' })
+      setToast({ type: 'error', message: 'Hãy chọn job ngay trong màn này trước khi tạo quảng cáo.' })
       return
     }
 
@@ -413,9 +413,9 @@ export default function AdminJobPromotions() {
       })
       await refreshListAndDetail(promotion?._id)
       setCreateForm(buildCreateForm(selectedJobPreview._id))
-      setToast({ type: 'success', message: 'Đã tạo cấu hình đẩy tin.' })
+      setToast({ type: 'success', message: 'Đã tạo cấu hình quảng cáo.' })
     } catch (error) {
-      setToast({ type: 'error', message: error.message || 'Không thể tạo cấu hình đẩy tin.' })
+      setToast({ type: 'error', message: error.message || 'Không thể tạo cấu hình quảng cáo.' })
     } finally {
       setCreating(false)
     }
@@ -441,9 +441,9 @@ export default function AdminJobPromotions() {
       setSelectedPromotion(promotion)
       setEditForm(buildEditForm(promotion))
       setPriorityDrafts((current) => ({ ...current, [promotion._id]: String(promotion.priority ?? 0) }))
-      setToast({ type: 'success', message: 'Đã cập nhật cấu hình đẩy tin.' })
+      setToast({ type: 'success', message: 'Đã cập nhật cấu hình quảng cáo.' })
     } catch (error) {
-      setToast({ type: 'error', message: error.message || 'Không thể cập nhật cấu hình đẩy tin.' })
+      setToast({ type: 'error', message: error.message || 'Không thể cập nhật cấu hình quảng cáo.' })
     } finally {
       setSaving(false)
     }
@@ -451,7 +451,7 @@ export default function AdminJobPromotions() {
 
   const handleDeletePromotion = async () => {
     if (!selectedPromotion?._id) return
-    if (!window.confirm('Xóa cấu hình đẩy tin này? Hành động này không thể hoàn tác.')) return
+    if (!window.confirm('Xóa cấu hình quảng cáo này? Hành động này không thể hoàn tác.')) return
 
     setDeleting(true)
     try {
@@ -460,9 +460,9 @@ export default function AdminJobPromotions() {
       setPromotions((current) => current.filter((item) => item._id !== deletedId))
       setSelectedPromotion(null)
       setEditForm(buildEditForm(null))
-      setToast({ type: 'success', message: 'Đã xóa cấu hình đẩy tin.' })
+      setToast({ type: 'success', message: 'Đã xóa cấu hình quảng cáo.' })
     } catch (error) {
-      setToast({ type: 'error', message: error.message || 'Không thể xóa cấu hình đẩy tin.' })
+      setToast({ type: 'error', message: error.message || 'Không thể xóa cấu hình quảng cáo.' })
     } finally {
       setDeleting(false)
     }
@@ -500,7 +500,7 @@ export default function AdminJobPromotions() {
       }
       setToast({ type: 'success', message: 'Đã lưu thứ tự ưu tiên.' })
     } catch (error) {
-      setToast({ type: 'error', message: error.message || 'Không thể sắp xếp thứ tự đẩy tin.' })
+      setToast({ type: 'error', message: error.message || 'Không thể sắp xếp thứ tự quảng cáo.' })
     } finally {
       setReordering(false)
     }
@@ -545,7 +545,7 @@ export default function AdminJobPromotions() {
   return (
     <AdminLayout
       title="Đẩy Tin Tuyển Dụng"
-      subtitle="Tạo cấu hình đẩy tin thủ công cho job, quản lý thời gian hiển thị và sắp xếp độ ưu tiên xuất hiện của các tin đang được làm nổi bật."
+      subtitle="Tạo cấu hình quảng cáo thủ công cho job, quản lý thời gian hiển thị và sắp xếp độ ưu tiên xuất hiện của các tin đang được làm nổi bật."
     >
       <Toast toast={toast} onClose={() => setToast(null)} />
       <JobPickerModal open={isJobPickerOpen} onClose={() => setIsJobPickerOpen(false)} onSelect={handlePickJob} />
@@ -557,11 +557,11 @@ export default function AdminJobPromotions() {
         <StatCard label="Tổng tiền trang này" value={formatMoney(stats.paid)} tone="text-slate-950" />
       </section>
 
-      <section className="mb-3 grid grid-cols-1 gap-3 xl:grid-cols-[360px_minmax(0,1fr)]">
+      <section className="mb-3 grid grid-cols-1 gap-3 xl:grid-cols-[380px_minmax(0,1fr)] xl:items-start">
         <form onSubmit={handleCreatePromotion} className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between gap-3">
             <div>
-              <h2 className="text-[14px] font-extrabold text-slate-950">Tạo cấu hình đẩy tin mới</h2>
+              <h2 className="text-[14px] font-extrabold text-slate-950">Tạo cấu hình quảng cáo mới</h2>
               <p className="mt-1 text-[12px] font-medium text-slate-500">Chọn job bằng popup preview ngay trong màn này, không cần chuyển sang tab jobs.</p>
             </div>
             <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-indigo-700">Quản trị</span>
@@ -611,7 +611,7 @@ export default function AdminJobPromotions() {
             </div>
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <FormField label="Loại đẩy tin">
+              <FormField label="Loại quảng cáo">
                 <select
                   value={createForm.type}
                   onChange={(event) => setCreateForm((current) => ({ ...current, type: event.target.value }))}
@@ -698,157 +698,16 @@ export default function AdminJobPromotions() {
               disabled={creating || !selectedJobPreview?._id}
               className="flex h-10 w-full items-center justify-center rounded-md bg-slate-950 px-3 text-[13px] font-extrabold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300"
             >
-              {creating ? 'Đang tạo...' : 'Tạo đẩy tin'}
+              {creating ? 'Đang tạo...' : 'Tạo quảng cáo'}
             </button>
           </div>
         </form>
 
-        <aside className="rounded-lg border border-slate-200 bg-white shadow-sm">
-          <div className="flex h-11 items-center justify-between border-b border-slate-100 px-4">
-            <h2 className="text-[13px] font-extrabold text-slate-950">Chi tiết đẩy tin</h2>
-            {detailLoading ? <span className="text-[12px] font-bold text-slate-400">Đang tải</span> : null}
-          </div>
-
-          {selectedPromotion ? (
-            <div className="p-4">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h3 className="text-lg font-extrabold leading-6 text-slate-950">{selectedPromotion.job?.title || 'Cấu hình đẩy tin'}</h3>
-                  <p className="mt-1 text-[12px] font-medium text-slate-500">{selectedPromotion.company?.company_name || 'Chưa có doanh nghiệp'}</p>
-                </div>
-                <span className={`rounded-full border px-2 py-1 text-[11px] font-extrabold ${promotionStatusToneMap[selectedPromotion.status] || promotionStatusToneMap.active}`}>
-                  {promotionStatusOptions.find((option) => option.value === selectedPromotion.status)?.label || selectedPromotion.status}
-                </span>
-              </div>
-
-              <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                <Field label="Mã đẩy tin" value={compactId(selectedPromotion._id)} />
-                <Field label="Mã job" value={compactId(selectedPromotion.job_id)} />
-                <Field label="Mã doanh nghiệp" value={compactId(selectedPromotion.company_id)} />
-                <Field label="Loại" value={selectedPromotion.type} />
-                <Field label="Bắt đầu" value={formatDateTime(selectedPromotion.starts_at)} />
-                <Field label="Kết thúc" value={formatDateTime(selectedPromotion.ends_at)} />
-                <Field label="Độ ưu tiên" value={selectedPromotion.priority} />
-                <Field label="Số tiền" value={formatMoney(selectedPromotion.amount_paid, selectedPromotion.currency)} />
-              </div>
-
-              <div className="mt-3 rounded-md border border-slate-100 bg-slate-50 p-3">
-                <p className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-slate-400">Job liên quan</p>
-                <p className="mt-2 text-[12px] font-bold text-slate-800">{selectedPromotion.job?.title || 'Chưa có tiêu đề'}</p>
-                <p className="mt-1 text-[12px] font-medium text-slate-500">
-                  {selectedPromotion.job?.location || 'Chưa có địa điểm'} · {selectedPromotion.job?.level || 'Chưa có level'}
-                </p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleSelectJobPreview({
-                        _id: selectedPromotion.job_id,
-                        title: selectedPromotion.job?.title,
-                        company: selectedPromotion.company,
-                      })
-                    }
-                    className="inline-flex h-8 items-center rounded-md border border-indigo-200 bg-indigo-50 px-3 text-[12px] font-extrabold text-indigo-700 transition hover:bg-indigo-100"
-                  >
-                    Dùng job này
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setIsJobPickerOpen(true)}
-                    className="inline-flex h-8 items-center rounded-md border border-slate-200 bg-white px-3 text-[12px] font-extrabold text-slate-700 transition hover:bg-slate-50"
-                  >
-                    Mở preview chọn job
-                  </button>
-                </div>
-              </div>
-
-              <form onSubmit={handleSavePromotion} className="mt-4 space-y-3 border-t border-slate-100 pt-4">
-                <div className="flex items-center justify-between gap-3">
-                  <h4 className="text-[13px] font-extrabold text-slate-950">Chỉnh sửa đẩy tin</h4>
-                  <button
-                    type="button"
-                    onClick={handleDeletePromotion}
-                    disabled={deleting}
-                    className="h-9 rounded-md border border-rose-200 bg-rose-50 px-3 text-[12px] font-extrabold text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-45"
-                  >
-                    {deleting ? 'Đang xóa...' : 'Xóa'}
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <FormField label="Loại đẩy tin">
-                    <select value={editForm.type} onChange={(event) => setEditForm((current) => ({ ...current, type: event.target.value }))} className={inputClassName}>
-                      {promotionTypeOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </FormField>
-                  <FormField label="Trạng thái">
-                    <select value={editForm.status} onChange={(event) => setEditForm((current) => ({ ...current, status: event.target.value }))} className={inputClassName}>
-                      {promotionStatusOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </FormField>
-                </div>
-
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <FormField label="Bắt đầu">
-                    <input type="datetime-local" value={editForm.starts_at} onChange={(event) => setEditForm((current) => ({ ...current, starts_at: event.target.value }))} className={inputClassName} />
-                  </FormField>
-                  <FormField label="Kết thúc">
-                    <input type="datetime-local" value={editForm.ends_at} onChange={(event) => setEditForm((current) => ({ ...current, ends_at: event.target.value }))} className={inputClassName} />
-                  </FormField>
-                </div>
-
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                  <FormField label="Độ ưu tiên">
-                    <input type="number" min="0" value={editForm.priority} onChange={(event) => setEditForm((current) => ({ ...current, priority: event.target.value }))} className={inputClassName} />
-                  </FormField>
-                  <FormField label="Số tiền">
-                    <input type="number" min="0" value={editForm.amount_paid} onChange={(event) => setEditForm((current) => ({ ...current, amount_paid: event.target.value }))} className={inputClassName} />
-                  </FormField>
-                  <FormField label="Tiền tệ">
-                    <select value={editForm.currency} onChange={(event) => setEditForm((current) => ({ ...current, currency: event.target.value }))} className={inputClassName}>
-                      <option value="VND">VND</option>
-                      <option value="USD">USD</option>
-                    </select>
-                  </FormField>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="flex h-10 w-full items-center justify-center rounded-md bg-slate-950 px-3 text-[13px] font-extrabold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300"
-                >
-                  {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
-                </button>
-              </form>
-            </div>
-          ) : (
-            <div className="flex min-h-[420px] items-center justify-center p-6 text-center">
-              <div>
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100 text-slate-400">
-                  <span className="material-symbols-outlined">star</span>
-                </div>
-                <p className="mt-3 text-[13px] font-bold text-slate-600">Chọn một cấu hình đẩy tin để xem chi tiết.</p>
-                <p className="mt-1 text-[12px] font-medium text-slate-400">Form sửa trạng thái, thời gian, độ ưu tiên và số tiền sẽ hiển thị tại đây.</p>
-              </div>
-            </div>
-          )}
-        </aside>
-      </section>
-
-      <div className="grid grid-cols-1 gap-3">
         <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-100 bg-slate-50 px-4 py-3">
             <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
               <div className="min-w-0">
-                <h2 className="text-[13px] font-extrabold text-slate-950">Danh sách đẩy tin</h2>
+                <h2 className="text-[13px] font-extrabold text-slate-950">Danh sách quảng cáo</h2>
                 <p className="mt-0.5 text-[12px] font-medium text-slate-500">Tìm kiếm, lọc trạng thái và sửa nhanh thứ tự ưu tiên ngay trong danh sách.</p>
               </div>
               <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-[minmax(240px,1fr)_170px_120px_auto] xl:max-w-[820px]">
@@ -977,12 +836,12 @@ export default function AdminJobPromotions() {
 
           {!promotions.length ? (
             <div className="px-4 py-10 text-center text-[13px] font-semibold text-slate-400">
-              {loading ? 'Đang tải danh sách đẩy tin...' : 'Không tìm thấy cấu hình đẩy tin phù hợp.'}
+              {loading ? 'Đang tải danh sách quảng cáo...' : 'Không tìm thấy cấu hình quảng cáo phù hợp.'}
             </div>
           ) : null}
 
           <div className="flex flex-col gap-2 border-t border-slate-100 px-4 py-3 text-[12px] font-semibold text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-            <span>Trang {pagination.page || 1}/{pagination.total_pages || 1} · Tổng {pagination.total || promotions.length} cấu hình đẩy tin</span>
+            <span>Trang {pagination.page || 1}/{pagination.total_pages || 1} · Tổng {pagination.total || promotions.length} cấu hình quảng cáo</span>
             <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center">
               <button
                 type="button"
@@ -1003,8 +862,121 @@ export default function AdminJobPromotions() {
             </div>
           </div>
         </section>
+      </section>
 
-      </div>
+      {(detailLoading || selectedPromotion) && (
+        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm">
+          <div className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
+            <div className="flex items-start justify-between gap-3 border-b border-slate-100 px-5 py-4">
+              <div>
+                <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-indigo-600">Chi ti?t qu?ng c?o</p>
+                <h2 className="mt-1 text-lg font-extrabold text-slate-950">
+                  {selectedPromotion?.job?.title || '?ang t?i c?u h?nh qu?ng c?o'}
+                </h2>
+                {selectedPromotion ? (
+                  <p className="mt-1 text-[12px] font-medium text-slate-500">
+                    {selectedPromotion.company?.company_name || 'Ch?a c? doanh nghi?p'} ? {compactId(selectedPromotion._id)}
+                  </p>
+                ) : null}
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedPromotion(null)
+                  setEditForm(buildEditForm(null))
+                }}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+              >
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
+            {detailLoading && !selectedPromotion ? (
+              <div className="flex min-h-[320px] items-center justify-center p-8 text-sm font-bold text-slate-400">
+                ?ang t?i chi ti?t qu?ng c?o...
+              </div>
+            ) : null}
+
+            {selectedPromotion ? (
+              <div className="min-h-0 overflow-y-auto p-5">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                  <Field label="M? qu?ng c?o" value={compactId(selectedPromotion._id)} />
+                  <Field label="Lo?i" value={selectedPromotion.type === 'homepage_featured' ? 'Qu?ng c?o trang ch?' : selectedPromotion.type} />
+                  <Field label="Job" value={compactId(selectedPromotion.job_id)} />
+                  <Field label="Doanh nghi?p" value={selectedPromotion.company?.company_name} />
+                  <Field label="B?t ??u" value={formatDateTime(selectedPromotion.starts_at)} />
+                  <Field label="K?t th?c" value={formatDateTime(selectedPromotion.ends_at)} />
+                  <Field label="?u ti?n" value={selectedPromotion.priority} />
+                  <Field label="?? thanh to?n" value={formatMoney(selectedPromotion.amount_paid, selectedPromotion.currency)} />
+                </div>
+
+                <form onSubmit={handleSavePromotion} className="mt-5 space-y-3 border-t border-slate-100 pt-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <h4 className="text-[13px] font-extrabold text-slate-950">Ch?nh s?a qu?ng c?o</h4>
+                    <button
+                      type="button"
+                      onClick={handleDeletePromotion}
+                      disabled={deleting}
+                      className="h-9 rounded-md border border-rose-200 bg-rose-50 px-3 text-[12px] font-extrabold text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-45"
+                    >
+                      {deleting ? '?ang x?a...' : 'X?a'}
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <FormField label="Lo?i qu?ng c?o">
+                      <select value={editForm.type} onChange={(event) => setEditForm((current) => ({ ...current, type: event.target.value }))} className={inputClassName}>
+                        {promotionTypeOptions.map((option) => (
+                          <option key={option.value} value={option.value}>{option.label}</option>
+                        ))}
+                      </select>
+                    </FormField>
+                    <FormField label="Tr?ng th?i">
+                      <select value={editForm.status} onChange={(event) => setEditForm((current) => ({ ...current, status: event.target.value }))} className={inputClassName}>
+                        {promotionStatusOptions.map((option) => (
+                          <option key={option.value} value={option.value}>{option.label}</option>
+                        ))}
+                      </select>
+                    </FormField>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <FormField label="B?t ??u">
+                      <input type="datetime-local" value={editForm.starts_at} onChange={(event) => setEditForm((current) => ({ ...current, starts_at: event.target.value }))} className={inputClassName} />
+                    </FormField>
+                    <FormField label="K?t th?c">
+                      <input type="datetime-local" value={editForm.ends_at} onChange={(event) => setEditForm((current) => ({ ...current, ends_at: event.target.value }))} className={inputClassName} />
+                    </FormField>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                    <FormField label="?? ?u ti?n">
+                      <input type="number" min="0" value={editForm.priority} onChange={(event) => setEditForm((current) => ({ ...current, priority: event.target.value }))} className={inputClassName} />
+                    </FormField>
+                    <FormField label="S? ti?n">
+                      <input type="number" min="0" value={editForm.amount_paid} onChange={(event) => setEditForm((current) => ({ ...current, amount_paid: event.target.value }))} className={inputClassName} />
+                    </FormField>
+                    <FormField label="Ti?n t?">
+                      <select value={editForm.currency} onChange={(event) => setEditForm((current) => ({ ...current, currency: event.target.value }))} className={inputClassName}>
+                        <option value="VND">VND</option>
+                        <option value="USD">USD</option>
+                      </select>
+                    </FormField>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="flex h-10 w-full items-center justify-center rounded-md bg-slate-950 px-3 text-[13px] font-extrabold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300"
+                  >
+                    {saving ? '?ang l?u...' : 'L?u thay ??i'}
+                  </button>
+                </form>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      )}
     </AdminLayout>
   )
 }

@@ -16,7 +16,9 @@ export interface PublicJobSearchDocument {
   location: string
   job_type: string
   level: string
-  category: string[]
+  category_ids: string[]
+  category_names: string[]
+  category_slugs: string[]
   skills: string[]
   status: string
   moderation_status: string
@@ -25,13 +27,23 @@ export interface PublicJobSearchDocument {
 }
 
 class JobIndexService {
-  buildSearchDocument(job: Job): PublicJobSearchDocument {
+  async buildSearchDocument(job: Job): Promise<PublicJobSearchDocument> {
     const title = job.title?.trim() || ''
     const description = job.description?.trim() || ''
     const requirements = job.requirements?.trim() || ''
     const benefits = job.benefits?.trim() || ''
-
-    const searchText = [title, description, requirements, benefits].filter(Boolean).join('\n\n')
+    const categories = job.category_ids?.length
+      ? await databaseService.jobCategories
+          .find({ _id: { $in: job.category_ids } })
+          .project({ name: 1, slug: 1 })
+          .toArray()
+      : []
+    const categoryNames = categories.map((category) => category.name)
+    const categorySlugs = categories.map((category) => category.slug)
+    const skills = Array.isArray(job.skills) ? job.skills : []
+    const searchText = [title, description, requirements, benefits, skills.join(' '), categoryNames.join(' ')]
+      .filter(Boolean)
+      .join('\n\n')
 
     return {
       job_id: String(job._id),
@@ -44,8 +56,10 @@ class JobIndexService {
       location: job.location || '',
       job_type: job.job_type || '',
       level: job.level || '',
-      category: Array.isArray(job.category) ? job.category : [],
-      skills: Array.isArray(job.skills) ? job.skills : [],
+      category_ids: (job.category_ids || []).map(String),
+      category_names: categoryNames,
+      category_slugs: categorySlugs,
+      skills,
       status: job.status || '',
       moderation_status: job.moderation_status || '',
       published_at: job.published_at,
@@ -61,7 +75,7 @@ class JobIndexService {
       return
     }
 
-    const document = this.buildSearchDocument(job)
+    const document = await this.buildSearchDocument(job)
     const embedding = await generateLocalEmbedding(document.search_text)
 
     await ElasticsearchConfig.getInstance().index({

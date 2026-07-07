@@ -7,7 +7,7 @@ import { adjustAdminWalletBalance, getAdminUsers, getAdminWalletTransactions } f
 const transactionTypeOptions = [
   { value: '', label: 'Tất cả loại giao dịch' },
   { value: 'top_up', label: 'Nạp ví' },
-  { value: 'promotion_purchase', label: 'Mua đẩy tin' },
+  { value: 'promotion_purchase', label: 'Mua quảng cáo' },
   { value: 'refund', label: 'Hoàn tiền' },
   { value: 'adjustment', label: 'Điều chỉnh ví' },
 ]
@@ -33,7 +33,7 @@ const directionAdjustOptions = [
 
 const typeLabelMap = {
   top_up: 'Nạp ví',
-  promotion_purchase: 'Mua đẩy tin',
+  promotion_purchase: 'Mua quảng cáo',
   refund: 'Hoàn tiền',
   adjustment: 'Điều chỉnh ví',
 }
@@ -355,7 +355,7 @@ export default function AdminWalletTransactions() {
       <section className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Thành công" value={stats.succeeded} tone="text-emerald-700" />
         <StatCard label="Nạp ví" value={stats.topup} tone="text-slate-950" />
-        <StatCard label="Mua đẩy tin" value={stats.promotion} tone="text-violet-700" />
+        <StatCard label="Mua quảng cáo" value={stats.promotion} tone="text-violet-700" />
         <StatCard label="Điều chỉnh ví" value={stats.adjusted} tone="text-amber-700" />
       </section>
 

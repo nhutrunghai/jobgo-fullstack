@@ -71,7 +71,7 @@ export default function EmployerJobPromotionDetail() {
         if (active) setPromotion(data)
       })
       .catch((error) => {
-        if (active) setToast({ type: 'error', message: error.message || 'Không thể tải chi tiết đẩy tin.' })
+        if (active) setToast({ type: 'error', message: error.message || 'Không thể tải chi tiết quảng cáo.' })
       })
       .finally(() => {
         if (active) setLoading(false)
@@ -84,16 +84,16 @@ export default function EmployerJobPromotionDetail() {
 
   const handleCancelPromotion = async () => {
     if (!promotion?._id) return
-    const confirmed = window.confirm('Hủy gói đẩy tin này?')
+    const confirmed = window.confirm('Hủy gói quảng cáo này?')
     if (!confirmed) return
 
     setCancelling(true)
     try {
       const updated = await cancelCompanyJobPromotion(promotion._id)
       setPromotion(updated)
-      setToast({ type: 'success', message: 'Đã hủy gói đẩy tin.' })
+      setToast({ type: 'success', message: 'Đã hủy gói quảng cáo.' })
     } catch (error) {
-      setToast({ type: 'error', message: error.message || 'Không thể hủy gói đẩy tin.' })
+      setToast({ type: 'error', message: error.message || 'Không thể hủy gói quảng cáo.' })
     } finally {
       setCancelling(false)
     }
@@ -109,15 +109,15 @@ export default function EmployerJobPromotionDetail() {
           <div className="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
             <div className="min-w-0">
               <p className="text-sm font-semibold text-blue-600">Quản lý tuyển dụng</p>
-              <h1 className="mt-1 text-[28px] font-extrabold tracking-tight text-slate-950 sm:text-[32px]">Chi tiết đẩy tin</h1>
-              <p className="mt-1.5 text-sm text-slate-500">Xem thời gian chạy, chi phí đã trừ ví và trạng thái hiện tại của gói đẩy tin.</p>
+              <h1 className="mt-1 text-[28px] font-extrabold tracking-tight text-slate-950 sm:text-[32px]">Chi tiết quảng cáo</h1>
+              <p className="mt-1.5 text-sm text-slate-500">Xem thời gian chạy, chi phí đã trừ ví và trạng thái hiện tại của gói quảng cáo.</p>
             </div>
             <div className="flex flex-wrap gap-2">
               <Link
                 to="/employer-job-promotions"
                 className="inline-flex h-11 items-center justify-center rounded-lg border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
               >
-                Danh sách đẩy tin
+                Danh sách quảng cáo
               </Link>
               {promotion?.job_id ? (
                 <Link
@@ -137,7 +137,7 @@ export default function EmployerJobPromotionDetail() {
 
           {loading ? (
             <section className="rounded-lg border border-slate-200 bg-white px-5 py-8 text-sm font-semibold text-slate-400 shadow-sm">
-              Đang tải chi tiết đẩy tin...
+              Đang tải chi tiết quảng cáo...
             </section>
           ) : null}
 
@@ -155,8 +155,8 @@ export default function EmployerJobPromotionDetail() {
                 </div>
 
                 <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  <InfoCard label="Mã đẩy tin" value={promotion._id} />
-                  <InfoCard label="Loại" value={promotion.type === 'homepage_featured' ? 'Nổi bật trang chủ' : promotion.type} />
+                  <InfoCard label="Mã quảng cáo" value={promotion._id} />
+                  <InfoCard label="Loại" value={promotion.type === 'homepage_featured' ? 'Quảng cáo trang chủ' : promotion.type} />
                   <InfoCard label="Độ ưu tiên" value={promotion.priority} />
                   <InfoCard label="Bắt đầu" value={formatDateTime(promotion.starts_at)} />
                   <InfoCard label="Kết thúc" value={formatDateTime(promotion.ends_at)} />
@@ -177,7 +177,7 @@ export default function EmployerJobPromotionDetail() {
                       onClick={handleCancelPromotion}
                       className="inline-flex h-11 items-center justify-center rounded-lg border border-rose-200 bg-rose-50 px-4 text-sm font-semibold text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      {cancelling ? 'Đang hủy...' : 'Hủy gói đẩy tin'}
+                      {cancelling ? 'Đang hủy...' : 'Hủy gói quảng cáo'}
                     </button>
                     <button
                       type="button"

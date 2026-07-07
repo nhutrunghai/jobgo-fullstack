@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 const sectionTabs = [
   { key: 'job-list', icon: 'checklist', label: 'Danh sách job', to: '/employer-job-list' },
   { key: 'post-job', icon: 'add_circle', label: 'Đăng tin mới', to: '/employer-post-job' },
-  { key: 'job-promotions', icon: 'rocket_launch', label: 'Đẩy tin', to: '/employer-job-promotions' },
+  { key: 'job-promotions', icon: 'rocket_launch', label: 'Quảng cáo', to: '/employer-job-promotions' },
   { key: 'received-cv', icon: 'description', label: 'Hồ sơ đã nhận', to: '/employer-received-cv' },
   { key: 'interviews', icon: 'calendar_month', label: 'Lịch phỏng vấn', to: '/employer-interviews' },
 ]

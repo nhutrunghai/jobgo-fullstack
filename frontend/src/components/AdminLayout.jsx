@@ -7,7 +7,7 @@ const navItems = [
   { key: 'users', label: 'Người dùng', to: '/admin/users', icon: 'group' },
   { key: 'companies', label: 'Doanh nghiệp', to: '/admin/companies', icon: 'apartment' },
   { key: 'jobs', label: 'Tin tuyển dụng', to: '/admin/jobs', icon: 'work' },
-  { key: 'job-promotions', label: 'Đẩy tin tuyển dụng', to: '/admin/job-promotions', icon: 'star' },
+  { key: 'job-promotions', label: 'Quảng cáo tuyển dụng', to: '/admin/job-promotions', icon: 'star' },
   { key: 'wallet-transactions', label: 'Giao dịch ví', to: '/admin/wallet-transactions', icon: 'account_balance_wallet' },
   { key: 'sepay-config', label: 'Cấu hình SePay', to: '/admin/sepay-config', icon: 'settings_ethernet' },
   { key: 'rag-chat-config', label: 'Cấu hình RAG Chat', to: '/admin/rag-chat-config', icon: 'smart_toy' },

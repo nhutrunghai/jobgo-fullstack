@@ -262,6 +262,16 @@ function mapLevel(value) {
   }
 }
 
+
+function getJobCategoryNames(job = {}) {
+  if (Array.isArray(job.category_names) && job.category_names.length) return job.category_names
+  if (Array.isArray(job.categories) && job.categories.length) {
+    return job.categories.map((item) => (typeof item === 'string' ? item : item?.name || item?.slug)).filter(Boolean)
+  }
+  if (Array.isArray(job.category) && job.category.length) return job.category
+  return []
+}
+
 function normalizePublicJob(job) {
   const company = job.company || {}
   const applicationStatus = job.my_application?.status || job.application_status || job.applied_status
@@ -292,7 +302,7 @@ function normalizePublicJob(job) {
     openings: typeof job.quantity === 'number' ? `${String(job.quantity).padStart(2, '0')} ng\u01b0\u1eddi` : '\u0110ang c\u1eadp nh\u1eadt',
     workMode: mapJobType(job.job_type),
     summary: responsibilities[0] || repairText(company.description) || '\u0110ang c\u1eadp nh\u1eadt',
-    tags: [...new Set([...(job.skills || []), ...(job.category || []), job.job_type, job.level].filter(Boolean).map(repairText))],
+    tags: [...new Set([...(job.skills || []), ...getJobCategoryNames(job), job.job_type, job.level].filter(Boolean).map(repairText))],
     responsibilities,
     requirementsList: requirements,
     benefits,
@@ -329,7 +339,7 @@ function normalizeJobDetail(job, company, myApplication) {
     status: myApplication?.status ? mapApplicationStatus(myApplication.status) : mapJobLifecycleStatus(job.status),
     postedAt: formatRelativeTime(job.published_at),
     summary: responsibilities[0] || repairText(company?.description) || '\u0110ang c\u1eadp nh\u1eadt',
-    tags: [...new Set([...(job.skills || []), ...(job.category || [])].map(repairText))],
+    tags: [...new Set([...(job.skills || []), ...getJobCategoryNames(job)].map(repairText))],
     responsibilities,
     requirements,
     benefits,
@@ -362,9 +372,9 @@ function getApplicationUpdatedAt(item) {
 }
 
 function getApplicationTitle(item) {
-  const jobTitle = item.job?.title || item.title || 'cÃƒÂ´ng viÃ¡Â»â€¡c'
-  const companyName = item.company?.company_name || item.job?.company?.company_name || item.company_name || ''
-  return companyName ? `${jobTitle} tÃ¡ÂºÂ¡i ${companyName}` : jobTitle
+  const jobTitle = repairText(item.job?.title || item.title || 'c\u00f4ng vi\u1ec7c')
+  const companyName = repairText(item.company?.company_name || item.job?.company?.company_name || item.company_name || '')
+  return companyName ? `${jobTitle} t\u1ea1i ${companyName}` : jobTitle
 }
 
 function mapApplicationActivity(item) {
@@ -373,49 +383,14 @@ function mapApplicationActivity(item) {
   const updatedAt = getApplicationUpdatedAt(item)
 
   switch (status) {
-    case 'reviewing':
-      return {
-        title: `NhÃƒÂ  tuyÃ¡Â»Æ’n dÃ¡Â»Â¥ng Ã„â€˜ang xem xÃƒÂ©t hÃ¡Â»â€œ sÃ†Â¡ cho vÃ¡Â»â€¹ trÃƒÂ­ ${target}`,
-        time: formatRelativeTime(updatedAt),
-        tone: 'text-blue-600',
-      }
-    case 'shortlisted':
-      return {
-        title: `HÃ¡Â»â€œ sÃ†Â¡ cÃ¡Â»Â§a bÃ¡ÂºÂ¡n Ã„â€˜ÃƒÂ£ vÃƒÂ o danh sÃƒÂ¡ch phÃƒÂ¹ hÃ¡Â»Â£p cho vÃ¡Â»â€¹ trÃƒÂ­ ${target}`,
-        time: formatRelativeTime(updatedAt),
-        tone: 'text-emerald-600',
-      }
-    case 'interviewing':
-      return {
-        title: `BÃ¡ÂºÂ¡n Ã„â€˜ÃƒÂ£ Ã„â€˜Ã†Â°Ã¡Â»Â£c mÃ¡Â»Âi phÃ¡Â»Âng vÃ¡ÂºÂ¥n cho vÃ¡Â»â€¹ trÃƒÂ­ ${target}`,
-        time: formatRelativeTime(updatedAt),
-        tone: 'text-amber-600',
-      }
-    case 'hired':
-      return {
-        title: `BÃ¡ÂºÂ¡n Ã„â€˜ÃƒÂ£ Ã„â€˜Ã†Â°Ã¡Â»Â£c nhÃ¡ÂºÂ­n cho vÃ¡Â»â€¹ trÃƒÂ­ ${target}`,
-        time: formatRelativeTime(updatedAt),
-        tone: 'text-emerald-600',
-      }
-    case 'rejected':
-      return {
-        title: `HÃ¡Â»â€œ sÃ†Â¡ chÃ†Â°a phÃƒÂ¹ hÃ¡Â»Â£p vÃ¡Â»â€ºi vÃ¡Â»â€¹ trÃƒÂ­ ${target}`,
-        time: formatRelativeTime(updatedAt),
-        tone: 'text-rose-600',
-      }
-    case 'withdrawn':
-      return {
-        title: `BÃ¡ÂºÂ¡n Ã„â€˜ÃƒÂ£ rÃƒÂºt hÃ¡Â»â€œ sÃ†Â¡ khÃ¡Â»Âi vÃ¡Â»â€¹ trÃƒÂ­ ${target}`,
-        time: formatRelativeTime(updatedAt),
-        tone: 'text-slate-500',
-      }
+    case 'reviewing': return { title: `Nh\u00e0 tuy\u1ec3n d\u1ee5ng \u0111ang xem x\u00e9t h\u1ed3 s\u01a1 cho v\u1ecb tr\u00ed ${target}`, time: formatRelativeTime(updatedAt), tone: 'text-blue-600' }
+    case 'shortlisted': return { title: `H\u1ed3 s\u01a1 c\u1ee7a b\u1ea1n \u0111\u00e3 v\u00e0o danh s\u00e1ch ph\u00f9 h\u1ee3p cho v\u1ecb tr\u00ed ${target}`, time: formatRelativeTime(updatedAt), tone: 'text-emerald-600' }
+    case 'interviewing': return { title: `B\u1ea1n \u0111\u00e3 \u0111\u01b0\u1ee3c m\u1eddi ph\u1ecfng v\u1ea5n cho v\u1ecb tr\u00ed ${target}`, time: formatRelativeTime(updatedAt), tone: 'text-amber-600' }
+    case 'hired': return { title: `B\u1ea1n \u0111\u00e3 \u0111\u01b0\u1ee3c nh\u1eadn cho v\u1ecb tr\u00ed ${target}`, time: formatRelativeTime(updatedAt), tone: 'text-emerald-600' }
+    case 'rejected': return { title: `H\u1ed3 s\u01a1 ch\u01b0a ph\u00f9 h\u1ee3p v\u1edbi v\u1ecb tr\u00ed ${target}`, time: formatRelativeTime(updatedAt), tone: 'text-rose-600' }
+    case 'withdrawn': return { title: `B\u1ea1n \u0111\u00e3 r\u00fat h\u1ed3 s\u01a1 kh\u1ecfi v\u1ecb tr\u00ed ${target}`, time: formatRelativeTime(updatedAt), tone: 'text-slate-500' }
     case 'submitted':
-    default:
-      return {
-        title: `Ã„ÂÃƒÂ£ Ã¡Â»Â©ng tuyÃ¡Â»Æ’n vÃ¡Â»â€¹ trÃƒÂ­ ${target}`,
-        time: formatRelativeTime(updatedAt),
-        tone: 'text-violet-600',
-      }
+    default: return { title: `\u0110\u00e3 \u1ee9ng tuy\u1ec3n v\u1ecb tr\u00ed ${target}`, time: formatRelativeTime(updatedAt), tone: 'text-violet-600' }
   }
 }
 
@@ -935,21 +910,21 @@ export async function loadCandidateDashboardSnapshot() {
 }
 
 function formatRelativeTime(value) {
-  if (!value) return 'VÃ¡Â»Â«a cÃ¡ÂºÂ­p nhÃ¡ÂºÂ­t'
+  if (!value) return 'V\u1eeba c\u1eadp nh\u1eadt'
   const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return 'VÃ¡Â»Â«a cÃ¡ÂºÂ­p nhÃ¡ÂºÂ­t'
+  if (Number.isNaN(date.getTime())) return 'V\u1eeba c\u1eadp nh\u1eadt'
 
   const diffMs = Date.now() - date.getTime()
   const diffMinutes = Math.max(0, Math.floor(diffMs / 60000))
-  if (diffMinutes < 1) return 'VÃ¡Â»Â«a xong'
-  if (diffMinutes < 60) return `${diffMinutes} phÃƒÂºt trÃ†Â°Ã¡Â»â€ºc`
+  if (diffMinutes < 1) return 'V\u1eeba xong'
+  if (diffMinutes < 60) return `${diffMinutes} ph\u00fat tr\u01b0\u1edbc`
 
   const diffHours = Math.floor(diffMinutes / 60)
-  if (diffHours < 24) return `${diffHours} giÃ¡Â»Â trÃ†Â°Ã¡Â»â€ºc`
+  if (diffHours < 24) return `${diffHours} gi\u1edd tr\u01b0\u1edbc`
 
   const diffDays = Math.floor(diffHours / 24)
-  if (diffDays === 1) return 'HÃƒÂ´m qua'
-  if (diffDays < 7) return `${diffDays} ngÃƒÂ y trÃ†Â°Ã¡Â»â€ºc`
+  if (diffDays === 1) return 'H\u00f4m qua'
+  if (diffDays < 7) return `${diffDays} ng\u00e0y tr\u01b0\u1edbc`
 
   return date.toLocaleDateString('vi-VN')
 }
@@ -1043,7 +1018,7 @@ function normalizeEmployerJobListItem(job = {}) {
     id: jobId,
     backendId: jobId,
     title: repairText(job.title || 'Tin tuy\u1ec3n d\u1ee5ng ch\u01b0a \u0111\u1eb7t t\u00ean'),
-    department: repairText(Array.isArray(job.category) && job.category.length ? job.category[0] : mapLevel(job.level)),
+    department: repairText(getJobCategoryNames(job)[0] || mapLevel(job.level)),
     type: mapJobType(job.job_type),
     workMode: mapJobType(job.job_type),
     location: repairText(job.location || '\u0110ang c\u1eadp nh\u1eadt'),
@@ -1091,18 +1066,18 @@ function clearEmployerOverviewCache() {
 }
 
 function mapEmployerApplicationActivity(application, job) {
-  const candidateName = application?.resume_snapshot?.full_name || 'Ã¡Â»Â¨ng viÃƒÂªn mÃ¡Â»â€ºi'
-  const jobTitle = job?.title || 'vÃ¡Â»â€¹ trÃƒÂ­ tuyÃ¡Â»Æ’n dÃ¡Â»Â¥ng'
+  const candidateName = repairText(application?.resume_snapshot?.full_name || '\u1ee8ng vi\u00ean m\u1edbi')
+  const jobTitle = repairText(job?.title || 'v\u1ecb tr\u00ed tuy\u1ec3n d\u1ee5ng')
   const status = application?.status || 'submitted'
   const statusText = {
-    submitted: 'Ã„â€˜ÃƒÂ£ nÃ¡Â»â„¢p hÃ¡Â»â€œ sÃ†Â¡',
-    reviewing: 'Ã„â€˜ang Ã„â€˜Ã†Â°Ã¡Â»Â£c xem xÃƒÂ©t',
-    shortlisted: 'vÃƒÂ o danh sÃƒÂ¡ch tiÃ¡Â»Âm nÃ„Æ’ng',
-    interviewing: 'Ã„â€˜ang phÃ¡Â»Âng vÃ¡ÂºÂ¥n',
-    rejected: 'Ã„â€˜ÃƒÂ£ bÃ¡Â»â€¹ tÃ¡Â»Â« chÃ¡Â»â€˜i',
-    hired: 'Ã„â€˜ÃƒÂ£ Ã„â€˜Ã†Â°Ã¡Â»Â£c nhÃ¡ÂºÂ­n',
-    withdrawn: 'Ã„â€˜ÃƒÂ£ rÃƒÂºt hÃ¡Â»â€œ sÃ†Â¡',
-  }[status] || 'cÃƒÂ³ cÃ¡ÂºÂ­p nhÃ¡ÂºÂ­t hÃ¡Â»â€œ sÃ†Â¡'
+    submitted: '\u0111\u00e3 n\u1ed9p h\u1ed3 s\u01a1',
+    reviewing: '\u0111ang \u0111\u01b0\u1ee3c xem x\u00e9t',
+    shortlisted: 'v\u00e0o danh s\u00e1ch ti\u1ec1m n\u0103ng',
+    interviewing: '\u0111ang ph\u1ecfng v\u1ea5n',
+    rejected: '\u0111\u00e3 b\u1ecb t\u1eeb ch\u1ed1i',
+    hired: '\u0111\u00e3 \u0111\u01b0\u1ee3c nh\u1eadn',
+    withdrawn: '\u0111\u00e3 r\u00fat h\u1ed3 s\u01a1',
+  }[status] || 'c\u00f3 c\u1eadp nh\u1eadt h\u1ed3 s\u01a1'
 
   return {
     id: application?._id || `${job?._id || job?.id}-${candidateName}-${application?.updated_at || application?.applied_at}`,

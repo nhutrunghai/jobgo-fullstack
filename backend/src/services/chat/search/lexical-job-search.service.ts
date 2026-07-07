@@ -14,7 +14,7 @@ class LexicalJobSearchService {
             {
               multi_match: {
                 query: params.q,
-                fields: ['title^4', 'skills^3', 'category^2', 'description', 'requirements', 'benefits']
+                fields: ['title^4', 'skills^3', 'category_names^2', 'description', 'requirements', 'benefits']
               }
             }
           ],

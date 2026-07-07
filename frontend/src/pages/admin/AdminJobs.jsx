@@ -44,6 +44,17 @@ const jobTypeLabelMap = {
   remote: 'Từ xa',
 }
 
+
+function formatJobCategories(job) {
+  if (Array.isArray(job?.category_names) && job.category_names.length) return job.category_names.join(', ')
+  if (Array.isArray(job?.categories) && job.categories.length) {
+    return job.categories.map((item) => (typeof item === 'string' ? item : item?.name || item?.slug)).filter(Boolean).join(', ')
+  }
+  if (Array.isArray(job?.category_ids) && job.category_ids.length) return job.category_ids.join(', ')
+  if (Array.isArray(job?.category) && job.category.length) return job.category.join(', ')
+  return ''
+}
+
 function getVisibilityState(job) {
   if (job?.moderation_status === 'blocked') {
     return {
@@ -336,7 +347,7 @@ export default function AdminJobs() {
                     to={buildPromotionLink(job)}
                     className={`${listActionClassName} border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100`}
                   >
-                    Đẩy tin
+                    Quảng cáo
                   </Link>
                 </div>
               </article>
@@ -402,7 +413,7 @@ export default function AdminJobs() {
 
               <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
                 <Field label="Mã tin" value={compactId(selectedJob._id)} />
-                <Field label="Danh mục" value={selectedJob.category} />
+                <Field label="Danh mục" value={formatJobCategories(selectedJob)} />
                 <Field label="Cấp bậc" value={selectedJob.level} />
                 <Field label="Số lượng" value={selectedJob.quantity} />
                 <Field label="Lương" value={formatMoneyRange(selectedJob.salary)} />
@@ -459,7 +470,7 @@ export default function AdminJobs() {
                 to={buildPromotionLink(selectedJob)}
                 className="mt-2 flex h-9 items-center justify-center rounded-md border border-indigo-200 bg-indigo-50 px-3 text-[12px] font-extrabold text-indigo-700 transition hover:bg-indigo-100"
               >
-                Quản lý đẩy tin của tin này
+                Quản lý quảng cáo của tin này
               </Link>
             </div>
           ) : (

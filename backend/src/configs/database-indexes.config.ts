@@ -69,6 +69,26 @@ const indexes: DatabaseIndexDefinition[] = [
     option: { name: 'status_updated_at' }
   },
   {
+    collection: env.DB_JOB_NAME,
+    key: { category_ids: 1, status: 1, moderation_status: 1, expired_at: 1 },
+    option: { name: 'category_ids_public_status' }
+  },
+  {
+    collection: env.DB_JOB_CATEGORY_NAME,
+    key: { slug: 1 },
+    option: { unique: true, name: 'slug_unique_job_category' }
+  },
+  {
+    collection: env.DB_JOB_CATEGORY_NAME,
+    key: { parent_id: 1, sort_order: 1 },
+    option: { name: 'parent_id_sort_order' }
+  },
+  {
+    collection: env.DB_JOB_CATEGORY_NAME,
+    key: { is_active: 1, sort_order: 1 },
+    option: { name: 'is_active_sort_order' }
+  },
+  {
     collection: env.DB_JOB_PROMOTION_NAME,
     key: { type: 1, status: 1, starts_at: 1, ends_at: 1, priority: -1 },
     option: { name: 'type_status_time_priority' }

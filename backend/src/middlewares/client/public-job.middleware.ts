@@ -49,7 +49,7 @@ export const loadPublicJobDetail = async (
             location: '$location',
             job_type: '$job_type',
             level: '$level',
-            category: '$category',
+            category_ids: '$category_ids',
             skills: '$skills',
             quantity: '$quantity',
             expired_at: '$expired_at',
