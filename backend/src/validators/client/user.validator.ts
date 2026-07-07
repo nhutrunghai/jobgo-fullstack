@@ -49,7 +49,6 @@ export const updateSettingUserValidator = z.object({
 })
 export const updateUserAvatarValidator = z.object({
   body: z.object({
-    avatar: z.url({ message: UserMessages.AVATAR_INVALID }),
     avatar_file_key: z.string().trim().min(1, { message: UserMessages.AVATAR_FILE_KEY_REQUIRED })
   })
 })

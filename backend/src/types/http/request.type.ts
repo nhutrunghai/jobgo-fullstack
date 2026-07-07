@@ -46,7 +46,6 @@ export interface newPasswordRqType {
 }
 
 export interface UpdateUserAvatarRqType {
-  avatar: string
   avatar_file_key: string
 }
 

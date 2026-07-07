@@ -15,23 +15,24 @@ import { UserLocals } from '~/types/http/response.type'
 import User from '~/models/schema/client/user.schema'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { hashPassword } from '~/utils/crypto.utils'
+import { attachUserAvatarUrl } from '~/utils/avatar.util.js'
 export const getProfileMeController = async (req: Request, res: Response) => {
   const projection = {
     username: 1,
     fullName: 1,
-    avatar: 1
+    avatar_file_key: 1
   }
   const user = await userService.findUser('_id', new ObjectId(req.decodeToken?.userId as string), projection)
-  return res.status(StatusCodes.OK).json({ status: 'success', data: user })
+  return res.status(StatusCodes.OK).json({ status: 'success', data: attachUserAvatarUrl(user) })
 }
 export const getProfileUserController = async (req: Request<GetUserRqType>, res: Response) => {
-  const projection = { email: 0, password: 0, is_verified: 0, role: 0, updated_at: 0, phone: 0 }
+  const projection = { email: 0, password: 0, is_verified: 0, role: 0, updated_at: 0, phone: 0, avatar: 0 }
   const user = await userService.findUser('username', req.params.id, projection)
   if (!user || user.status === 2) {
     throw new AppError({ statusCode: StatusCodes.NOT_FOUND, message: UserMessages.USER_NOT_FOUND })
   }
   delete user.status
-  return res.status(StatusCodes.OK).json({ status: 'success', data: user })
+  return res.status(StatusCodes.OK).json({ status: 'success', data: attachUserAvatarUrl(user) })
 }
 export const updateProfileUserController = async (req: Request, res: Response) => {
   await userService.updateProfile(req.decodeToken?.userId as string, req.body)

@@ -15,7 +15,14 @@ import adminCompanyService from '~/services/admin/company.service.js'
 import notificationService from '~/services/client/notification.service.js'
 
 export const getAdminCompaniesController = async (req: Request, res: Response) => {
-  const verified = typeof req.query.verified === 'boolean' ? req.query.verified : undefined
+  const verified =
+    typeof req.query.verified === 'boolean'
+      ? req.query.verified
+      : req.query.verified === 'true'
+        ? true
+        : req.query.verified === 'false'
+          ? false
+          : undefined
   const keyword = typeof req.query.keyword === 'string' ? req.query.keyword.trim() : undefined
   const page = Number(req.query.page || 1)
   const limit = Number(req.query.limit || 10)

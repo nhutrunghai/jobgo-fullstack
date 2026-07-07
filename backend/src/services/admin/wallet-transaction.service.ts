@@ -126,7 +126,7 @@ class AdminWalletTransactionService {
                 fullName: '$user.fullName',
                 username: '$user.username',
                 email: '$user.email',
-                avatar: '$user.avatar'
+                avatar: { $cond: [{ $ifNull: ['$user.avatar_file_key', false] }, { $concat: ['https://utfs.io/f/', '$user.avatar_file_key'] }, '' ] }
               }
             }
           }

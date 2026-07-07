@@ -12,6 +12,7 @@ import { AppError } from '~/errors/app-error.js'
 import { AdminUserLocals } from '~/types/http/response.type.js'
 import adminAuditLogService from '~/services/admin/audit-log.service.js'
 import adminUserService from '~/services/admin/user.service.js'
+import { buildUploadThingFileUrl } from '~/utils/avatar.util.js'
 
 export const getAdminUsersController = async (req: Request, res: Response) => {
   const role = req.query.role as UserRole | undefined
@@ -36,7 +37,7 @@ export const getAdminUsersController = async (req: Request, res: Response) => {
         fullName: user.fullName,
         username: user.username,
         email: user.email,
-        avatar: user.avatar,
+        avatar: buildUploadThingFileUrl(user.avatar_file_key),
         role: user.role,
         status: user.status,
         is_verified: user.is_verified,
@@ -61,7 +62,7 @@ export const getAdminUserDetailController = async (
       fullName: user.fullName,
       username: user.username,
       email: user.email,
-      avatar: user.avatar,
+      avatar: buildUploadThingFileUrl(user.avatar_file_key),
       phone: user.phone,
       bio: user.bio,
       address: user.address,
@@ -90,7 +91,7 @@ export const getAdminUserWalletController = async (
         fullName: user.fullName,
         username: user.username,
         email: user.email,
-        avatar: user.avatar,
+        avatar: buildUploadThingFileUrl(user.avatar_file_key),
         role: user.role,
         status: user.status,
         is_verified: user.is_verified
@@ -124,7 +125,7 @@ export const getAdminUserTopUpOrdersController = async (
         fullName: user.fullName,
         username: user.username,
         email: user.email,
-        avatar: user.avatar,
+        avatar: buildUploadThingFileUrl(user.avatar_file_key),
         role: user.role,
         status: user.status,
         is_verified: user.is_verified

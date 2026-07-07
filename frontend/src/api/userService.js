@@ -179,15 +179,13 @@ export async function updateMyAvatar(file) {
   })
 
   const uploadedFile = uploadedFiles?.[0]
-  const avatar = uploadedFile?.url || uploadedFile?.serverData?.url
   const avatarFileKey = uploadedFile?.key || uploadedFile?.serverData?.key
 
-  if (!avatar || !avatarFileKey) {
+  if (!avatarFileKey) {
     throw new Error('Upload avatar thành công nhưng thiếu dữ liệu file.')
   }
 
   await apiClient.patch('/user/profile/avatar', {
-    avatar,
     avatar_file_key: avatarFileKey,
   })
 

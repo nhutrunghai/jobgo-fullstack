@@ -15,7 +15,7 @@ class UserService {
   async updateProfile(userId: string, data: object) {
     return await databaseService.users.updateOne({ _id: new ObjectId(userId) }, { $set: data })
   }
-  async updateAvatar(userId: string, payload: { avatar: string; avatar_file_key: string }) {
+  async updateAvatar(userId: string, payload: { avatar_file_key: string }) {
     const user = (await databaseService.users.findOne({ _id: new ObjectId(userId) })) as User | null
 
     if (!user) {
@@ -28,9 +28,11 @@ class UserService {
       { _id: new ObjectId(userId) },
       {
         $set: {
-          avatar: payload.avatar,
           avatar_file_key: payload.avatar_file_key,
           updated_at: new Date()
+        },
+        $unset: {
+          avatar: ''
         }
       }
     )

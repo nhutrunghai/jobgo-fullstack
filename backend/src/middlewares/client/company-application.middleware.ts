@@ -118,7 +118,7 @@ export const loadCompanyApplicationDetail = async (
           candidate: {
             _id: '$candidate._id',
             full_name: '$candidate.fullName',
-            avatar: '$candidate.avatar'
+            avatar: { $cond: [{ $ifNull: ['$candidate.avatar_file_key', false] }, { $concat: ['https://utfs.io/f/', '$candidate.avatar_file_key'] }, '' ] }
           },
           resume_snapshot: '$resume_snapshot',
           cover_letter: '$cover_letter',

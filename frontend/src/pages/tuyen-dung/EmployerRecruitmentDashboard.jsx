@@ -207,6 +207,46 @@ function DetailSection({ title, icon, children }) {
   )
 }
 
+function CategoryTreeNode({ category, depth = 0, selectedIds, onToggle }) {
+  const checked = selectedIds.includes(category.id)
+  const hasChildren = Array.isArray(category.children) && category.children.length > 0
+
+  return (
+    <div className={depth ? 'ml-4 border-l border-slate-200 pl-3' : ''}>
+      <button
+        type="button"
+        onClick={() => onToggle(category.id)}
+        className={`flex w-full items-center justify-between gap-2 rounded-lg border px-3 py-2 text-left text-sm font-semibold transition ${
+          checked
+            ? 'border-blue-200 bg-blue-50 text-blue-700 ring-1 ring-blue-100'
+            : 'border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:bg-blue-50/60'
+        }`}
+      >
+        <span className="flex min-w-0 items-center gap-2">
+          {depth > 0 ? <span className="h-px w-3 bg-slate-300" /> : null}
+          <span className="truncate">{category.label}</span>
+          {hasChildren ? (
+            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-500">
+              {category.children.length} danh mục con
+            </span>
+          ) : null}
+        </span>
+        <span className={`material-symbols-outlined text-[18px] ${checked ? 'text-blue-600' : 'text-slate-300'}`}>
+          {checked ? 'check_circle' : 'radio_button_unchecked'}
+        </span>
+      </button>
+
+      {hasChildren ? (
+        <div className="mt-2 space-y-2">
+          {category.children.map((child) => (
+            <CategoryTreeNode key={child.id} category={child} depth={depth + 1} selectedIds={selectedIds} onToggle={onToggle} />
+          ))}
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
 function SmallPreviewCard({ form, selectedJobType, selectedLevel, salaryLabel, selectedCategoryLabels }) {
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm lg:p-5">
@@ -269,6 +309,7 @@ export default function EmployerRecruitmentDashboard() {
   const [loading, setLoading] = useState(false)
   const [savingStatus, setSavingStatus] = useState('')
   const [toast, setToast] = useState(null)
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -323,25 +364,29 @@ export default function EmployerRecruitmentDashboard() {
 
   const selectedJobType = useMemo(() => jobTypeOptions.find((item) => item.value === form?.jobType) || jobTypeOptions[0], [form])
   const selectedLevel = useMemo(() => levelOptions.find((item) => item.value === form?.level) || levelOptions[0], [form])
-  const categoryLabelMap = useMemo(() => new Map(categoryOptions.map((item) => [String(item._id || item.id), item.name || item.slug || 'Danh m?c'])), [categoryOptions])
+  const categoryLabelMap = useMemo(() => new Map(categoryOptions.map((item) => [String(item._id || item.id), item.name || item.slug || 'Danh mục'])), [categoryOptions])
   const selectedCategoryLabels = useMemo(() => (form?.categoryIds || []).map((id) => categoryLabelMap.get(String(id)) || String(id)), [form?.categoryIds, categoryLabelMap])
-  const categoryGroups = useMemo(() => {
+  const categoryTree = useMemo(() => {
     const normalized = categoryOptions.map((item) => ({
       ...item,
       id: String(item._id || item.id),
       parentId: item.parent_id ? String(item.parent_id) : '',
-      label: item.name || item.slug || 'Danh m?c',
+      label: item.name || item.slug || 'Danh mục',
+      children: [],
     }))
-    const byParent = normalized.reduce((groups, item) => {
-      const key = item.parentId || 'root'
-      groups[key] = [...(groups[key] || []), item]
-      return groups
-    }, {})
+    const byId = new Map(normalized.map((item) => [item.id, item]))
+    const roots = []
 
-    return (byParent.root || []).map((parent) => ({
-      ...parent,
-      children: byParent[parent.id] || [],
-    }))
+    normalized.forEach((item) => {
+      const parent = item.parentId ? byId.get(item.parentId) : null
+      if (parent) {
+        parent.children.push(item)
+      } else {
+        roots.push(item)
+      }
+    })
+
+    return roots
   }, [categoryOptions])
   const salaryLabel = useMemo(() => {
     if (!form) return ''
@@ -358,7 +403,7 @@ export default function EmployerRecruitmentDashboard() {
       return
     }
     if (currentIds.length >= 5) {
-      setToast({ type: 'error', message: 'Ch? ???c ch?n t?i ?a 5 danh m?c.' })
+      setToast({ type: 'error', message: 'Chỉ được chọn tối đa 5 danh mục.' })
       return
     }
     updateCategoryIds([...currentIds, categoryId])
@@ -440,66 +485,24 @@ export default function EmployerRecruitmentDashboard() {
               />
             </label>
             <div>
-              <FieldLabel icon="category" label="Danh m?c" />
-              <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+              <FieldLabel icon="category" label="Danh mục" />
+              <button
+                type="button"
+                onClick={() => setCategoryModalOpen(true)}
+                className="min-h-[52px] w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-left text-sm outline-none transition hover:border-blue-200 hover:bg-white hover:ring-2 hover:ring-blue-100"
+              >
                 {selectedCategoryLabels.length ? (
-                  <div className="mb-3 flex flex-wrap gap-2">
-                    {form.categoryIds.map((categoryId) => (
-                      <button
-                        key={categoryId}
-                        type="button"
-                        onClick={() => toggleCategoryId(categoryId)}
-                        className="inline-flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700 transition hover:bg-blue-100"
-                      >
-                        {categoryLabelMap.get(categoryId) || categoryId}
-                        <span className="material-symbols-outlined text-[14px]">close</span>
-                      </button>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedCategoryLabels.map((label) => (
+                      <span key={label} className="rounded-full border border-blue-100 bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700">
+                        {label}
+                      </span>
                     ))}
                   </div>
-                ) : null}
-
-                <div className="max-h-64 space-y-3 overflow-y-auto pr-1">
-                  {categoryGroups.map((parent) => (
-                    <div key={parent.id} className="rounded-lg border border-slate-100 bg-slate-50 p-2.5">
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-slate-500">{parent.label}</p>
-                        <button
-                          type="button"
-                          onClick={() => toggleCategoryId(parent.id)}
-                          className={`rounded-md px-2 py-1 text-[11px] font-bold transition ${
-                            form.categoryIds.includes(parent.id) ? 'bg-blue-600 text-white' : 'bg-white text-slate-500 hover:text-blue-600'
-                          }`}
-                        >
-                          {form.categoryIds.includes(parent.id) ? '?? ch?n' : 'Ch?n nh?m'}
-                        </button>
-                      </div>
-                      <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                        {(parent.children.length ? parent.children : [parent]).map((category) => {
-                          const checked = form.categoryIds.includes(category.id)
-                          return (
-                            <button
-                              key={category.id}
-                              type="button"
-                              onClick={() => toggleCategoryId(category.id)}
-                              className={`flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-left text-sm font-semibold transition ${
-                                checked
-                                  ? 'border-blue-200 bg-blue-50 text-blue-700 ring-1 ring-blue-100'
-                                  : 'border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:bg-blue-50/60'
-                              }`}
-                            >
-                              <span>{category.label}</span>
-                              <span className={`material-symbols-outlined text-[18px] ${checked ? 'text-blue-600' : 'text-slate-300'}`}>
-                                {checked ? 'check_circle' : 'radio_button_unchecked'}
-                              </span>
-                            </button>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <p className="mt-1 text-xs font-medium text-slate-500">Ch?n t? 1 ??n 5 danh m?c. C? th? ch?n nh?m cha ho?c danh m?c con.</p>
+                ) : (
+                  <span className="font-semibold text-slate-400">Chọn danh mục nghề nghiệp</span>
+                )}
+              </button>
             </div>
 
             <label>
@@ -570,58 +573,67 @@ export default function EmployerRecruitmentDashboard() {
           </div>
         </SectionBlock>
 
-        <SectionBlock title="Lương và kỹ năng">
-          <div className="mb-4 flex justify-start sm:justify-end">
-            <label className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700">
-              <input
-                type="checkbox"
-                checked={form.negotiable}
-                onChange={(event) => updateForm({ negotiable: event.target.checked })}
-              />
-              Thỏa thuận
-            </label>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_1fr_140px]">
+        <SectionBlock title="Lương">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-[220px_minmax(0,1fr)]">
             <label>
-              <FieldLabel icon="payments" label="Lương tối thiểu" />
-              <input
-                type="number"
-                min="0"
-                disabled={form.negotiable}
-                className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-100 disabled:opacity-50"
-                value={form.salaryMin}
-                onChange={(event) => updateForm({ salaryMin: event.target.value })}
-              />
-            </label>
-
-            <label>
-              <FieldLabel icon="trending_up" label="Lương tối đa" />
-              <input
-                type="number"
-                min="0"
-                disabled={form.negotiable}
-                className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-100 disabled:opacity-50"
-                value={form.salaryMax}
-                onChange={(event) => updateForm({ salaryMax: event.target.value })}
-              />
-            </label>
-
-            <label>
-              <FieldLabel icon="currency_exchange" label="Tiền tệ" />
+              <FieldLabel icon="payments" label="Ki?u l??ng" />
               <select
                 className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-semibold outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-100"
-                value={form.currency}
-                onChange={(event) => updateForm({ currency: event.target.value })}
+                value={form.negotiable ? 'negotiable' : 'range'}
+                onChange={(event) => updateForm({ negotiable: event.target.value === 'negotiable' })}
               >
-                <option value="VND">VND</option>
-                <option value="USD">USD</option>
+                <option value="range">Kho?ng l??ng</option>
+                <option value="negotiable">L??ng th?a thu?n</option>
               </select>
             </label>
-          </div>
 
-          <label className="mt-4 block">
-            <FieldLabel icon="code" label="Kỹ năng" />
+            {!form.negotiable ? (
+              <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_1fr_140px]">
+                <label>
+                  <FieldLabel icon="payments" label="L??ng t?i thi?u" />
+                  <input
+                    type="number"
+                    min="0"
+                    className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-100"
+                    value={form.salaryMin}
+                    onChange={(event) => updateForm({ salaryMin: event.target.value })}
+                  />
+                </label>
+
+                <label>
+                  <FieldLabel icon="trending_up" label="L??ng t?i ?a" />
+                  <input
+                    type="number"
+                    min="0"
+                    className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-100"
+                    value={form.salaryMax}
+                    onChange={(event) => updateForm({ salaryMax: event.target.value })}
+                  />
+                </label>
+
+                <label>
+                  <FieldLabel icon="currency_exchange" label="Ti?n t?" />
+                  <select
+                    className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-semibold outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-100"
+                    value={form.currency}
+                    onChange={(event) => updateForm({ currency: event.target.value })}
+                  >
+                    <option value="VND">VND</option>
+                    <option value="USD">USD</option>
+                  </select>
+                </label>
+              </div>
+            ) : (
+              <div className="flex min-h-[76px] items-center rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-slate-500">
+                Tin tuy?n d?ng s? hi?n th? m?c l??ng l? ?Th?a thu?n?.
+              </div>
+            )}
+          </div>
+        </SectionBlock>
+
+        <SectionBlock title="K? n?ng">
+          <label className="block">
+            <FieldLabel icon="code" label="K? n?ng y?u c?u" />
             <input
               className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-100"
               value={form.skillsText}
@@ -858,6 +870,74 @@ export default function EmployerRecruitmentDashboard() {
         {currentStep === 1 && renderStepOne()}
         {currentStep === 2 && renderStepTwo()}
         {currentStep === 3 && renderStepThree()}
+
+
+        {categoryModalOpen && (
+          <div className="fixed inset-0 z-[90] flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm">
+            <div className="flex max-h-[88vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
+              <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-5 py-4">
+                <div>
+                  <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600">Danh mục</p>
+                  <h3 className="mt-1 text-lg font-extrabold text-slate-950">Chọn danh mục nghề nghiệp</h3>
+                  <p className="mt-1 text-sm font-medium text-slate-500">Chọn từ 1 đến 5 danh mục phù hợp với tin tuyển dụng.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setCategoryModalOpen(false)}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+                >
+                  <span className="material-symbols-outlined text-[20px]">close</span>
+                </button>
+              </div>
+
+              <div className="min-h-0 overflow-y-auto p-5">
+                {selectedCategoryLabels.length ? (
+                  <div className="mb-4 flex flex-wrap gap-2">
+                    {form.categoryIds.map((categoryId) => (
+                      <button
+                        key={categoryId}
+                        type="button"
+                        onClick={() => toggleCategoryId(categoryId)}
+                        className="inline-flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700 transition hover:bg-blue-100"
+                      >
+                        {categoryLabelMap.get(categoryId) || categoryId}
+                        <span className="material-symbols-outlined text-[14px]">close</span>
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+
+                <div className="space-y-3">
+                  {categoryTree.length ? (
+                    categoryTree.map((category) => (
+                      <CategoryTreeNode
+                        key={category.id}
+                        category={category}
+                        selectedIds={form.categoryIds}
+                        onToggle={toggleCategoryId}
+                      />
+                    ))
+                  ) : (
+                    <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-3 py-8 text-center text-sm font-semibold text-slate-400">
+                      Chưa có danh mục khả dụng.
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-3 border-t border-slate-100 px-5 py-4">
+                <p className="text-sm font-semibold text-slate-500">Đã chọn {form.categoryIds.length}/5 danh mục</p>
+                <button
+                  type="button"
+                  onClick={() => setCategoryModalOpen(false)}
+                  className="inline-flex h-10 items-center justify-center rounded-lg bg-slate-950 px-5 text-sm font-extrabold text-white transition hover:bg-slate-800"
+                >
+                  Xong
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between lg:mt-5">
           <button

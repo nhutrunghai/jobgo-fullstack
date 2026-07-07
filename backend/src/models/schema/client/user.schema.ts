@@ -7,7 +7,6 @@ interface UserType {
   fullName: string
   email: string
   password: string
-  avatar?: string
   avatar_file_key?: string
   phone?: string
   bio?: string
@@ -25,7 +24,6 @@ export default class User {
   username?: string
   email: string
   password: string
-  avatar?: string
   avatar_file_key?: string
   phone?: string
   bio?: string
@@ -43,7 +41,6 @@ export default class User {
     this.fullName = user.fullName
     this.email = user.email
     this.password = user.password
-    this.avatar = user.avatar
     this.avatar_file_key = user.avatar_file_key
     this.phone = user.phone
     this.bio = user.bio

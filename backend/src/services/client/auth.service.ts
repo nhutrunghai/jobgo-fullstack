@@ -125,7 +125,6 @@ class AuthService {
         fullName: userInfo.name,
         email: userInfo.email,
         password: '',
-        avatar: userInfo.picture,
         is_verified: true,
         role: UserRole.CANDIDATE
       }
