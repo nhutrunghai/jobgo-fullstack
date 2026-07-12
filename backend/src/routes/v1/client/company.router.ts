@@ -34,6 +34,7 @@ import {
 } from '~/middlewares/client/company-application.middleware'
 import { loadCompanyJob, requireCompanyJob } from '~/middlewares/client/job.middleware'
 import { isVerifiedCompany } from '~/middlewares/client/verification.middleware'
+import { paymentLimiter, writeLimiter } from '~/middlewares/common/rate-limit.middleware'
 import validate from '~/middlewares/common/validator.middleware'
 import { createCompanyValidator, updateCompanyLogoValidator, updateCompanyValidator } from '~/validators/client/company.validator'
 import {
@@ -61,9 +62,9 @@ companyRouter.get('/', (req, res) => {
   res.json({ message: 'Company route' })
 })
 companyRouter.get('/me', loadCompany, requireCompany, getCompanyMeController)
-companyRouter.post('/', validate(createCompanyValidator), checkCompany, createCompanyController)
-companyRouter.patch('/', loadCompany, requireCompany, validate(updateCompanyValidator), updateCompanyController)
-companyRouter.patch('/logo', loadCompany, requireCompany, validate(updateCompanyLogoValidator), updateCompanyLogoController)
+companyRouter.post('/', writeLimiter, validate(createCompanyValidator), checkCompany, createCompanyController)
+companyRouter.patch('/', loadCompany, requireCompany, writeLimiter, validate(updateCompanyValidator), updateCompanyController)
+companyRouter.patch('/logo', loadCompany, requireCompany, writeLimiter, validate(updateCompanyLogoValidator), updateCompanyLogoController)
 companyRouter.get(
   '/job-promotions/plans',
   loadCompany,
@@ -92,6 +93,7 @@ companyRouter.patch(
   loadCompany,
   requireCompany,
   isVerifiedCompany,
+  paymentLimiter,
   validate(cancelCompanyJobPromotionValidator),
   cancelCompanyJobPromotionController
 )
@@ -100,6 +102,7 @@ companyRouter.post(
   loadCompany,
   requireCompany,
   isVerifiedCompany,
+  writeLimiter,
   validate(createJobValidator),
   createCompanyJobController
 )
@@ -136,6 +139,7 @@ companyRouter.patch(
   '/applications/:applicationId/status',
   loadCompany,
   requireCompany,
+  writeLimiter,
   validate(updateCompanyApplicationStatusValidator),
   loadCompanyApplication,
   requireCompanyApplication,
@@ -146,6 +150,7 @@ companyRouter.patch(
   '/jobs/:jobId',
   loadCompany,
   requireCompany,
+  writeLimiter,
   validate(getCompanyJobDetailValidator),
   loadCompanyJob,
   requireCompanyJob,
@@ -156,6 +161,7 @@ companyRouter.patch(
   '/jobs/:jobId/status',
   loadCompany,
   requireCompany,
+  writeLimiter,
   validate(getCompanyJobDetailValidator),
   loadCompanyJob,
   requireCompanyJob,
@@ -167,6 +173,7 @@ companyRouter.post(
   loadCompany,
   requireCompany,
   isVerifiedCompany,
+  paymentLimiter,
   validate(purchaseCompanyJobPromotionValidator),
   loadCompanyJob,
   requireCompanyJob,

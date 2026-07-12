@@ -28,6 +28,7 @@ import {
   loadPublicJobDetail,
   requirePublicJobDetail
 } from '~/middlewares/client/public-job.middleware'
+import { writeLimiter } from '~/middlewares/common/rate-limit.middleware'
 import validate from '~/middlewares/common/validator.middleware'
 import { applyJobValidator, getMyAppliedJobsValidator } from '~/validators/client/job-application.validator'
 import {
@@ -55,6 +56,7 @@ jobsRouter.get(
 jobsRouter.post(
   '/:jobId/apply',
   isAuthorized,
+  writeLimiter,
   validate(getCompanyJobDetailValidator),
   validate(applyJobValidator),
   loadPublicJobForApply,
@@ -68,6 +70,7 @@ jobsRouter.post(
 jobsRouter.patch(
   '/:jobId/withdraw',
   isAuthorized,
+  writeLimiter,
   validate(getCompanyJobDetailValidator),
   loadMyJobApplicationByJobId,
   requireMyJobApplication,

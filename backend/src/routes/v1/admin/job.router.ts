@@ -8,6 +8,7 @@ import {
 import { adminAuthMiddleware } from '~/middlewares/admin/auth.middleware.js'
 import { authorizeAdmin } from '~/middlewares/admin/authorization.middleware.js'
 import { findAdminJobByIdOrThrow } from '~/middlewares/admin/job.middleware.js'
+import { adminLimiter } from '~/middlewares/common/rate-limit.middleware.js'
 import validate from '~/middlewares/common/validator.middleware.js'
 import {
   getAdminJobDetailValidator,
@@ -38,6 +39,7 @@ adminJobRouter.patch(
   '/:jobId/moderation-status',
   adminAuthMiddleware,
   authorizeAdmin([UserRole.ADMIN]),
+  adminLimiter,
   validate(updateAdminJobModerationStatusValidator),
   findAdminJobByIdOrThrow,
   updateAdminJobModerationStatusController

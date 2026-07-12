@@ -8,6 +8,7 @@ import {
 } from '~/controllers/admin/rag-chat.controller.js'
 import { adminAuthMiddleware } from '~/middlewares/admin/auth.middleware.js'
 import { authorizeAdmin } from '~/middlewares/admin/authorization.middleware.js'
+import { adminLimiter, paymentLimiter } from '~/middlewares/common/rate-limit.middleware.js'
 import validate from '~/middlewares/common/validator.middleware.js'
 import {
   rotateAdminRagChatSecretsValidator,
@@ -21,6 +22,7 @@ adminRagChatRouter.patch(
   '/config',
   adminAuthMiddleware,
   authorizeAdmin([UserRole.ADMIN]),
+  adminLimiter,
   validate(updateAdminRagChatConfigValidator),
   updateAdminRagChatConfigController
 )
@@ -28,6 +30,7 @@ adminRagChatRouter.patch(
   '/secrets',
   adminAuthMiddleware,
   authorizeAdmin([UserRole.ADMIN]),
+  paymentLimiter,
   validate(rotateAdminRagChatSecretsValidator),
   rotateAdminRagChatSecretsController
 )

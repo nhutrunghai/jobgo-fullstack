@@ -9,6 +9,7 @@ import {
 } from '~/controllers/admin/sepay.controller.js'
 import { adminAuthMiddleware } from '~/middlewares/admin/auth.middleware.js'
 import { authorizeAdmin } from '~/middlewares/admin/authorization.middleware.js'
+import { adminLimiter, paymentLimiter } from '~/middlewares/common/rate-limit.middleware.js'
 import validate from '~/middlewares/common/validator.middleware.js'
 import {
   getAdminSePayDiagnosticsValidator,
@@ -24,6 +25,7 @@ adminSePayRouter.patch(
   '/config',
   adminAuthMiddleware,
   authorizeAdmin([UserRole.ADMIN]),
+  adminLimiter,
   validate(updateAdminSePayConfigValidator),
   updateAdminSePayConfigController
 )
@@ -32,6 +34,7 @@ adminSePayRouter.patch(
   '/secrets',
   adminAuthMiddleware,
   authorizeAdmin([UserRole.ADMIN]),
+  paymentLimiter,
   validate(rotateAdminSePaySecretsValidator),
   rotateAdminSePaySecretsController
 )
@@ -40,6 +43,7 @@ adminSePayRouter.post(
   '/test-connection',
   adminAuthMiddleware,
   authorizeAdmin([UserRole.ADMIN]),
+  paymentLimiter,
   testAdminSePayConnectionController
 )
 

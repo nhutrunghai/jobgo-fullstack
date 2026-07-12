@@ -10,6 +10,7 @@ import {
 import { adminAuthMiddleware } from '~/middlewares/admin/auth.middleware.js'
 import { authorizeAdmin } from '~/middlewares/admin/authorization.middleware.js'
 import { findAdminCompanyByIdOrThrow } from '~/middlewares/admin/company.middleware.js'
+import { adminLimiter } from '~/middlewares/common/rate-limit.middleware.js'
 import validate from '~/middlewares/common/validator.middleware.js'
 import {
   getAdminCompaniesValidator,
@@ -60,6 +61,7 @@ adminCompanyRouter.patch(
   '/:companyId/status',
   adminAuthMiddleware,
   authorizeAdmin([UserRole.ADMIN]),
+  adminLimiter,
   validate(updateAdminCompanyStatusValidator),
   findAdminCompanyByIdOrThrow,
   updateAdminCompanyStatusController

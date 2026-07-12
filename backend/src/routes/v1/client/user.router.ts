@@ -30,7 +30,7 @@ import {
 import { newPasswordMiddleware, resendMailMiddleware } from '~/middlewares/client/user.middleware'
 import isAuthorized from '~/middlewares/client/isAuthorized.middleware'
 import { loadPublicJobDetail, requirePublicJobDetail } from '~/middlewares/client/public-job.middleware'
-import { mailLimiter } from '~/middlewares/common/rate-limit.middleware'
+import { accountLimiter, mailLimiter, writeLimiter } from '~/middlewares/common/rate-limit.middleware'
 import validate from '~/middlewares/common/validator.middleware'
 import {
   getFavoriteJobsValidator,
@@ -48,27 +48,29 @@ import {
 const userRouter = Router()
 userRouter.get('/me', isAuthorized, getProfileMeController)
 userRouter.get('/profile/:id', getProfileUserController)
-userRouter.patch('/profile', isAuthorized, validate(updateProfileUserValidator), updateProfileUserController)
-userRouter.patch('/profile/avatar', isAuthorized, validate(updateUserAvatarValidator), updateUserAvatarController)
-userRouter.post('/resumes', isAuthorized, validate(createResumeValidator), createResumeController)
+userRouter.patch('/profile', isAuthorized, writeLimiter, validate(updateProfileUserValidator), updateProfileUserController)
+userRouter.patch('/profile/avatar', isAuthorized, writeLimiter, validate(updateUserAvatarValidator), updateUserAvatarController)
+userRouter.post('/resumes', isAuthorized, writeLimiter, validate(createResumeValidator), createResumeController)
 userRouter.get('/resumes', isAuthorized, getMyResumesController)
 userRouter.get('/resumes/:resumeId', isAuthorized, validate(getResumeDetailValidator), getResumeDetailController)
-userRouter.delete('/resumes/:resumeId', isAuthorized, validate(getResumeDetailValidator), deleteResumeController)
+userRouter.delete('/resumes/:resumeId', isAuthorized, writeLimiter, validate(getResumeDetailValidator), deleteResumeController)
 userRouter.get('/setting', isAuthorized, getSettingUserController)
-userRouter.patch('/setting', isAuthorized, validate(updateSettingUserValidator), updateSettingUserController)
+userRouter.patch('/setting', isAuthorized, accountLimiter, validate(updateSettingUserValidator), updateSettingUserController)
 userRouter.get('/favorite-jobs', isAuthorized, validate(getFavoriteJobsValidator), getFavoriteJobsController)
 userRouter.get('/notifications', isAuthorized, validate(getNotificationsValidator), getNotificationsController)
 userRouter.get('/notifications/unread-count', isAuthorized, getUnreadNotificationCountController)
 userRouter.patch(
   '/notifications/:notificationId/read',
   isAuthorized,
+  writeLimiter,
   validate(markNotificationAsReadValidator),
   markNotificationAsReadController
 )
-userRouter.patch('/notifications/read-all', isAuthorized, markAllNotificationsAsReadController)
+userRouter.patch('/notifications/read-all', isAuthorized, writeLimiter, markAllNotificationsAsReadController)
 userRouter.post(
   '/favorite-jobs/:jobId',
   isAuthorized,
+  writeLimiter,
   validate(saveFavoriteJobValidator),
   loadPublicJobDetail,
   requirePublicJobDetail,
@@ -77,16 +79,18 @@ userRouter.post(
 userRouter.delete(
   '/favorite-jobs/:jobId',
   isAuthorized,
+  writeLimiter,
   validate(removeFavoriteJobValidator),
   removeFavoriteJobController
 )
 userRouter.post('/setting/resend-mail', isAuthorized, resendMailMiddleware, mailLimiter, resendMailController)
-userRouter.post('/setting/change-password', isAuthorized, changePasswordController) // mailLimiter ( rate limit theo tài khoản )
+userRouter.post('/setting/change-password', isAuthorized, accountLimiter, changePasswordController)
 userRouter.post(
   '/setting/new-password',
   isAuthorized,
+  accountLimiter,
   validate(newPasswordValidator),
   newPasswordMiddleware,
   newPasswordController
-) // ( rate limit theo tài khoản )
+)
 export default userRouter

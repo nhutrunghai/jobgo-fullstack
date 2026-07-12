@@ -10,6 +10,7 @@ import {
 import { adminAuthMiddleware } from '~/middlewares/admin/auth.middleware.js'
 import { authorizeAdmin } from '~/middlewares/admin/authorization.middleware.js'
 import { findAdminUserByIdOrThrow } from '~/middlewares/admin/user.middleware.js'
+import { adminLimiter } from '~/middlewares/common/rate-limit.middleware.js'
 import validate from '~/middlewares/common/validator.middleware.js'
 import {
   getAdminUserDetailValidator,
@@ -60,6 +61,7 @@ adminUserRouter.patch(
   '/:userId/status',
   adminAuthMiddleware,
   authorizeAdmin([UserRole.ADMIN]),
+  adminLimiter,
   validate(updateAdminUserStatusValidator),
   findAdminUserByIdOrThrow,
   updateAdminUserStatusController

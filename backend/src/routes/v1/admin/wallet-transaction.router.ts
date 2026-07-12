@@ -6,6 +6,7 @@ import {
 } from '~/controllers/admin/wallet-transaction.controller.js'
 import { adminAuthMiddleware } from '~/middlewares/admin/auth.middleware.js'
 import { authorizeAdmin } from '~/middlewares/admin/authorization.middleware.js'
+import { paymentLimiter } from '~/middlewares/common/rate-limit.middleware.js'
 import validate from '~/middlewares/common/validator.middleware.js'
 import {
   adjustAdminWalletTransactionValidator,
@@ -18,6 +19,7 @@ adminWalletTransactionRouter.post(
   '/adjust',
   adminAuthMiddleware,
   authorizeAdmin([UserRole.ADMIN]),
+  paymentLimiter,
   validate(adjustAdminWalletTransactionValidator),
   adjustAdminWalletTransactionController
 )
