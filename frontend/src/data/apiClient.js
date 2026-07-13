@@ -472,7 +472,24 @@ async function loadAppliedJobsFallback() {
 }
 
 export async function loadHomeMeta() {
-  return loadMockHome()
+  try {
+    const payload = await requestJson('/job-categories')
+    const categories = Array.isArray(payload?.data?.categories) ? payload.data.categories : []
+
+    return {
+      categories: categories
+        .filter((item) => item?.is_active !== false && item?.name)
+        .sort((a, b) => Number(a?.sort_order || 0) - Number(b?.sort_order || 0))
+        .map((item) => ({
+          id: item._id || item.id || item.slug || item.name,
+          name: item.name,
+          slug: item.slug,
+          count: item.job_count || item.jobs_count || item.count || null,
+        })),
+    }
+  } catch {
+    return { categories: [] }
+  }
 }
 
 export async function loadJobsForHome() {

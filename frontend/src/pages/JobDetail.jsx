@@ -420,13 +420,13 @@ export default function JobDetail() {
                     <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-blue-700">{job.status}</span>
                     <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">{job.workMode}</span>
                   </div>
-                  <h1 className="max-w-4xl text-[22px] font-black leading-tight tracking-tight text-slate-950 sm:text-[25px]">{job.title}</h1>
-                  <p className="mt-1.5 text-[16px] font-bold text-slate-800">{job.company}</p>
+                  <h1 className="max-w-4xl text-[22px] font-semibold leading-tight tracking-tight text-slate-950 sm:text-[25px]">{job.title}</h1>
+                  <p className="mt-1.5 text-[16px] font-semibold text-slate-800">{job.company}</p>
                   <p className="mt-3 max-w-3xl text-[14px] leading-6 text-slate-600">{job.summary}</p>
                 </div>
                 <div className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-[13px] font-medium text-slate-600 lg:w-auto">
                   Hạn nộp hồ sơ
-                  <p className="mt-1 text-[18px] font-black text-slate-900">{job.deadline}</p>
+                  <p className="mt-1 text-[18px] font-semibold text-slate-900">{job.deadline}</p>
                 </div>
               </div>
 
@@ -441,7 +441,7 @@ export default function JobDetail() {
                       <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
                     </div>
                     <p className="text-[13px] text-slate-500">{item.label}</p>
-                    <p className="mt-1 text-[15px] font-bold text-slate-900">{item.value}</p>
+                    <p className="mt-1 text-[15px] font-semibold text-slate-900">{item.value}</p>
                   </article>
                 ))}
               </div>
@@ -479,13 +479,13 @@ export default function JobDetail() {
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_24px_60px_-45px_rgba(15,23,42,0.4)] sm:p-5">
               <div className="mb-6 flex items-center justify-between gap-4 overflow-x-auto border-b border-slate-200 pb-4">
                 <div className="flex min-w-max items-center gap-6 sm:gap-8">
-                  <button className="border-b-2 border-[#007bff] pb-3 text-[15px] font-bold text-[#007bff]">Chi tiết tin tuyển dụng</button>
-                  <button className="pb-3 text-[15px] font-bold text-slate-400">Việc làm liên quan</button>
+                  <button className="border-b-2 border-[#007bff] pb-3 text-[15px] font-semibold text-[#007bff]">Chi tiết tin tuyển dụng</button>
+                  <button className="pb-3 text-[15px] font-semibold text-slate-400">Việc làm liên quan</button>
                 </div>
               </div>
 
               <div className="mb-6">
-                <h2 className="mb-4 flex items-center gap-3 text-[17px] font-black text-slate-950">
+                <h2 className="mb-4 flex items-center gap-3 text-[17px] font-semibold text-slate-950">
                   <span className="h-7 w-1.5 rounded-full bg-[#007bff]" />
                   Thẻ công việc
                 </h2>
@@ -500,7 +500,7 @@ export default function JobDetail() {
 
               <div className="space-y-8">
                 <section>
-                  <h3 className="mb-3 text-[17px] font-black text-slate-950">Mô tả công việc</h3>
+                  <h3 className="mb-3 text-[17px] font-semibold text-slate-950">Mô tả công việc</h3>
                   <ul className="space-y-2 text-[14px] leading-7 text-slate-700">
                     {job.responsibilities.map((item) => (
                       <li key={item} className="ml-5 list-disc">
@@ -511,7 +511,7 @@ export default function JobDetail() {
                 </section>
 
                 <section>
-                  <h3 className="mb-3 text-[17px] font-black text-slate-950">Yêu cầu ứng viên</h3>
+                  <h3 className="mb-3 text-[17px] font-semibold text-slate-950">Yêu cầu ứng viên</h3>
                   <ul className="space-y-2 text-[14px] leading-7 text-slate-700">
                     {job.requirements.map((item) => (
                       <li key={item} className="ml-5 list-disc">
@@ -522,7 +522,7 @@ export default function JobDetail() {
                 </section>
 
                 <section>
-                  <h3 className="mb-3 text-[17px] font-black text-slate-950">Quyền lợi</h3>
+                  <h3 className="mb-3 text-[17px] font-semibold text-slate-950">Quyền lợi</h3>
                   <ul className="space-y-2 text-[14px] leading-7 text-slate-700">
                     {job.benefits.map((item) => (
                       <li key={item} className="ml-5 list-disc">
@@ -535,7 +535,7 @@ export default function JobDetail() {
             </section>
 
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_24px_60px_-45px_rgba(15,23,42,0.4)] sm:p-5">
-              <h3 className="mb-4 text-[19px] font-black text-slate-950">Chi tiết các công việc khác</h3>
+              <h3 className="mb-4 text-[19px] font-semibold tracking-tight text-slate-950">Chi tiết các công việc khác</h3>
               <div className="grid gap-3 md:grid-cols-2">
                 {otherJobs.map((item) => (
                   <article key={item.id} className="rounded-xl border border-slate-200 p-4 transition hover:border-blue-300 hover:bg-blue-50/40">
@@ -553,7 +553,7 @@ export default function JobDetail() {
 
           <aside className="space-y-4 xl:sticky xl:top-24">
             <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_24px_60px_-45px_rgba(15,23,42,0.4)]">
-              <h2 className="text-[24px] font-black leading-tight text-slate-950">{job.company}</h2>
+              <h2 className="text-[22px] font-semibold leading-tight tracking-tight text-slate-950">{job.company}</h2>
               <p className="mt-2 text-[13px] leading-6 text-slate-500">{job.companyDescription || 'Đang cập nhật thông tin công ty.'}</p>
 
               <div className="mt-6 space-y-4">
@@ -564,7 +564,7 @@ export default function JobDetail() {
                     </div>
                     <div>
                       <p className="text-[13px] text-slate-500">{item.label}</p>
-                      <p className="mt-1 text-[15px] font-bold text-slate-900">{item.value}</p>
+                      <p className="mt-1 text-[15px] font-semibold text-slate-900">{item.value}</p>
                     </div>
                   </div>
                 ))}
@@ -572,29 +572,29 @@ export default function JobDetail() {
             </section>
 
             <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_24px_60px_-45px_rgba(15,23,42,0.4)]">
-              <h3 className="mb-4 text-[19px] font-black text-slate-950">Thông tin chung</h3>
-              <div className="space-y-3 text-[13px]">
-                <div className="flex items-start justify-between gap-3">
-                  <span className="text-slate-500">Cấp bậc</span>
-                  <span className="font-bold text-slate-800">{job.level}</span>
-                </div>
-                <div className="flex items-start justify-between gap-3">
-                  <span className="text-slate-500">Số lượng tuyển</span>
-                  <span className="font-bold text-slate-800">{job.openings}</span>
-                </div>
-                <div className="flex items-start justify-between gap-3">
-                  <span className="text-slate-500">Hình thức</span>
-                  <span className="font-bold text-slate-800">{job.workMode}</span>
-                </div>
-                <div className="flex items-start justify-between gap-3">
-                  <span className="text-slate-500">Địa chỉ công ty</span>
-                  <span className="text-right font-bold text-slate-800">{job.companyFacts?.address || 'Đang cập nhật'}</span>
-                </div>
+              <h3 className="mb-5 text-[19px] font-semibold tracking-tight text-slate-950">Thông tin chung</h3>
+              <div className="space-y-4">
+                {[
+                  { icon: 'trending_up', label: 'Cấp bậc', value: job.level },
+                  { icon: 'groups', label: 'Số lượng tuyển', value: job.openings },
+                  { icon: 'business_center', label: 'Hình thức làm việc', value: job.workMode },
+                  { icon: 'location_on', label: 'Địa chỉ công ty', value: job.companyFacts?.address || 'Đang cập nhật' },
+                ].map((item) => (
+                  <div key={item.label} className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+                      <span className="material-symbols-outlined !text-[20px]">{item.icon}</span>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[13px] leading-5 text-slate-500">{item.label}</p>
+                      <p className="mt-0.5 text-[14px] font-semibold leading-5 text-slate-900">{item.value}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </section>
 
             <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_24px_60px_-45px_rgba(15,23,42,0.4)]">
-              <h3 className="mb-4 text-[19px] font-black text-slate-950">Công việc trong danh sách</h3>
+              <h3 className="mb-4 text-[19px] font-semibold tracking-tight text-slate-950">Công việc trong danh sách</h3>
               <div className="space-y-2.5">
                 {jobs.map((item) => (
                   <Link

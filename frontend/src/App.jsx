@@ -22,6 +22,14 @@ const homeNav = [
 
 const FEATURED_PAGE_LIMIT = 2
 const LATEST_PAGE_LIMIT = 6
+const CATEGORY_TONES = [
+  { icon: 'code_blocks', ring: 'border-blue-100 bg-blue-50 text-blue-700', badge: 'bg-blue-600 text-white' },
+  { icon: 'dns', ring: 'border-emerald-100 bg-emerald-50 text-emerald-700', badge: 'bg-emerald-600 text-white' },
+  { icon: 'hub', ring: 'border-violet-100 bg-violet-50 text-violet-700', badge: 'bg-violet-600 text-white' },
+  { icon: 'smart_toy', ring: 'border-cyan-100 bg-cyan-50 text-cyan-700', badge: 'bg-cyan-600 text-white' },
+  { icon: 'cloud', ring: 'border-amber-100 bg-amber-50 text-amber-700', badge: 'bg-amber-500 text-white' },
+  { icon: 'phone_iphone', ring: 'border-rose-100 bg-rose-50 text-rose-700', badge: 'bg-rose-500 text-white' },
+]
 
 function JobCard({ job, favoriteSet, onToggleFavorite, animationDelay = '0ms' }) {
   const fav = favoriteSet.has(job.id)
@@ -72,6 +80,7 @@ export default function App() {
   const [featuredJobs, setFeaturedJobs] = useState([])
   const [latestJobs, setLatestJobs] = useState([])
   const [search, setSearch] = useState('')
+  const [searchError, setSearchError] = useState('')
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(() => hasActiveAuthSession())
   const [favoriteSet, setFavoriteSet] = useState(() => {
@@ -298,9 +307,20 @@ export default function App() {
     navigate('/login')
   }
 
+  const popularCategories = useMemo(() => (homeMeta?.categories || []).filter((item) => item?.name).slice(0, 6), [homeMeta])
+  const featuredCategory = popularCategories[0]
+  const compactCategories = popularCategories.slice(1, 5)
+
   const handleSearchNavigate = () => {
     const q = search.trim()
-    navigate(q ? `/search-jobs?q=${encodeURIComponent(q)}` : '/search-jobs')
+
+    if (!q) {
+      setSearchError('Vui lòng nhập từ khóa trước khi tìm kiếm.')
+      return
+    }
+
+    setSearchError('')
+    navigate(`/search-jobs?q=${encodeURIComponent(q)}`)
   }
 
   return (
@@ -488,15 +508,52 @@ export default function App() {
                 )}
               </div>
 
-              <div className="soft-radius border border-slate-100 bg-white p-4 shadow-sm">
-                <h3 className="mb-4 text-[14px] font-bold text-slate-800">Danh mục phổ biến</h3>
-                <div className="space-y-3 text-[13px]">
-                  {(homeMeta?.categories || []).slice(0, 5).map((item) => (
-                    <div key={item.name} className="flex items-center justify-between">
-                      <span className="text-slate-600">{item.name}</span>
-                      <span className="text-slate-400">{item.count}</span>
-                    </div>
-                  ))}
+              <div className="soft-radius overflow-hidden border border-slate-100 bg-white shadow-sm">
+                <div className="border-b border-slate-100 bg-[radial-gradient(circle_at_top_left,#dbeafe,transparent_34%),linear-gradient(135deg,#ffffff,#f8fbff)] p-4">
+                  <div className="mb-1 flex items-center justify-between gap-2">
+                    <h3 className="text-[14px] font-bold text-slate-800">Danh mục phổ biến</h3>
+                    <span className="rounded-full bg-blue-50 px-2 py-1 text-[10px] font-extrabold uppercase tracking-wide text-blue-600">Hot</span>
+                  </div>
+                  <p className="text-[11px] leading-5 text-slate-500">Khám phá nhanh các nhóm việc làm đang có nhiều cơ hội.</p>
+                </div>
+
+                <div className="p-3">
+                  {featuredCategory ? (
+                    <Link to={`/search-jobs?q=${encodeURIComponent(featuredCategory.name)}`} className="group mb-3 block rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-600 to-cyan-500 p-3 text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+                      <div className="mb-3 flex items-start justify-between gap-3">
+                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/18 backdrop-blur">
+                          <span className="material-symbols-outlined !text-[20px]">rocket_launch</span>
+                        </span>
+                        <span className="rounded-full bg-white/18 px-2 py-1 text-[10px] font-bold">Top trend</span>
+                      </div>
+                      <p className="line-clamp-1 text-[14px] font-black">{featuredCategory.name}</p>
+                      <div className="mt-1 flex items-center justify-between text-[11px] text-white/85">
+                        <span>{featuredCategory.count ? `${featuredCategory.count} việc đang mở` : 'Khám phá ngay'}</span>
+                        <span className="material-symbols-outlined !text-[16px] transition group-hover:translate-x-0.5">arrow_forward</span>
+                      </div>
+                    </Link>
+                  ) : null}
+
+                  <div className="grid grid-cols-2 gap-2">
+                    {compactCategories.map((item, index) => {
+                      const tone = CATEGORY_TONES[index % CATEGORY_TONES.length]
+
+                      return (
+                        <Link key={item.name} to={`/search-jobs?q=${encodeURIComponent(item.name)}`} className={`group rounded-2xl border p-2.5 transition hover:-translate-y-0.5 hover:shadow-sm ${tone.ring}`}>
+                          <div className="mb-2 flex items-center justify-between gap-2">
+                            <span className="material-symbols-outlined !text-[18px]">{tone.icon}</span>
+                            <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-black ${tone.badge}`}>{item.count || 'Go'}</span>
+                          </div>
+                          <p className="line-clamp-2 min-h-8 text-[12px] font-extrabold leading-4">{item.name}</p>
+                        </Link>
+                      )
+                    })}
+                  </div>
+
+                  <Link to="/search-jobs" className="mt-3 flex items-center justify-center gap-1 rounded-xl border border-dashed border-slate-200 py-2 text-[12px] font-bold text-slate-500 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
+                    Xem tất cả danh mục
+                    <span className="material-symbols-outlined !text-[15px]">chevron_right</span>
+                  </Link>
                 </div>
               </div>
             </aside>
@@ -514,7 +571,10 @@ export default function App() {
                     placeholder="Tìm kiếm công việc, kỹ năng, công ty..."
                     type="text"
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e) => {
+                      setSearch(e.target.value)
+                      if (searchError) setSearchError('')
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') handleSearchNavigate()
                     }}
@@ -522,6 +582,7 @@ export default function App() {
                   <button type="button" onClick={handleSearchNavigate} className="h-10 rounded-md bg-[#2b59ff] px-4 text-xs font-bold text-white transition hover:bg-[#1f4bf1] sm:absolute sm:right-1.5 sm:top-1/2 sm:h-9 sm:-translate-y-1/2">
                     Tìm kiếm
                   </button>
+                  {searchError ? <p className="mt-2 text-[12px] font-semibold text-rose-500 sm:absolute sm:left-0 sm:top-full">{searchError}</p> : null}
                 </div>
               </div>
 
