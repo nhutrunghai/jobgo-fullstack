@@ -361,30 +361,30 @@ select.auth-input.auth-input-compact {
   line-height: 1.4;
 }
 
-.dashboard-copy-font h1 {
+:where(.dashboard-copy-font h1) {
   font-size: 31px !important;
   font-weight: 600 !important;
   line-height: 1.2 !important;
   letter-spacing: 0 !important;
 }
 
-.dashboard-copy-font h2,
-.dashboard-copy-font h3 {
+:where(.dashboard-copy-font h2),
+:where(.dashboard-copy-font h3) {
   font-size: 18px !important;
   font-weight: 600 !important;
   line-height: 1.35 !important;
   letter-spacing: 0 !important;
 }
 
-.dashboard-copy-font p,
-.dashboard-copy-font a,
-.dashboard-copy-font button,
-.dashboard-copy-font input,
-.dashboard-copy-font textarea,
-.dashboard-copy-font select,
-.dashboard-copy-font th,
-.dashboard-copy-font td,
-.dashboard-copy-font label,
-.dashboard-copy-font li {
+:where(.dashboard-copy-font p),
+:where(.dashboard-copy-font a),
+:where(.dashboard-copy-font button),
+:where(.dashboard-copy-font input),
+:where(.dashboard-copy-font textarea),
+:where(.dashboard-copy-font select),
+:where(.dashboard-copy-font th),
+:where(.dashboard-copy-font td),
+:where(.dashboard-copy-font label),
+:where(.dashboard-copy-font li) {
   font-size: 15px;
 }

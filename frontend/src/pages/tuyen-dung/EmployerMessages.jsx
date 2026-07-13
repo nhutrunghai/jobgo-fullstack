@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import DashboardSidebar from '../../components/DashboardSidebar.jsx'
+import EmployerTopBar from '../../components/EmployerTopBar.jsx'
 import { loadHardcodedMock } from '../../data/hardcodedClient.js'
 
 export default function EmployerMessages() {
@@ -36,7 +37,9 @@ export default function EmployerMessages() {
   return (
     <div className="bg-[#f7f9fc] text-on-surface">
       <DashboardSidebar activeKey="employer-messages" />
-      <main className="min-h-screen p-4 lg:ml-64 lg:p-5">
+      <main className="min-h-screen bg-[#F9FAFB] lg:ml-64">
+        <EmployerTopBar />
+        <div className="px-4 py-5 lg:px-6 lg:py-7">
         <h1 className="mb-4 text-[22px] font-bold sm:text-[24px]">Tin nhắn nhà tuyển dụng</h1>
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
           <section className="max-h-[360px] space-y-2 overflow-y-auto xl:col-span-4 xl:max-h-none">
@@ -70,6 +73,7 @@ export default function EmployerMessages() {
               <button className="h-10 rounded-lg bg-blue-600 px-4 text-white" onClick={send}>Gửi</button>
             </div>
           </section>
+        </div>
         </div>
       </main>
     </div>

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import DashboardSidebar from '../../components/DashboardSidebar.jsx'
+import EmployerTopBar from '../../components/EmployerTopBar.jsx'
 import Toast from '../../components/Toast.jsx'
 import { loadEmployerApplicationDetail, updateEmployerApplicationStatus } from '../../data/apiClient.js'
 
@@ -127,7 +128,9 @@ export default function EmployerCandidateDetail() {
   return (
     <div className="dashboard-copy-font min-h-screen bg-[#F9FAFB] text-slate-900">
       <DashboardSidebar activeKey="received-cv" />
-      <main className="lg:ml-64 min-h-screen px-6 py-7">
+      <main className="min-h-screen bg-[#F9FAFB] lg:ml-64">
+        <EmployerTopBar />
+        <div className="px-4 py-5 lg:px-6 lg:py-7">
         <Toast toast={toast} onClose={() => setToast(null)} />
 
         <section className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
@@ -320,6 +323,7 @@ export default function EmployerCandidateDetail() {
             </aside>
           </div>
         )}
+        </div>
       </main>
 
       {previewCvOpen && detail?.resumeSnapshot?.cv_url && (

@@ -359,6 +359,8 @@ class CompanyJobPromotionService {
     page: number
     limit: number
   }) {
+    await this.expireEndedPromotions(companyId)
+
     const match: {
       company_id: ObjectId
       status?: JobPromotionStatus
@@ -417,6 +419,8 @@ class CompanyJobPromotionService {
   }
 
   async getCompanyPromotionDetailOrThrow({ companyId, promotionId }: { companyId: ObjectId; promotionId: ObjectId }) {
+    await this.expireEndedPromotions(companyId)
+
     const promotion = await databaseService.jobPromotions
       .aggregate<CompanyPromotionListItem>([
         {
@@ -449,6 +453,8 @@ class CompanyJobPromotionService {
   }
 
   async cancelPromotion({ companyId, promotionId }: { companyId: ObjectId; promotionId: ObjectId }) {
+    await this.expireEndedPromotions(companyId)
+
     const promotion = await databaseService.jobPromotions.findOne({
       _id: promotionId,
       company_id: companyId
@@ -508,6 +514,29 @@ class CompanyJobPromotionService {
         message: UserMessages.JOB_PROMOTION_DUPLICATED
       })
     }
+  }
+
+  private async expireEndedPromotions(companyId?: ObjectId) {
+    const now = new Date()
+    const filter: {
+      status: JobPromotionStatus
+      ends_at: { $lte: Date }
+      company_id?: ObjectId
+    } = {
+      status: JobPromotionStatus.ACTIVE,
+      ends_at: { $lte: now }
+    }
+
+    if (companyId) {
+      filter.company_id = companyId
+    }
+
+    await databaseService.jobPromotions.updateMany(filter, {
+      $set: {
+        status: JobPromotionStatus.EXPIRED,
+        updated_at: now
+      }
+    })
   }
 
   private getCompanyPromotionProjection() {

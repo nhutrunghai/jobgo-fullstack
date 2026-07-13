@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import DashboardSidebar from '../../components/DashboardSidebar.jsx'
+import EmployerTopBar from '../../components/EmployerTopBar.jsx'
 import Toast from '../../components/Toast.jsx'
 import { loadEmployerReceivedApplications } from '../../data/apiClient.js'
 
@@ -102,7 +103,9 @@ export default function EmployerReceivedProfiles() {
       <Toast toast={toast} onClose={() => setToast(null)} />
       <DashboardSidebar activeKey="received-cv" />
 
-      <main className="min-h-screen px-4 py-5 lg:ml-64 lg:px-6 lg:py-7">
+      <main className="min-h-screen bg-[#F9FAFB] lg:ml-64">
+        <EmployerTopBar />
+        <div className="px-4 py-5 lg:px-6 lg:py-7">
         <section className="mb-4 lg:mb-6">
           <div>
             <p className="text-sm font-semibold text-blue-600">Quản lý tuyển dụng</p>
@@ -255,6 +258,7 @@ export default function EmployerReceivedProfiles() {
             </div>
           </div>
         </section>
+        </div>
       </main>
 
       {previewCv && (

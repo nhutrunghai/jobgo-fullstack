@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import DashboardSidebar from '../../components/DashboardSidebar.jsx'
+import EmployerTopBar from '../../components/EmployerTopBar.jsx'
 import Toast from '../../components/Toast.jsx'
 import { createCompanyProfile, loadEmployerDashboardOverview } from '../../data/apiClient.js'
 
@@ -89,7 +90,9 @@ export default function EmployerCompanyRegistration() {
       <Toast toast={toast} onClose={() => setToast(null)} />
       <DashboardSidebar activeKey="employer-dashboard" />
 
-      <main className="lg:ml-64 min-h-screen p-5">
+      <main className="min-h-screen bg-[#F9FAFB] lg:ml-64">
+        <EmployerTopBar />
+        <div className="px-4 py-5 lg:px-6 lg:py-7">
         <header className="mb-5 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-sm font-semibold text-blue-600">Thiết lập nhà tuyển dụng</p>
           <h1 className="mt-1 text-[30px] font-extrabold tracking-tight text-slate-900">Đăng ký hồ sơ công ty</h1>
@@ -231,6 +234,7 @@ export default function EmployerCompanyRegistration() {
             </div>
           </section>
         )}
+        </div>
       </main>
     </div>
   )

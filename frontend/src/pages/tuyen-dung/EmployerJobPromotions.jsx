@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Toast from '../../components/Toast.jsx'
 import DashboardSidebar from '../../components/DashboardSidebar.jsx'
-import EmployerSectionTabs from '../../components/EmployerSectionTabs.jsx'
+import EmployerTopBar from '../../components/EmployerTopBar.jsx'
 import { getCompanyJobPromotions } from '../../api/companyService.js'
 
 const statusOptions = [
@@ -102,26 +102,9 @@ export default function EmployerJobPromotions() {
       <DashboardSidebar activeKey="job-promotions" />
 
       <main className="min-h-screen bg-[#F9FAFB] lg:ml-64">
-        <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 px-4 py-4 backdrop-blur lg:px-6">
-          <div className="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-blue-600">Quản lý tuyển dụng</p>
-              <h1 className="mt-1 text-[28px] font-extrabold tracking-tight text-slate-950 sm:text-[32px]">Quảng cáo tuyển dụng</h1>
-              <p className="mt-1.5 text-sm text-slate-500">Theo dõi các gói quảng cáo đã mua, thời gian hiển thị và trạng thái từng job.</p>
-            </div>
-            <Link
-              to="/employer-job-list"
-              className="inline-flex h-11 items-center justify-center rounded-lg border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-            >
-              <span className="material-symbols-outlined mr-2 text-[18px]">checklist</span>
-              Về danh sách job
-            </Link>
-          </div>
-        </header>
+        <EmployerTopBar />
 
         <div className="space-y-4 px-4 py-5 lg:px-6 lg:py-8">
-          <EmployerSectionTabs />
-
           <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 2xl:grid-cols-4">
             {[
               ['Đang hiển thị', stats.active, 'text-emerald-700'],
@@ -203,17 +186,17 @@ export default function EmployerJobPromotions() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:w-[240px]">
+                  <div className="grid w-full shrink-0 grid-cols-2 gap-2 sm:w-[224px] xl:w-[224px]">
                     <Link
                       to={`/employer-job-promotions/${promotion._id}`}
-                      className="inline-flex h-11 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                      className="inline-flex h-11 w-full items-center justify-center rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
                     >
                       Xem chi tiết
                     </Link>
                     <Link
                       to="/employer-job-list"
                       state={{ focusJobId: promotion.job_id }}
-                      className="inline-flex h-11 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 px-4 text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
+                      className="inline-flex h-11 w-full items-center justify-center rounded-lg border border-blue-100 bg-blue-50 px-3 text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
                     >
                       Mở job
                     </Link>

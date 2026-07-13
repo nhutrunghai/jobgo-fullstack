@@ -340,6 +340,7 @@ function normalizeJobDetail(job, company, myApplication) {
     postedAt: formatRelativeTime(job.published_at),
     summary: responsibilities[0] || repairText(company?.description) || '\u0110ang c\u1eadp nh\u1eadt',
     tags: [...new Set([...(job.skills || []), ...getJobCategoryNames(job)].map(repairText))],
+    categoryIds: Array.isArray(job.category_ids) ? job.category_ids.map(String) : [],
     responsibilities,
     requirements,
     benefits,
@@ -492,6 +493,28 @@ export async function loadHomeMeta() {
   }
 }
 
+export async function loadEmployerCompanyGate({ force = false } = {}) {
+  try {
+    const payload = await requestJson('/company/me', { auth: true, noCache: force })
+    const company = payload?.data || null
+
+    return {
+      needsCompanyProfile: false,
+      needsAdminApproval: company?.verified !== true,
+      company,
+    }
+  } catch (error) {
+    if (error.status === 404) {
+      return {
+        needsCompanyProfile: true,
+        needsAdminApproval: false,
+        company: null,
+      }
+    }
+    throw error
+  }
+}
+
 export async function loadJobsForHome() {
   const mock = await loadMockJobs()
   return mock.jobs || []
@@ -555,20 +578,23 @@ export async function searchPublicJobs(queryOrParams) {
       : { q: queryOrParams }
   const query = String(params.q || '').trim()
 
-  if (query.length < 2) {
+  const hasFilters = Boolean(params.location || params.job_type || params.level || params.category_id)
+
+  if (query.length < 2 && !hasFilters) {
     const jobs = await loadJobsForHome()
     return shouldReturnSearchResult ? { jobs, pagination: null } : jobs
   }
 
   const searchParams = new URLSearchParams({
-    q: query,
     page: String(params.page || 1),
     limit: String(params.limit || 10),
   })
 
+  if (query.length >= 2) searchParams.set('q', query)
   if (params.location) searchParams.set('location', params.location)
   if (params.job_type) searchParams.set('job_type', params.job_type)
   if (params.level) searchParams.set('level', params.level)
+  if (params.category_id) searchParams.set('category_id', params.category_id)
 
   const payload = await requestJson(`/jobs/search?${searchParams.toString()}`)
   const items = Array.isArray(payload?.data?.items)

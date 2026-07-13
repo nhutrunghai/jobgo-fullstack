@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import DashboardSidebar from '../../components/DashboardSidebar.jsx'
+import EmployerTopBar from '../../components/EmployerTopBar.jsx'
 import { loadHardcodedMock } from '../../data/hardcodedClient.js'
 
 export default function EmployerInterviewCalendar() {
@@ -37,7 +38,9 @@ export default function EmployerInterviewCalendar() {
   return (
     <div className="bg-[#f7f9fc] text-on-surface">
       <DashboardSidebar activeKey="employer-interviews" />
-      <main className="lg:ml-64 min-h-screen p-5">
+      <main className="min-h-screen bg-[#F9FAFB] lg:ml-64">
+        <EmployerTopBar />
+        <div className="px-4 py-5 lg:px-6 lg:py-7">
         <h1 className="mb-4 text-[24px] font-bold">Lịch phỏng vấn</h1>
         <div className="mb-4 flex flex-wrap gap-2">
           {viewModes.map((item) => (
@@ -62,6 +65,7 @@ export default function EmployerInterviewCalendar() {
             </article>
           ))}
         </section>
+        </div>
       </main>
     </div>
   )

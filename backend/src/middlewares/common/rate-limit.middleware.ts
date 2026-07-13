@@ -46,7 +46,7 @@ export const createRateLimiter = ({
     }),
     message: {
       status: StatusCodes.TOO_MANY_REQUESTS,
-      message: message ?? 'B?n thao t?c qu? nhanh, vui l?ng th? l?i sau.',
+      message: message ?? 'Bạn thao tác quá nhanh, vui lòng thử lại sau.',
       retryAfter: Math.ceil(windowMs / 1000)
     },
     validate: { xForwardedForHeader: false }
@@ -58,14 +58,14 @@ export const authLimiter = createRateLimiter({
   windowMinutes: 15,
   max: 10,
   skipSuccessfulRequests: true,
-  message: 'B?n th? ??ng nh?p/??ng k? qu? nhi?u l?n, vui l?ng th? l?i sau 15 ph?t.'
+  message: 'Bạn thử đăng nhập/đăng ký quá nhiều lần, vui lòng thử lại sau 15 phút.'
 })
 
 export const mailLimiter = createRateLimiter({
   name: 'mail',
   windowMinutes: 60,
   max: 3,
-  message: 'H? th?ng ?? g?i qu? nhi?u email, vui l?ng ki?m tra h?m th? ho?c th? l?i sau 1 gi?.'
+  message: 'Hệ thống đã gửi quá nhiều email, vui lòng kiểm tra hòm thư hoặc thử lại sau 1 giờ.'
 })
 
 export const accountLimiter = createRateLimiter({
@@ -73,7 +73,7 @@ export const accountLimiter = createRateLimiter({
   windowMinutes: 15,
   max: 8,
   keyScope: 'user',
-  message: 'B?n thao t?c v?i t?i kho?n qu? nhi?u l?n, vui l?ng th? l?i sau 15 ph?t.'
+  message: 'Bạn thao tác với tài khoản quá nhiều lần, vui lòng thử lại sau 15 phút.'
 })
 
 export const writeLimiter = createRateLimiter({
@@ -81,7 +81,7 @@ export const writeLimiter = createRateLimiter({
   windowMinutes: 5,
   max: 30,
   keyScope: 'user',
-  message: 'B?n t?o ho?c c?p nh?t d? li?u qu? nhanh, vui l?ng th? l?i sau ?t ph?t.'
+  message: 'Bạn tạo hoặc cập nhật dữ liệu quá nhanh, vui lòng thử lại sau ít phút.'
 })
 
 export const paymentLimiter = createRateLimiter({
@@ -89,7 +89,7 @@ export const paymentLimiter = createRateLimiter({
   windowMinutes: 10,
   max: 6,
   keyScope: 'user',
-  message: 'B?n t?o giao d?ch qu? nhi?u l?n, vui l?ng th? l?i sau 10 ph?t.'
+  message: 'Bạn tạo giao dịch quá nhiều lần, vui lòng thử lại sau 10 phút.'
 })
 
 export const chatLimiter = createRateLimiter({
@@ -97,7 +97,7 @@ export const chatLimiter = createRateLimiter({
   windowMinutes: 1,
   max: 12,
   keyScope: 'user',
-  message: 'B?n g?i y?u c?u chat qu? nhanh, vui l?ng th? l?i sau ?t ph?t.'
+  message: 'Bạn gửi yêu cầu chat quá nhanh, vui lòng thử lại sau ít phút.'
 })
 
 export const adminLimiter = createRateLimiter({
@@ -105,7 +105,7 @@ export const adminLimiter = createRateLimiter({
   windowMinutes: 5,
   max: 20,
   keyScope: 'user',
-  message: 'B?n thao t?c qu?n tr? qu? nhanh, vui l?ng th? l?i sau ?t ph?t.'
+  message: 'Bạn thao tác quản trị quá nhanh, vui lòng thử lại sau ít phút.'
 })
 
 export const webhookLimiter = createRateLimiter({
@@ -113,5 +113,5 @@ export const webhookLimiter = createRateLimiter({
   windowMinutes: 1,
   max: 120,
   keyScope: 'ip',
-  message: 'Qu? nhi?u webhook request, vui l?ng th? l?i sau.'
+  message: 'Quá nhiều webhook request, vui lòng thử lại sau.'
 })

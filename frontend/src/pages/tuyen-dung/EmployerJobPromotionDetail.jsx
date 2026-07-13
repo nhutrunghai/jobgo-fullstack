@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import Toast from '../../components/Toast.jsx'
 import DashboardSidebar from '../../components/DashboardSidebar.jsx'
+import EmployerTopBar from '../../components/EmployerTopBar.jsx'
 import EmployerSectionTabs from '../../components/EmployerSectionTabs.jsx'
 import { cancelCompanyJobPromotion, getCompanyJobPromotionDetail } from '../../api/companyService.js'
 
@@ -105,32 +106,7 @@ export default function EmployerJobPromotionDetail() {
       <DashboardSidebar activeKey="job-promotions" />
 
       <main className="min-h-screen bg-[#F9FAFB] lg:ml-64">
-        <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 px-4 py-4 backdrop-blur lg:px-6">
-          <div className="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-blue-600">Quản lý tuyển dụng</p>
-              <h1 className="mt-1 text-[28px] font-extrabold tracking-tight text-slate-950 sm:text-[32px]">Chi tiết quảng cáo</h1>
-              <p className="mt-1.5 text-sm text-slate-500">Xem thời gian chạy, chi phí đã trừ ví và trạng thái hiện tại của gói quảng cáo.</p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Link
-                to="/employer-job-promotions"
-                className="inline-flex h-11 items-center justify-center rounded-lg border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-              >
-                Danh sách quảng cáo
-              </Link>
-              {promotion?.job_id ? (
-                <Link
-                  to="/employer-job-list"
-                  state={{ focusJobId: promotion.job_id }}
-                  className="inline-flex h-11 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 px-5 text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
-                >
-                  Mở job
-                </Link>
-              ) : null}
-            </div>
-          </div>
-        </header>
+        <EmployerTopBar />
 
         <div className="space-y-4 px-4 py-5 lg:px-6 lg:py-8">
           <EmployerSectionTabs />

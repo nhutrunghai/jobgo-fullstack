@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Toast from '../../components/Toast.jsx'
 import DashboardSidebar from '../../components/DashboardSidebar.jsx'
-import EmployerSectionTabs from '../../components/EmployerSectionTabs.jsx'
+import EmployerTopBar from '../../components/EmployerTopBar.jsx'
 import {
   getCompanyJob,
   getCompanyJobPromotions,
@@ -819,37 +819,9 @@ export default function EmployerJobList() {
       />
 
       <main className="dashboard-copy-font min-h-screen bg-[#F9FAFB] lg:ml-64">
-        <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur lg:px-6 lg:py-4">
-          <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-            <label className="relative block w-full max-w-[560px]">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
-              <input
-                type="text"
-                placeholder="Tìm kiếm hệ thống..."
-                className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 pl-12 pr-4 text-[15px] outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-100"
-              />
-            </label>
-
-            <div className="flex items-center justify-between gap-3 xl:justify-end">
-              <div className="flex items-center gap-2">
-                <button type="button" className="relative flex h-10 w-10 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100">
-                  <span className="material-symbols-outlined">notifications</span>
-                  <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500" />
-                </button>
-                <button type="button" className="flex h-10 w-10 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100">
-                  <span className="material-symbols-outlined">help</span>
-                </button>
-              </div>
-
-              <div className="hidden h-8 w-px bg-slate-200 md:block" />
-              <p className="truncate text-sm font-semibold text-slate-800 sm:text-base lg:text-lg">Quản lý tuyển dụng</p>
-            </div>
-          </div>
-        </header>
+        <EmployerTopBar />
 
         <div className="space-y-4 px-4 py-5 lg:space-y-5 lg:px-6 lg:py-8">
-          <EmployerSectionTabs />
-
           {error && (
             <section className="rounded-lg border border-rose-200 bg-rose-50 px-5 py-4 text-sm font-semibold text-rose-700 shadow-sm">
               {error}

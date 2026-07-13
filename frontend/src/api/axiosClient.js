@@ -46,7 +46,14 @@ async function request(method, path, { params, data, headers, auth = true, retry
     if (payload?.message) {
       throw new Error(payload.message)
     }
-    throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+
+    const gatewayErrorMessage = {
+      502: 'Không kết nối được tới máy chủ. Vui lòng thử lại sau ít giây.',
+      503: 'Máy chủ đang tạm thời bận. Vui lòng thử lại sau ít giây.',
+      504: 'Máy chủ phản hồi quá lâu. Vui lòng thử lại sau ít giây.',
+    }[response.status]
+
+    throw new Error(gatewayErrorMessage || 'Không thể kết nối máy chủ. Vui lòng thử lại sau.')
   }
 
   return { data: payload }

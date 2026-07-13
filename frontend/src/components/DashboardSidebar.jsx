@@ -113,15 +113,15 @@ function SidebarSections({ sections, normalizedActiveKey, onNavigateClose, onRol
   return (
     <>
       {sections.map((section) => (
-        <div key={section.title || 'main'}>
-          {section.title ? <p className="px-3 pb-2 text-xs font-extrabold uppercase tracking-wider text-slate-400">{section.title}</p> : null}
-          <div className="space-y-1">
+        <div key={section.title || 'main'} className="min-w-0">
+          {section.title ? <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-slate-400">{section.title}</p> : null}
+          <div className="min-w-0 space-y-1">
             {section.items.map((item) => {
               const isActive = normalizedActiveKey === item.key
               const rowClass = isActive
                 ? item.key === 'milestone'
-                  ? 'bg-emerald-50 font-bold text-emerald-600'
-                  : 'bg-blue-500 font-bold text-white'
+                  ? 'bg-emerald-50 font-semibold text-emerald-600'
+                  : 'bg-blue-500 font-semibold text-white'
                 : item.key === 'switch-role'
                   ? 'bg-emerald-50 font-bold text-emerald-500'
                   : 'font-semibold text-slate-500 hover:bg-slate-50'
@@ -147,13 +147,13 @@ function SidebarSections({ sections, normalizedActiveKey, onNavigateClose, onRol
                         ? { toast: { type: 'success', message: 'Đã chuyển sang chế độ người dùng.' } }
                         : undefined
                   }
-                  className={`flex items-center justify-between rounded-lg px-3 py-2.5 text-sm transition-colors ${rowClass}`}
+                  className={`box-border flex h-10 w-full max-w-full min-w-0 items-center justify-between gap-2 overflow-hidden rounded-lg px-3 text-sm transition-colors ${rowClass}`}
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
-                    <span>{item.label}</span>
+                  <div className="flex min-w-0 flex-1 items-center gap-3">
+                    <span className="material-symbols-outlined shrink-0 text-[20px]">{item.icon}</span>
+                    <span className="min-w-0 truncate">{item.label}</span>
                   </div>
-                  {item.badge ? <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${toneClass(item.badgeTone)}`}>{item.badge}</span> : null}
+                  {item.badge ? <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold ${toneClass(item.badgeTone)}`}>{item.badge}</span> : null}
                 </Link>
               )
             })}
@@ -305,12 +305,12 @@ export default function DashboardSidebar({ activeKey }) {
               </button>
             </div>
 
-            <nav className="flex-1 space-y-4 overflow-y-auto pr-1">
+            <nav className="flex-1 space-y-4 overflow-y-auto">
               <SidebarSections sections={sections} normalizedActiveKey={normalizedActiveKey} onNavigateClose={() => setMobileOpen(false)} onRoleSwitch={handleRoleSwitch} />
             </nav>
 
             <div className="mt-4 rounded-2xl border border-slate-100 bg-slate-50 px-3 py-3 shadow-sm">
-              <div className="flex items-center gap-3">
+              <div className="flex min-w-0 flex-1 items-center gap-3">
                 <UserAvatar src={profile?.avatar} name={displayName} className="h-11 w-11" textClassName="text-sm" />
                 <div className="min-w-0">
                   <p className="truncate text-sm font-bold text-slate-900">{displayName}</p>
@@ -337,12 +337,12 @@ export default function DashboardSidebar({ activeKey }) {
           </Link>
         </div>
 
-        <nav className="flex-1 space-y-4 overflow-y-auto pr-1">
+        <nav className="flex-1 space-y-4 overflow-y-auto">
           <SidebarSections sections={sections} normalizedActiveKey={normalizedActiveKey} onRoleSwitch={handleRoleSwitch} />
         </nav>
 
         <div className="mt-4 rounded-2xl border border-slate-100 bg-slate-50 px-3 py-3 shadow-sm">
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 flex-1 items-center gap-3">
             <UserAvatar src={profile?.avatar} name={displayName} className="h-11 w-11" textClassName="text-sm" />
             <div className="min-w-0">
               <p className="truncate text-sm font-bold text-slate-900">{displayName}</p>

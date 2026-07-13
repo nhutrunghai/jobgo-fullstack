@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import DashboardSidebar from '../../components/DashboardSidebar.jsx'
+import EmployerTopBar from '../../components/EmployerTopBar.jsx'
 import Toast from '../../components/Toast.jsx'
 import { loadEmployerDashboardOverview } from '../../data/apiClient.js'
 
@@ -160,7 +161,9 @@ export default function EmployerOverviewDashboard() {
       <Toast toast={toast} onClose={() => setToast(null)} />
       <DashboardSidebar activeKey="employer-dashboard" />
 
-      <main className="lg:ml-64 min-h-screen p-5">
+      <main className="min-h-screen bg-[#F9FAFB] lg:ml-64">
+        <EmployerTopBar />
+        <div className="px-4 py-5 lg:px-6 lg:py-7">
         <header className="mb-4 flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between">
           <div className="flex min-w-0 items-center gap-4">
             {showCompanyLogo ? (
@@ -286,6 +289,7 @@ export default function EmployerOverviewDashboard() {
           </div>
         </section>
         </>
+        </div>
       </main>
     </div>
   )

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Toast from '../../components/Toast.jsx'
 import DashboardSidebar from '../../components/DashboardSidebar.jsx'
+import EmployerTopBar from '../../components/EmployerTopBar.jsx'
 import { createCompanyJob, getCompanyJob, getCompanyPromotionPlans, getJobCategories, updateCompanyJob } from '../../api/companyService.js'
 import { loadHardcodedMock } from '../../data/hardcodedClient.js'
 
@@ -451,9 +452,12 @@ export default function EmployerRecruitmentDashboard() {
     return (
       <div className="dashboard-copy-font min-h-screen bg-[#F9FAFB] text-slate-900">
         <DashboardSidebar activeKey="post-job" />
-        <main className="lg:ml-64 min-h-screen p-6">
-          <div className="rounded-lg border border-slate-200 bg-white px-5 py-4 text-sm font-semibold text-slate-500 shadow-sm">
-            Đang tải dữ liệu...
+        <main className="min-h-screen bg-[#F9FAFB] lg:ml-64">
+          <EmployerTopBar />
+          <div className="px-4 py-5 lg:px-6 lg:py-7">
+            <div className="rounded-lg border border-slate-200 bg-white px-5 py-4 text-sm font-semibold text-slate-500 shadow-sm">
+              Đang tải dữ liệu...
+            </div>
           </div>
         </main>
       </div>
@@ -824,7 +828,9 @@ export default function EmployerRecruitmentDashboard() {
       <Toast toast={toast} onClose={() => setToast(null)} />
       <DashboardSidebar activeKey="post-job" />
 
-      <main className="min-h-screen px-4 py-5 lg:ml-64 lg:px-6 lg:py-7">
+      <main className="min-h-screen bg-[#F9FAFB] lg:ml-64">
+        <EmployerTopBar />
+        <div className="px-4 py-5 lg:px-6 lg:py-7">
         <section className="mb-4 flex flex-col gap-4 lg:mb-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-sm font-semibold text-blue-600">Quản lý tuyển dụng</p>
@@ -969,6 +975,7 @@ export default function EmployerRecruitmentDashboard() {
               </button>
             )}
           </div>
+        </div>
         </div>
       </main>
     </div>

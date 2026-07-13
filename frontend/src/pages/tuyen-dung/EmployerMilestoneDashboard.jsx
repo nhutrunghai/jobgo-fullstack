@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import DashboardSidebar from '../../components/DashboardSidebar.jsx'
+import EmployerTopBar from '../../components/EmployerTopBar.jsx'
 import { loadHardcodedMock } from '../../data/hardcodedClient.js'
 
 export default function EmployerMilestoneDashboard() {
@@ -23,7 +24,9 @@ export default function EmployerMilestoneDashboard() {
   return (
     <div className="bg-[#f7f9fc] text-on-surface">
       <DashboardSidebar activeKey="milestone" />
-      <main className="lg:ml-64 min-h-screen p-5">
+      <main className="min-h-screen bg-[#F9FAFB] lg:ml-64">
+        <EmployerTopBar />
+        <div className="px-4 py-5 lg:px-6 lg:py-7">
         <h1 className="mb-4 text-[28px] font-bold text-slate-900">Milestone nhà tuyển dụng</h1>
         <section className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
           <article className="rounded-xl border border-slate-200 bg-white p-4">Tổng milestone: {stats.total}</article>
@@ -40,6 +43,7 @@ export default function EmployerMilestoneDashboard() {
             </article>
           ))}
         </section>
+        </div>
       </main>
     </div>
   )
