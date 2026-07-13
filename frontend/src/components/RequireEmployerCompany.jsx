@@ -2,13 +2,6 @@ import { useEffect, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { loadEmployerDashboardOverview } from '../data/apiClient.js'
 
-function EmployerRouteLoading() {
-  return (
-    <div className="min-h-screen bg-[#f6f8fb] px-6 py-8 text-sm font-semibold text-slate-500">
-      Đang kiểm tra hồ sơ công ty...
-    </div>
-  )
-}
 
 export default function RequireEmployerCompany({ children }) {
   const location = useLocation()
@@ -33,7 +26,7 @@ export default function RequireEmployerCompany({ children }) {
   }, [])
 
   if (status === 'checking') {
-    return <EmployerRouteLoading />
+    return null
   }
 
   if (status === 'missing') {

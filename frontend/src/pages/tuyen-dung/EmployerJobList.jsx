@@ -792,7 +792,7 @@ export default function EmployerJobList() {
   }
 
   return (
-    <div className="dashboard-copy-font min-h-screen bg-[#F9FAFB] text-slate-900">
+    <div className="min-h-screen bg-[#F9FAFB] text-slate-900">
       <Toast toast={toast} onClose={() => setToast(null)} />
       <DashboardSidebar activeKey="job-list" />
       <ApplicantPreviewModal
@@ -818,7 +818,7 @@ export default function EmployerJobList() {
         onSubmit={handleSubmitPromotionPurchase}
       />
 
-      <main className="min-h-screen bg-[#F9FAFB] lg:ml-64">
+      <main className="dashboard-copy-font min-h-screen bg-[#F9FAFB] lg:ml-64">
         <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur lg:px-6 lg:py-4">
           <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
             <label className="relative block w-full max-w-[560px]">
