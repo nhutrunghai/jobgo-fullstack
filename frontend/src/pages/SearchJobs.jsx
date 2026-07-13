@@ -319,7 +319,7 @@ export default function SearchJobs() {
           <div className="flex flex-1 flex-col gap-2 rounded-xl bg-white p-3 lg:h-11 lg:flex-row lg:items-center lg:gap-0 lg:px-3 lg:py-0">
             <div className="flex h-10 items-center rounded-lg bg-slate-50 px-2 lg:bg-transparent lg:px-0">
               <span className="material-symbols-outlined text-slate-500">work</span>
-              <select className="ml-2 h-10 min-w-0 flex-1 border-0 bg-transparent pr-2 text-[14px] font-semibold text-slate-700 outline-none lg:flex-none" value={jobType} onChange={(e) => setJobType(e.target.value)}>
+              <select className="ml-2 h-10 min-w-0 flex-1 border-0 bg-transparent pr-8 text-[14px] font-semibold text-slate-700 outline-none lg:flex-none" value={jobType} onChange={(e) => setJobType(e.target.value)}>
               {jobTypeOptions.map((item) => (
                 <option key={item.value || 'all-job-type'} value={item.value}>{item.label}</option>
               ))}
