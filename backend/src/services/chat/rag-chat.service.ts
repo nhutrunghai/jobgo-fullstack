@@ -40,7 +40,7 @@ class RagChatService {
       return {
         session_id,
         intent: 'unsupported' as ChatIntent,
-        answer: config.maintenance_message || 'Chatbot Ä‘ang táº¡m báº£o trÃ¬. Vui lÃ²ng thá»­ láº¡i sau.',
+        answer: config.maintenance_message || 'Chatbot đang tạm bảo trì. Vui lòng thử lại sau.',
         sources: []
       }
     }
@@ -212,18 +212,18 @@ class RagChatService {
     })
 
     if (chunks.length === 0 && !visualReviewResult.summary) {
-      const fallbackReasons: string[] = ['TÃ´i chÆ°a láº¥y Ä‘Æ°á»£c text CV tá»« Elasticsearch']
+      const fallbackReasons: string[] = ['Tôi chưa lấy được text CV từ Elasticsearch']
 
       if (!resume.cv_url) {
-        fallbackReasons.push('CV nÃ y khÃ´ng cÃ³ `cv_url` Ä‘á»ƒ phÃ¢n tÃ­ch PDF')
+        fallbackReasons.push('CV này không có `cv_url` để phân tích PDF')
       } else if (visualReviewResult.error) {
-        fallbackReasons.push(`phÃ¢n tÃ­ch bá»‘ cá»¥c PDF chÆ°a thá»±c hiá»‡n Ä‘Æ°á»£c: ${visualReviewResult.error}`)
+        fallbackReasons.push(`phân tích bố cục PDF chưa thực hiện được: ${visualReviewResult.error}`)
       }
 
       return {
-        answer: `Hiá»‡n tÃ´i chÆ°a cÃ³ Ä‘á»§ dá»¯ liá»‡u Ä‘á»ƒ Ä‘Ã¡nh giÃ¡ CV nÃ y. ${fallbackReasons.join(
+        answer: `Hiện tôi chưa có đủ dữ liệu để đánh giá CV này. ${fallbackReasons.join(
           ', '
-        )}. HÃ£y kiá»ƒm tra láº¡i file CV hoáº·c cháº¡y láº¡i pipeline ingest Ä‘á»ƒ cÃ³ cáº£ text chunks vÃ  dá»¯ liá»‡u PDF há»£p lá»‡.`,
+        )}. Hãy kiểm tra lại file CV hoặc chạy lại pipeline ingest để có cả text chunks và dữ liệu PDF hợp lệ.`,
         sources: [this.buildSingleResumeSource(resume)]
       }
     }
@@ -312,7 +312,7 @@ class RagChatService {
     if (chunks.length === 0) {
       return {
         answer:
-          'Hiá»‡n tÃ´i chÆ°a láº¥y Ä‘Æ°á»£c dá»¯ liá»‡u text tá»« CV nÃ y Ä‘á»ƒ so khá»›p vá»›i job. Báº¡n hÃ£y kiá»ƒm tra CV Ä‘Ã£ Ä‘Æ°á»£c ingest embedding hoáº·c chá»n má»™t CV khÃ¡c.',
+          'Hiện tôi chưa lấy được dữ liệu text từ CV này để so khớp với job. Bạn hãy kiểm tra CV đã được ingest embedding hoặc chọn một CV khác.',
         sources: [this.buildSingleResumeSource(resume)]
       }
     }
@@ -325,7 +325,7 @@ class RagChatService {
     if (intent === 'cv_match_previous_jobs' && jobs.length === 0) {
       return {
         answer:
-          'TÃ´i chÆ°a tháº¥y danh sÃ¡ch job nÃ o trÆ°á»›c Ä‘Ã³ trong cuá»™c trÃ² chuyá»‡n nÃ y Ä‘á»ƒ so khá»›p vá»›i CV. Báº¡n hÃ£y tÃ¬m job trÆ°á»›c, vÃ­ dá»¥: "tÃ¬m job backend", rá»“i há»i láº¡i job nÃ o phÃ¹ há»£p vá»›i CV.',
+          'Tôi chưa thấy danh sách job nào trước đó trong cuộc trò chuyện này để so khớp với CV. Bạn hãy tìm job trước, ví dụ: "tìm job backend", rồi hỏi lại job nào phù hợp với CV.',
         sources: this.buildResumeSources(chunks)
       }
     }
@@ -333,7 +333,7 @@ class RagChatService {
     if (jobs.length === 0) {
       return {
         answer:
-          'Hiá»‡n tÃ´i chÆ°a tÃ¬m tháº¥y job phÃ¹ há»£p Ä‘á»ƒ so khá»›p vá»›i CV nÃ y. Báº¡n cÃ³ thá»ƒ thá»­ nÃªu rÃµ vá»‹ trÃ­ mong muá»‘n, level hoáº·c Ä‘á»‹a Ä‘iá»ƒm.',
+          'Hiện tôi chưa tìm thấy job phù hợp để so khớp với CV này. Bạn có thể thử nêu rõ vị trí mong muốn, level hoặc địa điểm.',
         sources: this.buildResumeSources(chunks)
       }
     }
@@ -383,7 +383,7 @@ class RagChatService {
 
     return {
       answer:
-        'TÃ´i Ä‘Ã£ tÃ¬m Ä‘Æ°á»£c má»™t sá»‘ job cÃ³ thá»ƒ so khá»›p vá»›i CV, nhÆ°ng chÆ°a táº¡o Ä‘Æ°á»£c pháº§n giáº£i thÃ­ch chi tiáº¿t. Báº¡n cÃ³ thá»ƒ há»i láº¡i ngáº¯n hÆ¡n hoáº·c thá»­ chá»n CV khÃ¡c.',
+        'Tôi đã tìm được một số job có thể so khớp với CV, nhưng chưa tạo được phần giải thích chi tiết. Bạn có thể hỏi lại ngắn hơn hoặc thử chọn CV khác.',
       sources: [...contextAssemblyService.buildSources(contextJobs, contextJobs.length), ...this.buildResumeSources(chunks)]
     }
   }
@@ -429,7 +429,7 @@ class RagChatService {
     if (jobs.length === 0) {
       return {
         answer:
-          'Hiá»‡n tÃ´i chÆ°a tÃ¬m tháº¥y job phÃ¹ há»£p vá»›i cÃ¢u há»i nÃ y. Báº¡n cÃ³ thá»ƒ thá»­ nÃªu rÃµ hÆ¡n vá» ká»¹ nÄƒng, level hoáº·c Ä‘á»‹a Ä‘iá»ƒm.',
+          'Hiện tôi chưa tìm thấy job phù hợp với câu hỏi này. Bạn có thể thử nêu rõ hơn về kỹ năng, level hoặc địa điểm.',
         sources: []
       }
     }
@@ -508,15 +508,15 @@ class RagChatService {
   }
 
   private async buildFreeformAnswer(intent: ChatIntent, message: string, config: RagChatRuntimeConfig) {
-    const scope = intent === 'policy_qa' ? 'cÃ¢u há»i chÃ­nh sÃ¡ch/quy Ä‘á»‹nh' : 'cÃ¢u há»i ngoÃ i pháº¡m vi tuyá»ƒn dá»¥ng'
+    const scope = intent === 'policy_qa' ? 'câu hỏi chính sách/quy định' : 'câu hỏi ngoài phạm vi tuyển dụng'
 
     try {
       return await llmService.generateText({
         provider: config.provider,
         model: config.chat_model,
-        prompt: `Báº¡n lÃ  trá»£ lÃ½ JobGo. HÃ£y tráº£ lá»i ngáº¯n gá»n, rÃµ rÃ ng báº±ng tiáº¿ng Viá»‡t cho ${scope}. Náº¿u khÃ´ng cháº¯c cháº¯n, hÃ£y nÃ³i rÃµ giá»›i háº¡n thÃ´ng tin.
+        prompt: `Bạn là trợ lý JobGo. Hãy trả lời ngắn gọn, rõ ràng bằng tiếng Việt cho ${scope}. Nếu không chắc chắn, hãy nói rõ giới hạn thông tin.
 
-CÃ¢u há»i cá»§a user:
+Câu hỏi của user:
 ${message}`
       })
     } catch (error) {
@@ -534,12 +534,12 @@ ${message}`
   private buildFallbackAnswer(intent: ChatIntent) {
     switch (intent) {
       case 'cv_review':
-        return 'TÃ­nh nÄƒng Ä‘Ã¡nh giÃ¡ CV sáº½ Ä‘Æ°á»£c há»— trá»£ á»Ÿ bÆ°á»›c sau. Hiá»‡n táº¡i chatbot nÃ y Ä‘ang há»— trá»£ tÆ° váº¥n job trÃªn JobGo. Báº¡n cÃ³ thá»ƒ há»i vá» tÃ¬m job, Ä‘á»™ phÃ¹ há»£p hoáº·c so sÃ¡nh cÃ¡c job.'
+        return 'Tính năng đánh giá CV sẽ được hỗ trợ ở bước sau. Hiện tại chatbot này đang hỗ trợ tư vấn job trên JobGo. Bạn có thể hỏi về tìm job, độ phù hợp hoặc so sánh các job.'
       case 'policy_qa':
-        return 'TÃ­nh nÄƒng há»i Ä‘Ã¡p vá» luáº­t, quy Ä‘á»‹nh vÃ  tÃ i liá»‡u kiáº¿n thá»©c sáº½ Ä‘Æ°á»£c há»— trá»£ sau khi dá»¯ liá»‡u Ä‘Æ°á»£c táº£i lÃªn há»‡ thá»‘ng. Hiá»‡n táº¡i chatbot nÃ y Ä‘ang há»— trá»£ tÆ° váº¥n job trÃªn JobGo. Báº¡n cÃ³ thá»ƒ há»i vá» tÃ¬m job, Ä‘á»™ phÃ¹ há»£p hoáº·c so sÃ¡nh cÃ¡c job.'
+        return 'Tính năng hỏi đáp về luật, quy định và tài liệu kiến thức sẽ được hỗ trợ sau khi dữ liệu được tải lên hệ thống. Hiện tại chatbot này đang hỗ trợ tư vấn job trên JobGo. Bạn có thể hỏi về tìm job, độ phù hợp hoặc so sánh các job.'
       case 'unsupported':
       default:
-        return 'Hiá»‡n táº¡i chatbot nÃ y Ä‘ang há»— trá»£ tÆ° váº¥n job trÃªn JobGo. Báº¡n cÃ³ thá»ƒ há»i vá» tÃ¬m job, Ä‘á»™ phÃ¹ há»£p hoáº·c so sÃ¡nh cÃ¡c job.'
+        return 'Hiện tại chatbot này đang hỗ trợ tư vấn job trên JobGo. Bạn có thể hỏi về tìm job, độ phù hợp hoặc so sánh các job.'
     }
   }
 }

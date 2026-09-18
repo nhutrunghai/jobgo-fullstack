@@ -686,7 +686,7 @@ function normalizeChatSessionSummary(item = {}) {
   return {
     id: String(item.session_id || item.id || ''),
     sessionId: String(item.session_id || item.id || ''),
-    title: String(item.title || 'CuÃ¡Â»â„¢c trÃƒÂ² chuyÃ¡Â»â€¡n mÃ¡Â»â€ºi').trim() || 'CuÃ¡Â»â„¢c trÃƒÂ² chuyÃ¡Â»â€¡n mÃ¡Â»â€ºi',
+    title: String(item.title || 'Cuộc trò chuyện mới').trim() || 'Cuộc trò chuyện mới',
     lastMessage: String(item.last_message || ''),
     intent: item.last_intent || '',
     createdAt: item.created_at || '',
@@ -1101,7 +1101,7 @@ export async function loadEmployerJobsList({ page = 1, limit = 5, status, keywor
 
 export async function updateEmployerJobStatus(jobId, status) {
   if (!jobId) {
-    throw new Error('ThiÃ¡ÂºÂ¿u mÃƒÂ£ job.')
+    throw new Error('Thiếu mã job.')
   }
 
   const payload = await requestJson(`/company/jobs/${encodeURIComponent(jobId)}/status`, {
@@ -1174,7 +1174,7 @@ export async function loadEmployerReceivedApplications({ status, keyword = '', p
         return {
           ...applicant,
           jobId,
-          jobTitle: job?.title || 'Tin tuyÃ¡Â»Æ’n dÃ¡Â»Â¥ng',
+          jobTitle: job?.title || 'Tin tuyển dụng',
           jobLocation: job?.location || '',
           jobType: mapJobType(job?.job_type),
           jobLevel: mapLevel(job?.level),
@@ -1215,7 +1215,7 @@ export async function loadEmployerReceivedApplications({ status, keyword = '', p
 
 export async function loadEmployerApplicationDetail(applicationId) {
   if (!applicationId) {
-    throw new Error('ThiÃ¡ÂºÂ¿u mÃƒÂ£ hÃ¡Â»â€œ sÃ†Â¡ Ã¡Â»Â©ng tuyÃ¡Â»Æ’n.')
+    throw new Error('Thiếu mã hồ sơ ứng tuyển.')
   }
 
   const payload = await requestJson(`/company/applications/${encodeURIComponent(applicationId)}`, { auth: true })
@@ -1237,7 +1237,7 @@ export async function loadEmployerApplicationDetail(applicationId) {
 
 export async function updateEmployerApplicationStatus(applicationId, status) {
   if (!applicationId) {
-    throw new Error('ThiÃ¡ÂºÂ¿u mÃƒÂ£ hÃ¡Â»â€œ sÃ†Â¡ Ã¡Â»Â©ng tuyÃ¡Â»Æ’n.')
+    throw new Error('Thiếu mã hồ sơ ứng tuyển.')
   }
 
   const payload = await requestJson(`/company/applications/${encodeURIComponent(applicationId)}/status`, {
@@ -1312,7 +1312,7 @@ export async function loadFavoriteIds() {
 export async function toggleFavoriteJob(jobId, shouldFavorite) {
   const token = getAccessToken()
   if (!token) {
-    throw new Error('BÃ¡ÂºÂ¡n cÃ¡ÂºÂ§n Ã„â€˜Ã„Æ’ng nhÃ¡ÂºÂ­p Ã„â€˜Ã¡Â»Æ’ lÃ†Â°u cÃƒÂ´ng viÃ¡Â»â€¡c.')
+    throw new Error('Bạn cần đăng nhập để lưu công việc.')
   }
 
   if (shouldFavorite) {
@@ -1338,7 +1338,7 @@ export async function loadUserUploadedCvs({ redirectOnUnauthorized = true, throw
 
       return {
         id: resumeId,
-        title: item.title || 'CV chÃ†Â°a Ã„â€˜Ã¡ÂºÂ·t tÃƒÂªn',
+        title: item.title || 'CV chưa đặt tên',
         cvUrl: item.cv_url || '',
         fileType,
         isDefault: Boolean(item.is_default),
@@ -1366,7 +1366,7 @@ export async function loadUserResumeDetail(resumeId) {
 
   return {
     id: normalizeObjectId(item._id || item.id || item.resume_id) || normalizedResumeId,
-    title: item.title || 'CV chÃ†Â°a Ã„â€˜Ã¡ÂºÂ·t tÃƒÂªn',
+    title: item.title || 'CV chưa đặt tên',
     cvUrl: item.cv_url || '',
     fileType: extensionMatch?.[1]?.toUpperCase() || 'CV',
     isDefault: Boolean(item.is_default),
@@ -1383,15 +1383,15 @@ export async function deleteUserUploadedCv(cvId) {
 
 export async function uploadUserResume({ title, file, isDefault = false, onProgress } = {}) {
   if (!title?.trim()) {
-    throw new Error('Vui lÃƒÂ²ng nhÃ¡ÂºÂ­p tÃƒÂªn CV.')
+    throw new Error('Vui lòng nhập tên CV.')
   }
   if (!file) {
-    throw new Error('Vui lÃƒÂ²ng chÃ¡Â»Ân file CV.')
+    throw new Error('Vui lòng chọn file CV.')
   }
 
   const token = getAccessToken()
   if (!token) {
-    throw new Error('BÃ¡ÂºÂ¡n cÃ¡ÂºÂ§n Ã„â€˜Ã„Æ’ng nhÃ¡ÂºÂ­p Ã„â€˜Ã¡Â»Æ’ upload CV.')
+    throw new Error('Bạn cần đăng nhập để upload CV.')
   }
 
   const uploadedFiles = await uploadFiles('userResume', {
@@ -1411,7 +1411,7 @@ export async function uploadUserResume({ title, file, isDefault = false, onProgr
   const fileKey = uploadedFile?.key || uploadedFile?.serverData?.key
 
   if (!cvUrl || !fileKey) {
-    throw new Error('Upload CV thÃƒÂ nh cÃƒÂ´ng nhÃ†Â°ng thiÃ¡ÂºÂ¿u URL hoÃ¡ÂºÂ·c file key.')
+    throw new Error('Upload CV thành công nhưng thiếu URL hoặc file key.')
   }
 
   const response = await requestJson('/user/resumes', {
