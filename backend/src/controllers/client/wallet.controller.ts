@@ -16,20 +16,6 @@ export const getWalletController = async (req: Request, res: Response) => {
   })
 }
 
-export const topUpWalletController = async (req: Request, res: Response) => {
-  const userId = new ObjectId(req.decodeToken?.userId as string)
-  const result = await walletService.topUp({
-    userId,
-    amount: req.body.amount
-  })
-
-  return res.status(StatusCodes.OK).json({
-    status: 'success',
-    message: UserMessages.WALLET_TOP_UP_SUCCESS,
-    data: result
-  })
-}
-
 export const getWalletTransactionsController = async (req: Request, res: Response) => {
   const userId = new ObjectId(req.decodeToken?.userId as string)
   const page = Number(req.query.page || 1)

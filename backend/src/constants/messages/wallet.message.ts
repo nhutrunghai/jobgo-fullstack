@@ -1,5 +1,4 @@
 const WalletMessages = {
-  WALLET_TOP_UP_SUCCESS: 'Nạp tiền vào ví thành công',
   WALLET_AMOUNT_INVALID: 'Số tiền không hợp lệ',
   WALLET_LOCKED: 'Ví của bạn đang bị khóa',
   WALLET_INSUFFICIENT_BALANCE: 'Số dư ví không đủ',

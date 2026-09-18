@@ -1,9 +1,5 @@
 import { Router } from 'express'
-import {
-  getWalletController,
-  getWalletTransactionsController,
-  topUpWalletController
-} from '~/controllers/client/wallet.controller'
+import { getWalletController, getWalletTransactionsController } from '~/controllers/client/wallet.controller'
 import {
   createWalletTopUpOrderController as createWalletTopUpOrderHandler,
   getWalletTopUpOrderDetailController as getWalletTopUpOrderDetailHandler
@@ -11,7 +7,7 @@ import {
 import isAuthorized from '~/middlewares/client/isAuthorized.middleware'
 import { paymentLimiter } from '~/middlewares/common/rate-limit.middleware'
 import validate from '~/middlewares/common/validator.middleware'
-import { getWalletTransactionsValidator, topUpWalletValidator } from '~/validators/client/wallet.validator'
+import { getWalletTransactionsValidator } from '~/validators/client/wallet.validator'
 import {
   createWalletTopUpOrderValidator,
   getWalletTopUpOrderDetailValidator
@@ -20,7 +16,6 @@ import {
 const walletRouter = Router()
 
 walletRouter.get('/', isAuthorized, getWalletController)
-walletRouter.post('/top-up', isAuthorized, paymentLimiter, validate(topUpWalletValidator), topUpWalletController)
 walletRouter.post(
   '/top-up-orders',
   isAuthorized,
